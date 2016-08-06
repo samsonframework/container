@@ -30,7 +30,7 @@
   "homepage": "http://samsonos.com/",
   "autoload": {
     "psr-4": {
-      "samsonframework\\di\\": "src/"
+      "samsonframework\\container\\": "src/"
     }
   },
   "config":{

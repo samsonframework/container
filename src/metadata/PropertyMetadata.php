@@ -6,7 +6,7 @@
  * Time: 22:22.
  */
 
-namespace samsonframework\di\metadata;
+namespace samsonframework\container\metadata;
 
 class PropertyMetadata
 {

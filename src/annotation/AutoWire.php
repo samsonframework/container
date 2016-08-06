@@ -6,7 +6,7 @@
  * Time: 1:59.
  */
 
-namespace samsonframework\di\annotation;
+namespace samsonframework\container\annotation;
 
 /**
  * Class AutoWire.

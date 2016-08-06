@@ -6,7 +6,7 @@
  * Time: 21:28.
  */
 
-namespace samsonframework\di\resolver;
+namespace samsonframework\container\resolver;
 
 use samsonframework\di\ClassMetadata;
 

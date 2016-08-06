@@ -6,7 +6,7 @@
  * Time: 23:31.
  */
 
-namespace samsonframework\di\scope;
+namespace samsonframework\container\scope;
 
 use samsonframework\di\Container;
 use samsonframework\di\metadata\ClassMetadata;

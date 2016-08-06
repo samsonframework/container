@@ -6,7 +6,7 @@
  * Time: 0:57.
  */
 
-namespace samsonframework\di\annotation;
+namespace samsonframework\container\annotation;
 
 interface MethodAnnotation
 {

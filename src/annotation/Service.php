@@ -6,7 +6,7 @@
  * Time: 1:55.
  */
 
-namespace samsonframework\di\annotation;
+namespace samsonframework\container\annotation;
 
 /**
  * Class Service.

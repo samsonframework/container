@@ -6,7 +6,7 @@
  * Time: 1:37.
  */
 
-namespace samsonframework\di\annotation;
+namespace samsonframework\container\annotation;
 
 interface Bean
 {

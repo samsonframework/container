@@ -6,7 +6,7 @@
  * Time: 1:52.
  */
 
-namespace samsonframework\di\util;
+namespace samsonframework\container\util;
 
 use hanneskod\classtools\Iterator\ClassIterator as ClassIteratorModule;
 use Symfony\Component\Finder\Finder;
