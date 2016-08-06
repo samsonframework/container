@@ -34,6 +34,6 @@ class AnnotationResolverTest extends TestCase
         $identifier = 'testID';
         $metadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class), $identifier);
 
-        static::assertEquals([], $metadata->dependencies);
+        static::assertEquals(['Car'], $metadata->dependencies);
     }
 }

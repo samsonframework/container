@@ -40,7 +40,7 @@ class AnnotationResolver extends Resolver
         // Create and fill class metadata base fields
         $metadata = new ClassMetadata();
         $metadata->className = $classData->getName();
-        $metadata->internalId = $identifier ?: uniqid('container', true);
+        $metadata->internalId = $identifier ?: uniqid();
         $metadata->name = $metadata->internalId;
 
         /** @var MetadataInterface $annotation Read class annotations */
