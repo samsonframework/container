@@ -9,7 +9,6 @@ namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\FilesystemCache;
 use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\metadata\ClassMetadata;
@@ -31,7 +30,7 @@ class AnnotationResolver extends Resolver
      */
     public function __construct($cachePath)
     {
-        $this->reader = new CachedReader(new AnnotationReader(), new FilesystemCache($cachePath));
+        $this->reader = new AnnotationReader();
     }
 
     /**
@@ -41,19 +40,16 @@ class AnnotationResolver extends Resolver
     {
         /** @var \ReflectionClass $classData */
 
-        /** @var MetadataInterface[] $classAnnotations Read class annotations */
-        $classAnnotations = $this->reader->getClassAnnotations($classData);
+        // Create and fill class metadata base fields
+        $metadata = new ClassMetadata();
+        $metadata->className = $classData->getName();
+        $metadata->internalId = $identifier ?: uniqid('container', true);
+        $metadata->name = $metadata->internalId;
 
-        if ($classAnnotations) {
-            $metadata = new ClassMetadata();
-            $metadata->className = $classData->getName();
-            $metadata->internalId = $identifier ?: uniqid('container', true);
-            $metadata->name = $metadata->internalId;
-
-            foreach ($classAnnotations as $annotation) {
-                if (class_implements($annotation, MetadataInterface::class)) {
-                    $annotation->toMetadata($metadata, $classData->getName());
-                }
+        /** @var MetadataInterface $annotation Read class annotations */
+        foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
+            if (class_implements($annotation, MetadataInterface::class)) {
+                $annotation->toMetadata($metadata, $classData->getName());
             }
         }
 

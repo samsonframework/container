@@ -16,6 +16,6 @@ class InjectAnnotationTest extends TestCase
         $scope = new Inject(['value' => CarController::class]);
         $metadata = new ClassMetadata();
         $scope->toMetadata($metadata);
-        static::assertEquals(true, in_array(CarController::class, $metadata->dependencies));
+        static::assertEquals(true, in_array(CarController::class, $metadata->dependencies, true));
     }
 }

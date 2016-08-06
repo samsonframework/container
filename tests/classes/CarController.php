@@ -5,11 +5,12 @@
  */
 namespace samsonframework\container\tests\classes;
 
-use \samsonframework\container\annotation\Inject;
-use \samsonframework\container\annotation\Controller;
+use samsonframework\container\annotation\Controller;
+use samsonframework\container\annotation\Inject;
 
 /**
  * Car Controller class.
+ * @Inject("Car")
  * @Controller()
  * @package samsonframework\di\tests\classes
  */
@@ -17,7 +18,6 @@ class CarController
 {
     /**
      * @var Car
-     * @Inject()
      */
     protected $car;
 }
