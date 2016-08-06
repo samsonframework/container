@@ -18,10 +18,17 @@ class ScopeAnnotationTest extends TestCase
         $this->assertEquals([], $scope->scopes);
     }
 
-    public function testCreationWithString()
+    public function testCreationWithArray()
     {
         $scope = new Scope(['value' => CarController::class]);
 
         $this->assertEquals(true, in_array(CarController::class, $scope->scopes));
+    }
+
+    public function testCreationWithWrondType()
+    {
+        $this->expectException(\Exception::class);
+
+        $scope = new Scope(['value' => new CarController()]);
     }
 }
