@@ -13,6 +13,5 @@ class ApplicationTest extends TestCase
     public function testReslover()
     {
         $resolver = new AnnotationResolver();
-
     }
 }

@@ -12,6 +12,9 @@ use samsonframework\di\ClassMetadata;
 
 abstract class Resolver
 {
+    /** @var string[] Collection of paths for scanning  */
+    protected $paths = [];
+
     /**
      * @param \ReflectionClass $class
      *
