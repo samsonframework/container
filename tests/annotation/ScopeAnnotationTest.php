@@ -25,7 +25,7 @@ class ScopeAnnotationTest extends TestCase
         $this->assertEquals(true, in_array(CarController::class, $scope->scopes));
     }
 
-    public function testCreationWithWrondType()
+    public function testCreationWithWrongType()
     {
         $this->expectException(\Exception::class);
 
