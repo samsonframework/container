@@ -8,7 +8,6 @@
 namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\CachedReader;
 use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\metadata\ClassMetadata;
