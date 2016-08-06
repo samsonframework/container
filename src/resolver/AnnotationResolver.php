@@ -62,7 +62,7 @@ class AnnotationResolver extends Resolver
      * @param \ReflectionClass $classData
      * @param ClassMetadata    $metadata
      */
-    protected function resolveClassAnnotations(\ReflectionClass $classData, ClassMetadata &$metadata)
+    protected function resolveClassAnnotations(\ReflectionClass $classData, ClassMetadata $metadata)
     {
         /** @var MetadataInterface $annotation Read class annotations */
         foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
@@ -78,7 +78,7 @@ class AnnotationResolver extends Resolver
      * @param \ReflectionMethod $method
      * @param ClassMetadata     $metadata
      */
-    protected function resolveMethodAnnotation(\ReflectionMethod $method, ClassMetadata &$metadata)
+    protected function resolveMethodAnnotation(\ReflectionMethod $method, ClassMetadata $metadata)
     {
         $methodAnnotations = $this->reader->getMethodAnnotations($method);
         $methodMetadata = new MethodMetadata();

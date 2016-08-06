@@ -39,7 +39,7 @@ class Service implements MetadataInterface
     }
 
     /** {@inheritdoc} */
-    public function toMetadata(ClassMetadata &$metadata)
+    public function toMetadata(ClassMetadata $metadata)
     {
         $metadata->name = $this->name;
     }
