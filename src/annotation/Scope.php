@@ -13,7 +13,7 @@ namespace samsonframework\container\annotation;
  *
  * @Annotation
  */
-class Scope
+class Scope implements ParentInterface
 {
     public $scopes = [];
 

@@ -9,14 +9,22 @@
 namespace samsonframework\container\annotation;
 
 /**
- * Class Service.
+ * Service annotation class.
+ *
+ * This annotation adds class to Service container scope.
  *
  * @Annotation
  */
-class Service implements Bean
+class Service implements ParentInterface
 {
+    /** @var string Service unique name */
     public $name;
 
+    /**
+     * Service constructor.
+     *
+     * @param string $name Service unique name
+     */
     public function __construct($name)
     {
         $this->name = $name;

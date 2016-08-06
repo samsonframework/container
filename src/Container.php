@@ -8,13 +8,18 @@
 
 namespace samsonframework\di;
 
-use samsonframework\di\scope\ScopeManager;
+use samsonframework\container\scope\ScopeManager;
 
 /**
  * Class Container.
  */
 abstract class Container
 {
+    /** Controller classes scope name */
+    const SCOPE_CONTROLLER = 'controllers';
+    /** Service classes scope name */
+    const SCOPE_SERVICES = 'services';
+
     /**
      * @var ScopeManager
      */

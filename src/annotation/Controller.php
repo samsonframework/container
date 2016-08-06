@@ -9,10 +9,13 @@
 namespace samsonframework\container\annotation;
 
 /**
- * Class Scope.
+ * Controller annotation class.
+ *
+ * This annotation adds class to Controller container scope.
  *
  * @Annotation
  */
-class Controller implements Bean
+class Controller implements ParentInterface
 {
+
 }

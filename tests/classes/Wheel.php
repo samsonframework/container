@@ -4,7 +4,7 @@
  * on 06.08.16 at 11:11
  */
 
-namespace samsonframework\di\tests\classes;
+namespace samsonframework\container\tests\classes;
 
 
 class Wheel

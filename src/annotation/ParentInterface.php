@@ -8,6 +8,6 @@
 
 namespace samsonframework\container\annotation;
 
-interface Bean
+interface ParentInterface
 {
 }
