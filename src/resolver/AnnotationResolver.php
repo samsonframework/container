@@ -13,10 +13,13 @@ use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 
+/**
+ * Annotation resolver class.
+ */
 class AnnotationResolver extends Resolver
 {
     /**
-     * @var CachedReader
+     * @var AnnotationReader
      */
     protected $reader;
 
