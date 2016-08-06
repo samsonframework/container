@@ -59,7 +59,7 @@ class AnnotationResolver extends Resolver
 
             foreach ($classAnnotations as $annotation) {
                 if (class_implements($annotation, MetadataInterface::class)) {
-                    $annotation->toMetadata($metadata);
+                    $annotation->toMetadata($metadata, $classData->getName());
                 }
 
                 if ($annotation instanceof AutoWire) {
