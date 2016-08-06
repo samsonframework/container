@@ -62,10 +62,6 @@ class AnnotationResolver extends Resolver
                     $annotation->toMetadata($metadata, $classData->getName());
                 }
 
-                if ($annotation instanceof Alias) {
-                    $metadata->aliases = $annotation->aliases['value'];
-                }
-
                 if ($annotation instanceof Inject) {
                     $argumentList = $annotation->list['value'];
                     foreach ($argumentList as $name => $serviceName) {

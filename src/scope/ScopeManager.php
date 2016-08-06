@@ -56,7 +56,7 @@ class ScopeManager
     }
 
     /**
-     * Get list of scopes.
+     * Get list of collection.
      *
      * @return Scope[]
      */

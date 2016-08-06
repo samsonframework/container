@@ -79,7 +79,7 @@ class ApplicationContext
     }
 
     /**
-     * Build scopes.
+     * Build collection.
      */
     public function buildScopes()
     {

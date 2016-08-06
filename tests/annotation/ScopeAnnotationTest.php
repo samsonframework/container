@@ -12,27 +12,6 @@ use samsonframework\container\tests\classes\CarController;
 
 class ScopeAnnotationTest extends TestCase
 {
-    public function testCreationWithEmptyString()
-    {
-        $scope = new Scope('');
-
-        static::assertEquals([], $scope->scopes);
-    }
-
-    public function testCreationWithArray()
-    {
-        $scope = new Scope(['value' => CarController::class]);
-
-        static::assertEquals(true, in_array(CarController::class, $scope->scopes, true));
-    }
-
-    public function testCreationWithWrongType()
-    {
-        $this->expectException(\Exception::class);
-
-        new Scope(['value' => new CarController()]);
-    }
-
     public function testToMetadata()
     {
         $scope = new Scope(['value' => CarController::class]);
