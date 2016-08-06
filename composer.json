@@ -1,9 +1,10 @@
 {
-  "name": "samsonframework/di",
-  "description": "SamsonFramework dependency injection",
+  "name": "samsonframework/container",
+  "description": "SamsonFramework service container",
   "keywords": [
-    "di",
-    "dependeny injection"
+    "service container",
+    "samsonframework",
+    "samson framework",
   ],
   "authors": [
     {
