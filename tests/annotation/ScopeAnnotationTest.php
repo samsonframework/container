@@ -15,14 +15,14 @@ class ScopeAnnotationTest extends TestCase
     {
         $scope = new Scope('');
 
-        assertEquals([], $scope->scopes);
+        static::assertEquals([], $scope->scopes);
     }
 
     public function testCreationWithArray()
     {
         $scope = new Scope(['value' => CarController::class]);
 
-        assertEquals(true, in_array(CarController::class, $scope->scopes, true));
+        static::assertEquals(true, in_array(CarController::class, $scope->scopes, true));
     }
 
     public function testCreationWithWrongType()
