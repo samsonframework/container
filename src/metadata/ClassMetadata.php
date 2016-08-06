@@ -5,17 +5,34 @@
  * Date: 29.07.2016
  * Time: 22:22.
  */
-
 namespace samsonframework\container\metadata;
 
+/**
+ * Generic class metadata entity.
+ *
+ * @package samsonframework\container\metadata
+ */
 class ClassMetadata
 {
+    /** @var string */
     public $name;
+
+    /** @var string */
     public $className;
+
+    /** @var string */
     public $internalId;
-    public $autowire;
+
+    /** @var bool */
+    public $autowire = false;
+
+    /** @var array */
     public $scopes = [];
-    public $args = [];
+
+    /** @var array */
+    public $dependencies = [];
+
+    /** @var array */
     public $aliases = [];
 
     /**

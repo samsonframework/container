@@ -19,13 +19,6 @@ class Inject extends CollectionValue implements MetadataInterface
     /** {@inheritdoc} */
     public function toMetadata(ClassMetadata &$metadata)
     {
-        foreach ($this->collection as $name => $serviceName) {
-            $arg = ['service' => $serviceName];
-            if (is_string($name)) {
-                $metadata->args[$name] = $arg;
-            } else {
-                $metadata->args[] = $arg;
-            }
-        }
+        $metadata->dependencies = $this->collection;
     }
 }

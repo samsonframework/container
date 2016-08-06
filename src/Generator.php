@@ -58,21 +58,6 @@ class Generator
     }
 
     /**
-     * Add finish definition.
-     */
-    protected function postGenerate()
-    {
-        // Add container service
-        $this->generator->defIfCondition('$name === \''.self::CONTAINER_ALIAS.'\'');
-        $this->generator->newLine("\t".'return $this;');
-        $this->generator->endIfCondition();
-
-        $this->generator->newLine("throw new \Exception(sprintf('Service with name %s not found', \$name));");
-        $this->generator->endFunction();
-        $this->generator->endClass();
-    }
-
-    /**
      * Add new service to container generator.
      *
      * @param ClassMetadata $metadata
@@ -88,8 +73,8 @@ class Generator
         $this->generator->defIfCondition($ifCondition);
         $this->generator->newLine("\t".'return new '.$metadata->className.'(');
         $i = 0;
-        foreach ($metadata->args as $argName => $service) {
-            $separator = (++$i) < count($metadata->args) ? ',' : '';
+        foreach ($metadata->dependencies as $argName => $service) {
+            $separator = (++$i) < count($metadata->dependencies) ? ',' : '';
             $this->generator->newLine("\t\t".'$this->'.self::FUNCTION_NAME.'(\''.$service['service'].'\')'.$separator);
         }
         $this->generator->newLine("\t".');');
@@ -113,5 +98,20 @@ class Generator
         $className = self::CACHE_CLASS_NAME;
 
         return new $className($scopeManager);
+    }
+
+    /**
+     * Add finish definition.
+     */
+    protected function postGenerate()
+    {
+        // Add container service
+        $this->generator->defIfCondition('$name === \'' . self::CONTAINER_ALIAS . '\'');
+        $this->generator->newLine("\t" . 'return $this;');
+        $this->generator->endIfCondition();
+
+        $this->generator->newLine("throw new \Exception(sprintf('Service with name %s not found', \$name));");
+        $this->generator->endFunction();
+        $this->generator->endClass();
     }
 }

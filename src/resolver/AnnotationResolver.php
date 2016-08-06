@@ -7,21 +7,13 @@
  */
 namespace samsonframework\container\resolver;
 
-use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\FilesystemCache;
-use samsonframework\container\annotation\Alias;
-use samsonframework\container\annotation\AutoWire;
-use samsonframework\container\annotation\Controller;
-use samsonframework\container\annotation\Inject;
 use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
-use samsonframework\container\annotation\Scope;
-use samsonframework\container\annotation\Service;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\scope\ControllerScope;
 
 class AnnotationResolver extends Resolver
 {
@@ -56,27 +48,12 @@ class AnnotationResolver extends Resolver
             $metadata = new ClassMetadata();
             $metadata->className = $classData->getName();
             $metadata->internalId = $identifier ?: uniqid('container', true);
+            $metadata->name = $metadata->internalId;
 
             foreach ($classAnnotations as $annotation) {
                 if (class_implements($annotation, MetadataInterface::class)) {
                     $annotation->toMetadata($metadata, $classData->getName());
                 }
-
-                if ($annotation instanceof Inject) {
-                    $argumentList = $annotation->list['value'];
-                    foreach ($argumentList as $name => $serviceName) {
-                        $arg = ['service' => $serviceName];
-                        if (is_string($name)) {
-                            $metadata->args[$name] = $arg;
-                        } else {
-                            $metadata->args[] = $arg;
-                        }
-                    }
-                }
-            }
-
-            if (!$metadata->name) {
-                $metadata->name = $metadata->internalId;
             }
         }
 
