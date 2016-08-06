@@ -15,7 +15,7 @@ namespace samsonframework\container\annotation;
  *
  * @Annotation
  */
-class Controller implements ParentInterface
+class Controller
 {
 
 }
