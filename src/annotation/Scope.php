@@ -26,13 +26,15 @@ class Scope implements ParentInterface
      */
     public function __construct($scopeOrScopes)
     {
-        $value = $scopeOrScopes['value'];
+        if ($scopeOrScopes) {
+            $value = $scopeOrScopes['value'];
 
-        if (!is_array($value) && !is_string($value)) {
-            throw new \Exception('Wrong type of alias');
+            if (!is_array($value) && !is_string($value)) {
+                throw new \Exception('Wrong type of alias');
+            }
+
+            // Always store array
+            $this->scopes = is_array($value) ?: [$value];
         }
-
-        // Always store array
-        $this->scopes = is_array($value) ?: [$value];
     }
 }

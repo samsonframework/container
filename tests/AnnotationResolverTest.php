@@ -31,8 +31,8 @@ class AnnotationResolverTest extends TestCase
         new Controller();
         new Inject('');
 
-        $metadata = $this->resolver->resolve(new \ReflectionClass(tests\Controller::class));
+        $metadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class));
 
-        $this->asserEquals();
+        $this->assertEquals(false, $metadata->autowire);
     }
 }
