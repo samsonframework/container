@@ -24,16 +24,14 @@ use samsonframework\di\scope\ControllerScope;
 
 class AnnotationResolver extends Resolver
 {
-    public static $pathToCache = '../cache/annotation';
-
     /**
      * @var CachedReader
      */
     protected $reader;
 
-    public function __construct()
+    public function __construct($cachePath)
     {
-        $this->reader = new CachedReader(new AnnotationReader(), new FilesystemCache(self::$pathToCache));
+        $this->reader = new CachedReader(new AnnotationReader(), new FilesystemCache($cachePath));
     }
 
     /**

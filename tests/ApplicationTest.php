@@ -6,12 +6,12 @@
 namespace samsonframework\di\tests;
 
 use PHPUnit\Framework\TestCase;
-use samsonframework\di\resolver\AnnotationResolver;
+use samsonframework\container\resolver\AnnotationResolver;
 
 class ApplicationTest extends TestCase
 {
     public function testReslover()
     {
-        $resolver = new AnnotationResolver();
+        $resolver = new AnnotationResolver(__DIR__.'/cache/');
     }
 }

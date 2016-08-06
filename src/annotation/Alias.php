@@ -5,11 +5,10 @@
  * Date: 02.08.16
  * Time: 1:59.
  */
-
 namespace samsonframework\container\annotation;
 
 /**
- * Class AutoWire.
+ * Class Alias.
  *
  * @Annotation
  */

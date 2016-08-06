@@ -8,17 +8,16 @@
 
 namespace samsonframework\container\resolver;
 
-use samsonframework\di\ClassMetadata;
+use samsonframework\container\metadata\ClassMetadata;
 
 abstract class Resolver
 {
-    /** @var string[] Collection of paths for scanning  */
-    protected $paths = [];
-
     /**
-     * @param \ReflectionClass $class
+     * Convert class reflection to internal metadata class.
      *
-     * @return ClassMetadata
+     * @param \ReflectionClass $class
+     * @see ClassMetadata
+     * @return ClassMetadata Class metadata
      */
     abstract public function resolve(\ReflectionClass $class);
 
