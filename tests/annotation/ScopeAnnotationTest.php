@@ -7,6 +7,7 @@ namespace samsonframework\container\tests\annotation;
 
 use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\Scope;
+use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes\CarController;
 
 class ScopeAnnotationTest extends TestCase
@@ -30,5 +31,13 @@ class ScopeAnnotationTest extends TestCase
         $this->expectException(\Exception::class);
 
         new Scope(['value' => new CarController()]);
+    }
+
+    public function testToMetadata()
+    {
+        $scope = new Scope(['value' => CarController::class]);
+        $metadata = new ClassMetadata();
+        $scope->toMetadata($metadata);
+        static::assertEquals(true, in_array(CarController::class, $metadata->scopes));
     }
 }
