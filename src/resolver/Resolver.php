@@ -15,9 +15,10 @@ abstract class Resolver
     /**
      * Convert class reflection to internal metadata class.
      *
-     * @param \ReflectionClass $class
-     * @see ClassMetadata
+     * @param mixed  $classData Class information representative
+     * @param string $identifier Unique class container identifier
+     *
      * @return ClassMetadata Class metadata
      */
-    abstract public function resolve(\ReflectionClass $class);
+    abstract public function resolve($classData, $identifier = null);
 }

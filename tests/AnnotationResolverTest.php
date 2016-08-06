@@ -7,6 +7,7 @@ namespace samsonframework\di\tests;
 
 use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\Container;
 use \samsonframework\container\resolver\AnnotationResolver;
 use \samsonframework\container\tests\classes as tests;
 use \samsonframework\container\annotation\Controller;
@@ -31,8 +32,11 @@ class AnnotationResolverTest extends TestCase
         new Controller();
         new Inject('');
 
-        $metadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class));
+        $identifier = 'testID';
+        $metadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class), $identifier);
 
-        $this->assertEquals(false, $metadata->autowire);
+        static::assertEquals(false, $metadata->autowire);
+        static::assertEquals($identifier, $metadata->internalId);
+        static::assertEquals(true, in_array(Container::SCOPE_CONTROLLER, $metadata->scopes));
     }
 }

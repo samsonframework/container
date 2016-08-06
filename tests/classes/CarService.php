@@ -6,14 +6,14 @@
 namespace samsonframework\container\tests\classes;
 
 use \samsonframework\container\annotation\Inject;
-use \samsonframework\container\annotation\Controller;
+use samsonframework\container\annotation\Service;
 
 /**
- * Car Controller class.
- * @Controller()
+ * Car service class.
+ * @Service(car_service)
  * @package samsonframework\di\tests\classes
  */
-class CarController
+class CarService
 {
     /**
      * @var Car

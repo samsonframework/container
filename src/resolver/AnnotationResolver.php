@@ -5,9 +5,9 @@
  * Date: 29.07.2016
  * Time: 21:38.
  */
-
 namespace samsonframework\container\resolver;
 
+use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\FilesystemCache;
@@ -15,6 +15,7 @@ use samsonframework\container\annotation\Alias;
 use samsonframework\container\annotation\AutoWire;
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\annotation\Scope;
 use samsonframework\container\annotation\Service;
@@ -32,7 +33,9 @@ class AnnotationResolver extends Resolver
     /**
      * AnnotationResolver constructor.
      *
-     * @param srting $cachePath Path for storing annotation cache
+     * @param string $cachePath Path for storing annotation cache
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($cachePath)
     {
@@ -40,29 +43,23 @@ class AnnotationResolver extends Resolver
     }
 
     /**
-     * @param \ReflectionClass $class
-     *
-     * @return ClassMetadata
+     * {@inheritDoc}
      */
-    public function resolve(\ReflectionClass $class)
+    public function resolve($classData, $identifier = null)
     {
-        // Read class annotations
-        $classAnnotations = $this->reader->getClassAnnotations($class);
+        /** @var \ReflectionClass $classData */
+
+        /** @var MetadataInterface[] $classAnnotations Read class annotations */
+        $classAnnotations = $this->reader->getClassAnnotations($classData);
 
         if ($classAnnotations) {
             $metadata = new ClassMetadata();
-            $metadata->className = $class->getName();
-            $metadata->internalId = uniqid('container_di', true);
+            $metadata->className = $classData->getName();
+            $metadata->internalId = $identifier ?: uniqid('container', true);
 
             foreach ($classAnnotations as $annotation) {
-                if ($annotation instanceof Service) {
-                    $metadata->name = array_key_exists('value', $annotation->name)
-                        ? $annotation->name['value']
-                        : $metadata->internalId;
-                }
-
-                if ($annotation instanceof Scope) {
-                    $metadata->scopes = $annotation->scopes;
+                if (class_implements($annotation, MetadataInterface::class)) {
+                    $annotation->toMetadata($metadata);
                 }
 
                 if ($annotation instanceof Controller) {
@@ -96,7 +93,7 @@ class AnnotationResolver extends Resolver
         }
 
         /** @var \ReflectionMethod $method */
-        foreach ($class->getMethods() as $method) {
+        foreach ($classData->getMethods() as $method) {
             $methodAnnotations = $this->reader->getMethodAnnotations($method);
             $methodMetadata = new MethodMetadata();
             $methodMetadata->name = $method->getName();

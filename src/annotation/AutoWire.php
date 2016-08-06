@@ -15,7 +15,5 @@ namespace samsonframework\container\annotation;
  */
 class AutoWire
 {
-    public function __construct()
-    {
-    }
+
 }

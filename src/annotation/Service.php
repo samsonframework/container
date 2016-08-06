@@ -5,7 +5,6 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-
 namespace samsonframework\container\annotation;
 
 /**
@@ -16,7 +15,7 @@ namespace samsonframework\container\annotation;
  *
  * @Annotation
  */
-class Service implements ParentInterface
+class Service implements MetadataInterface
 {
     /** @var string Service unique name */
     public $name;
@@ -25,9 +24,21 @@ class Service implements ParentInterface
      * Service constructor.
      *
      * @param string $name Service unique name
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($name)
     {
-        $this->name = $name;
+        if (is_array($name) && array_key_exists('value', $name)) {
+            $this->name = $name['value'];
+        } else {
+            throw new \InvalidArgumentException('Service annotation should have name');
+        }
+    }
+
+    /** {@inheritdoc} */
+    public function toMetadata(&$metadata)
+    {
+        $metadata->name = $this->name;
     }
 }
