@@ -13,7 +13,7 @@ namespace samsonframework\container\annotation;
 class CollectionValue
 {
     /** @var array Collection of class collection */
-    public $collection = [];
+    protected $collection = [];
 
     /**
      * Scope constructor.

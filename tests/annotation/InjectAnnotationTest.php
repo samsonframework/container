@@ -5,17 +5,17 @@
  */
 namespace samsonframework\container\tests\annotation;
 
-use samsonframework\container\annotation\Controller;
-use samsonframework\container\Container;
+use samsonframework\container\annotation\Inject;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\tests\classes\CarController;
 
-class ControllerAnnotationTest extends TestCase
+class InjectAnnotationTest extends TestCase
 {
     public function testToMetadata()
     {
-        $scope = new Controller();
+        $scope = new Inject(['value' => CarController::class]);
         $metadata = new ClassMetadata();
         $scope->toMetadata($metadata);
-        static::assertEquals(true, in_array(Container::SCOPE_CONTROLLER, $metadata->scopes));
+        static::assertEquals(true, in_array(CarController::class, $metadata->aliases));
     }
 }

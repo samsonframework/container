@@ -5,9 +5,7 @@
  */
 namespace samsonframework\container\tests\annotation;
 
-use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\CollectionValue;
-use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes\CarController;
 
 class CollectionValueTest extends TestCase
@@ -16,14 +14,14 @@ class CollectionValueTest extends TestCase
     {
         $scope = new CollectionValue('');
 
-        static::assertEquals([], $scope->collection);
+        static::assertEquals([], $this->getProperty('collection', $scope));
     }
 
     public function testCreationWithArray()
     {
         $scope = new CollectionValue(['value' => CarController::class]);
 
-        static::assertEquals(true, in_array(CarController::class, $scope->collection, true));
+        static::assertEquals(true, in_array(CarController::class, $this->getProperty('collection', $scope), true));
     }
 
     public function testCreationWithWrongType()

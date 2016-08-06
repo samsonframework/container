@@ -5,20 +5,27 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\metadata\ClassMetadata;
+
 /**
- * Class Scope.
+ * Injection annotation class.
  *
  * @Annotation
  */
-class Inject
+class Inject extends CollectionValue implements MetadataInterface
 {
-    public $list;
-
-    public function __construct($list)
+    /** {@inheritdoc} */
+    public function toMetadata(ClassMetadata &$metadata)
     {
-        $this->list = $list;
+        foreach ($this->collection as $name => $serviceName) {
+            $arg = ['service' => $serviceName];
+            if (is_string($name)) {
+                $metadata->args[$name] = $arg;
+            } else {
+                $metadata->args[] = $arg;
+            }
+        }
     }
 }

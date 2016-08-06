@@ -5,7 +5,6 @@
  */
 namespace samsonframework\container\tests\annotation;
 
-use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\AutoWire;
 use samsonframework\container\metadata\ClassMetadata;
 

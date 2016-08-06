@@ -6,6 +6,7 @@
  * Time: 1:55.
  */
 namespace samsonframework\container\annotation;
+
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -19,7 +20,7 @@ use samsonframework\container\metadata\ClassMetadata;
 class Service implements MetadataInterface
 {
     /** @var string Service unique name */
-    public $name;
+    protected $name;
 
     /**
      * Service constructor.

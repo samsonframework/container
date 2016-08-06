@@ -5,7 +5,6 @@
  */
 namespace samsonframework\container\tests\annotation;
 
-use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\Service;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes\CarController;
@@ -18,7 +17,7 @@ class ServiceAnnotationTest extends TestCase
         $serviceName = 'car_service';
         $service = new Service(['value' => $serviceName]);
 
-        static::assertEquals($serviceName, $service->name, true);
+        static::assertEquals($serviceName, $this->getProperty('name', $service), true);
     }
 
     public function testCreationWithWrongType()
