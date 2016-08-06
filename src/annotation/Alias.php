@@ -7,20 +7,19 @@
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\metadata\ClassMetadata;
+
 /**
  * Class Alias.
  *
  * @Annotation
  */
-class Alias
+class Alias extends Scope
 {
-    public $aliases = [];
-
-    public function __construct($value)
+    /** {@inheritdoc} */
+    public function toMetadata(ClassMetadata &$metadata)
     {
-        if (!is_array($value) && is_string($value)) {
-            throw new \Exception('Wrong type of alias');
-        }
-        $this->aliases = is_string($value) ? [$value] : $value;
+        // Add all found annotation scopes to metadata collection
+        $metadata->aliases = array_merge($metadata->aliases, $this->scopes);
     }
 }

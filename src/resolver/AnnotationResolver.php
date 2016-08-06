@@ -62,10 +62,6 @@ class AnnotationResolver extends Resolver
                     $annotation->toMetadata($metadata, $classData->getName());
                 }
 
-                if ($annotation instanceof AutoWire) {
-                    $metadata->autowire = true;
-                }
-
                 if ($annotation instanceof Alias) {
                     $metadata->aliases = $annotation->aliases['value'];
                 }
