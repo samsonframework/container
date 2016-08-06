@@ -24,11 +24,9 @@ class AnnotationResolver extends Resolver
     /**
      * AnnotationResolver constructor.
      *
-     * @param string $cachePath Path for storing annotation cache
-     *
      * @throws \InvalidArgumentException
      */
-    public function __construct($cachePath)
+    public function __construct()
     {
         $this->reader = new AnnotationReader();
     }
@@ -49,7 +47,7 @@ class AnnotationResolver extends Resolver
         /** @var MetadataInterface $annotation Read class annotations */
         foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
             if (class_implements($annotation, MetadataInterface::class)) {
-                $annotation->toMetadata($metadata, $classData->getName());
+                $annotation->toMetadata($metadata);
             }
         }
 
