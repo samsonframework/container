@@ -11,16 +11,16 @@ namespace samsonframework\container\resolver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\FilesystemCache;
-use samsonframework\di\annotation\Alias;
-use samsonframework\di\annotation\AutoWire;
-use samsonframework\di\annotation\Controller;
-use samsonframework\di\annotation\Inject;
-use samsonframework\di\annotation\MethodAnnotation;
-use samsonframework\di\annotation\Scope;
-use samsonframework\di\annotation\Service;
-use samsonframework\di\metadata\ClassMetadata;
-use samsonframework\di\metadata\MethodMetadata;
-use samsonframework\di\scope\ControllerScope;
+use samsonframework\container\annotation\Alias;
+use samsonframework\container\annotation\AutoWire;
+use samsonframework\container\annotation\Controller;
+use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\MethodAnnotation;
+use samsonframework\container\annotation\Scope;
+use samsonframework\container\annotation\Service;
+use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\scope\ControllerScope;
 
 class AnnotationResolver extends Resolver
 {
@@ -29,6 +29,11 @@ class AnnotationResolver extends Resolver
      */
     protected $reader;
 
+    /**
+     * AnnotationResolver constructor.
+     *
+     * @param srting $cachePath Path for storing annotation cache
+     */
     public function __construct($cachePath)
     {
         $this->reader = new CachedReader(new AnnotationReader(), new FilesystemCache($cachePath));
@@ -41,30 +46,37 @@ class AnnotationResolver extends Resolver
      */
     public function resolve(\ReflectionClass $class)
     {
-        $metadata = new ClassMetadata();
+        // Read class annotations
         $classAnnotations = $this->reader->getClassAnnotations($class);
 
-        $metadata->className = $class->getName();
-        $metadata->internalId = $this->createInternalId();
         if ($classAnnotations) {
+            $metadata = new ClassMetadata();
+            $metadata->className = $class->getName();
+            $metadata->internalId = uniqid('container_di', true);
+
             foreach ($classAnnotations as $annotation) {
                 if ($annotation instanceof Service) {
-                    $metadata->name = array_key_exists('value', $annotation->name) ? $annotation->name['value'] : $metadata->internalId;
+                    $metadata->name = array_key_exists('value', $annotation->name)
+                        ? $annotation->name['value']
+                        : $metadata->internalId;
                 }
+
                 if ($annotation instanceof Scope) {
                     $metadata->scopes = $annotation->scopes;
                 }
+
                 if ($annotation instanceof Controller) {
-                    if (!in_array(ControllerScope::SCOPE_NAME, $metadata->scopes)) {
-                        array_push($metadata->scopes, ControllerScope::SCOPE_NAME);
-                    }
+                    $metadata->scopes[] = ControllerScope::SCOPE_NAME;
                 }
+
                 if ($annotation instanceof AutoWire) {
                     $metadata->autowire = true;
                 }
+
                 if ($annotation instanceof Alias) {
                     $metadata->aliases = $annotation->aliases['value'];
                 }
+
                 if ($annotation instanceof Inject) {
                     $argumentList = $annotation->list['value'];
                     foreach ($argumentList as $name => $serviceName) {
@@ -77,6 +89,7 @@ class AnnotationResolver extends Resolver
                     }
                 }
             }
+
             if (!$metadata->name) {
                 $metadata->name = $metadata->internalId;
             }

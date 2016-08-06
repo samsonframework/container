@@ -20,14 +20,4 @@ abstract class Resolver
      * @return ClassMetadata Class metadata
      */
     abstract public function resolve(\ReflectionClass $class);
-
-    /**
-     * Get internal id for container item.
-     *
-     * @return string
-     */
-    protected function createInternalId()
-    {
-        return uniqid('container_di', true);
-    }
 }

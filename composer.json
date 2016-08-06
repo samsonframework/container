@@ -33,6 +33,11 @@
       "samsonframework\\container\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "samsonframework\\container\\tests\\": "tests/"
+    }
+  },
   "config": {
     "github-protocols": [
       "https"
