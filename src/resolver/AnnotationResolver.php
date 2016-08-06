@@ -62,10 +62,6 @@ class AnnotationResolver extends Resolver
                     $annotation->toMetadata($metadata);
                 }
 
-                if ($annotation instanceof Controller) {
-                    $metadata->scopes[] = ControllerScope::SCOPE_NAME;
-                }
-
                 if ($annotation instanceof AutoWire) {
                     $metadata->autowire = true;
                 }

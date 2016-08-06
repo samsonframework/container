@@ -6,6 +6,7 @@
  * Time: 1:55.
  */
 namespace samsonframework\container\annotation;
+use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Service annotation class.
@@ -37,7 +38,7 @@ class Service implements MetadataInterface
     }
 
     /** {@inheritdoc} */
-    public function toMetadata(&$metadata)
+    public function toMetadata(ClassMetadata &$metadata)
     {
         $metadata->name = $this->name;
     }

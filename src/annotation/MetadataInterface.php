@@ -16,5 +16,5 @@ interface MetadataInterface
      *
      * @return ClassMetadata Annotation conversion to metadata
      */
-    public function toMetadata(&$metadata);
+    public function toMetadata(ClassMetadata &$metadata);
 }

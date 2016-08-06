@@ -5,8 +5,9 @@
  * Date: 02.08.16
  * Time: 1:59.
  */
-
 namespace samsonframework\container\annotation;
+
+use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Class AutoWire.
@@ -15,5 +16,9 @@ namespace samsonframework\container\annotation;
  */
 class AutoWire
 {
-
+    /** {@inheritdoc} */
+    public function toMetadata(ClassMetadata &$metadata)
+    {
+        $metadata->autowire = true;
+    }
 }

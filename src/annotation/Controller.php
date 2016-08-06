@@ -8,6 +8,7 @@
 namespace samsonframework\container\annotation;
 
 use samsonframework\container\Container;
+use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Controller annotation class.
@@ -20,7 +21,7 @@ use samsonframework\container\Container;
 class Controller implements MetadataInterface
 {
     /** {@inheritdoc} */
-    public function toMetadata(&$metadata)
+    public function toMetadata(ClassMetadata &$metadata)
     {
         // Add controller scope to metadata collection
         $metadata->scopes[] = Container::SCOPE_CONTROLLER;

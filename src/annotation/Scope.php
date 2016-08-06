@@ -40,7 +40,7 @@ class Scope implements MetadataInterface
     }
 
     /** {@inheritdoc} */
-    public function toMetadata(&$metadata)
+    public function toMetadata(ClassMetadata &$metadata)
     {
         // Add all found annotation scopes to metadata collection
         $metadata->scopes = array_merge($metadata->scopes, $this->scopes);
