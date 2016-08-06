@@ -6,7 +6,7 @@
  * Time: 0:46.
  */
 
-namespace samsonframework\di;
+namespace samsonframework\container;
 
 use samsonframework\container\scope\ScopeManager;
 

@@ -15,16 +15,25 @@ namespace samsonframework\container\annotation;
  */
 class Scope implements ParentInterface
 {
+    /** @var array Collection of class scopes */
     public $scopes = [];
 
-    public function __construct($scope)
+    /**
+     * Scope constructor.
+     *
+     * @param string|array $scopeOrScopes Class scopes
+     *
+     * @throws \Exception Thrown when neither string nor string[] is passed
+     */
+    public function __construct($scopeOrScopes)
     {
-        if ($scope) {
-            $value = $scope['value'];
-            if (!is_array($value) && !is_string($value)) {
-                throw new \Exception('Wrong type of alias');
-            }
-            $this->scopes = is_string($value) ? [$value] : $value;
+        $value = $scopeOrScopes['value'];
+
+        if (!is_array($value) && !is_string($value)) {
+            throw new \Exception('Wrong type of alias');
         }
+
+        // Always store array
+        $this->scopes = is_array($value) ?: [$value];
     }
 }

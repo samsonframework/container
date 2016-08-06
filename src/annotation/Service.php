@@ -12,6 +12,7 @@ namespace samsonframework\container\annotation;
  * Service annotation class.
  *
  * This annotation adds class to Service container scope.
+ * @see samsonframework\container\Container::SCOPE_SERVICE
  *
  * @Annotation
  */
