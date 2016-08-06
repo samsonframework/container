@@ -6,6 +6,7 @@
  * Time: 1:55.
  */
 namespace samsonframework\container\annotation;
+
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -13,7 +14,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Scope extends CollectionValue implements MetadataInterface
+class Scope extends CollectionValue implements ClassInterface
 {
     /** {@inheritdoc} */
     public function toMetadata(ClassMetadata $metadata)
