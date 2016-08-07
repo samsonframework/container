@@ -12,7 +12,7 @@ namespace samsonframework\container\annotation;
  */
 class CollectionValue
 {
-    /** @var array Collection of class collection */
+    /** @var string[] Collection of class collection */
     protected $collection = [];
 
     /**
@@ -20,7 +20,7 @@ class CollectionValue
      *
      * @param array $scopeOrScopes Class collection
      *
-     * @throws \Exception Thrown when neither string nor string[] is passed
+     * @throws \InvalidArgumentException Thrown when neither string nor string[] is passed
      */
     public function __construct($scopeOrScopes)
     {

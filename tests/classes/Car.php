@@ -16,6 +16,6 @@ class Car
     /** @var Wheel */
     protected $backRightWheel;
 
-    /** @var Driver */
+    /** @var FastDriver */
     protected $driver;
 }

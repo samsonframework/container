@@ -12,9 +12,9 @@ interface PropertyInterface
     /**
      * Convert to class property metadata.
      *
-     * @param PropertyMetadata $metadata Input metadata
+     * @param PropertyMetadata $propertyMetadata Input metadata
      *
      * @return PropertyMetadata Annotation conversion to metadata
      */
-    public function toMetadata(PropertyMetadata $metadata);
+    public function toPropertyMetadata(PropertyMetadata $propertyMetadata);
 }

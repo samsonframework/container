@@ -14,7 +14,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Route implements MethodInterface
+class Route extends CollectionValue implements MethodInterface
 {
     /** @var string Route path */
     protected $path;
@@ -27,9 +27,10 @@ class Route implements MethodInterface
      *
      * @param $path
      */
-    public function __construct($path)
+    public function __construct($scopeOrScopes)
     {
-        $this->path = $path;
+        parent::__construct($scopeOrScopes);
+
     }
 
     /**
@@ -39,7 +40,7 @@ class Route implements MethodInterface
      *
      * @return ClassMetadata Annotation conversion to metadata
      */
-    public function toMetadata(ClassMetadata $metadata)
+    public function toMethodMetadata(ClassMetadata $metadata)
     {
         // TODO: Implement toMetadata() method.
     }

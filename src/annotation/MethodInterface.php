@@ -16,5 +16,5 @@ interface MethodInterface
      *
      * @return MethodMetadata Annotation conversion to metadata
      */
-    public function toMetadata(MethodMetadata $metadata);
+    public function toMethodMetadata(MethodMetadata $metadata);
 }

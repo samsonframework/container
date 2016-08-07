@@ -5,7 +5,7 @@
  */
 namespace samsonframework\container\tests\classes;
 
-class Driver
+class FastDriver implements DriverInterface
 {
 
 }

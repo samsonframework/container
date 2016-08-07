@@ -14,10 +14,10 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class AutoWire
+class AutoWire implements ClassInterface
 {
     /** {@inheritdoc} */
-    public function toMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $metadata)
     {
         $metadata->autowire = true;
     }

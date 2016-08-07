@@ -8,18 +8,23 @@
 namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\annotation\ClassInterface;
 use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\annotation\MethodInterface;
 use samsonframework\container\annotation\PropertyInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\metadata\PropertyMetadata;
 
 /**
  * Annotation resolver class.
  */
 class AnnotationResolver extends Resolver
 {
+    /** Property typeHint hint pattern */
+    const P_PROPERTY_TYPE_HINT = '/@var\s+(?<class>[^\s]+)/';
+
     /**
      * @var AnnotationReader
      */
@@ -45,10 +50,16 @@ class AnnotationResolver extends Resolver
         // Create and fill class metadata base fields
         $metadata = new ClassMetadata();
         $metadata->className = $classData->getName();
+        $metadata->nameSpace = $classData->getNamespaceName();
         $metadata->internalId = $identifier ?: uniqid();
         $metadata->name = $metadata->internalId;
 
         $this->resolveClassAnnotations($classData, $metadata);
+
+        /** @var \ReflectionProperty $method */
+        foreach ($classData->getProperties() as $property) {
+            $this->resolveClassPropertyAnnotations($property, $metadata);
+        }
 
         /** @var \ReflectionMethod $method */
         foreach ($classData->getMethods() as $method) {
@@ -66,12 +77,44 @@ class AnnotationResolver extends Resolver
      */
     protected function resolveClassAnnotations(\ReflectionClass $classData, ClassMetadata $metadata)
     {
-        /** @var MetadataInterface $annotation Read class annotations */
+        /** @var ClassInterface $annotation Read class annotations */
         foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
-            if (class_implements($annotation, MetadataInterface::class)) {
-                $annotation->toMetadata($metadata);
+            if ($annotation instanceof ClassInterface) {
+                $annotation->toClassMetadata($metadata);
             }
         }
+    }
+
+    /**
+     * Resolve all class property annotations.
+     *
+     * @param \ReflectionProperty $property
+     * @param ClassMetadata       $classMetadata
+     */
+    protected function resolveClassPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    {
+        // Create method metadata instance
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = $property->getName();
+        $propertyMetadata->modifiers = $property->getModifiers();
+
+        // Parse property typeHint hint if present
+        if (preg_match('/@var\s+(?<class>[^\s]+)/', $property->getDocComment(), $matches)) {
+            list(, $propertyMetadata->typeHint) = $matches;
+            // Check if we need to append namespace
+            if (strpos($propertyMetadata->typeHint, '\\') === false) {
+                $propertyMetadata->typeHint = $classMetadata->nameSpace . '\\' . $propertyMetadata->typeHint;
+            }
+        }
+
+        /** @var PropertyInterface $annotation Read class annotations */
+        foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
+            if ($annotation instanceof PropertyInterface) {
+                $annotation->toPropertyMetadata($propertyMetadata);
+            }
+        }
+
+        $classMetadata->propertyMetadata[$propertyMetadata->name] = $propertyMetadata;
     }
 
     /**
@@ -90,28 +133,11 @@ class AnnotationResolver extends Resolver
 
         /** @var MethodInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
-            if (class_implements($annotation, MethodInterface::class)) {
-
-                $methodMetadata->options[$annotation->getMethodAlias()] = $annotation->convertToMetadata();
+            if ($annotation instanceof MethodInterface) {
+                $methodMetadata->options[] = $annotation->toMethodMetadata($methodMetadata);
             }
         }
 
         $metadata->methodsMetadata[$method->getName()] = $methodMetadata;
-    }
-
-    /**
-     * Resolve all class property annotations.
-     *
-     * @param \ReflectionProperty $property
-     * @param ClassMetadata       $metadata
-     */
-    protected function resolveClassPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $metadata)
-    {
-        /** @var MetadataInterface $annotation Read class annotations */
-        foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
-            if (class_implements($annotation, PropertyInterface::class)) {
-                $annotation->toMetadata($metadata);
-            }
-        }
     }
 }

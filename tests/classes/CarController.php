@@ -10,14 +10,38 @@ use samsonframework\container\annotation\Inject;
 
 /**
  * Car Controller class.
- * @Inject("Car")
- * @Controller()
+ * @Controller
  * @package samsonframework\di\tests\classes
  */
 class CarController
 {
     /**
      * @var Car
+     * @Inject
      */
     protected $car;
+
+    /**
+     * @var DriverInterface
+     * @Inject
+     */
+    protected $unknownDriver;
+
+    /**
+     * @var DriverInterface
+     * @Inject("Car")
+     */
+    protected $wrongDriver;
+
+    /**
+     * @var DriverInterface
+     * @Inject("FastDriver")
+     */
+    protected $fastDriver;
+
+    /**
+     * @var DriverInterface
+     * @Inject("\samsonframework\container\tests\classes\SlowDriver")
+     */
+    protected $slowDriver;
 }

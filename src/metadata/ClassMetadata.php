@@ -21,6 +21,9 @@ class ClassMetadata
     public $className;
 
     /** @var string */
+    public $nameSpace;
+
+    /** @var string */
     public $internalId;
 
     /** @var bool */
@@ -37,4 +40,7 @@ class ClassMetadata
 
     /** @var MethodMetadata[string] */
     public $methodsMetadata = [];
+
+    /** @var PropertyMetadata[string] */
+    public $propertyMetadata = [];
 }

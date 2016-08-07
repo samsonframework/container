@@ -14,7 +14,7 @@ class AutowireAnnotationTest extends TestCase
     {
         $scope = new AutoWire();
         $metadata = new ClassMetadata();
-        $scope->toMetadata($metadata);
+        $scope->toClassMetadata($metadata);
         static::assertEquals(true, $metadata->autowire);
     }
 }

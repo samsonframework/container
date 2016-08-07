@@ -15,7 +15,7 @@ class ScopeAnnotationTest extends TestCase
     {
         $scope = new Scope(['value' => CarController::class]);
         $metadata = new ClassMetadata();
-        $scope->toMetadata($metadata);
+        $scope->toClassMetadata($metadata);
         static::assertEquals(true, in_array(CarController::class, $metadata->scopes));
     }
 }

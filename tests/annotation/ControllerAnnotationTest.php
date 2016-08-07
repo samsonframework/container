@@ -15,7 +15,7 @@ class ControllerAnnotationTest extends TestCase
     {
         $scope = new Controller();
         $metadata = new ClassMetadata();
-        $scope->toMetadata($metadata);
+        $scope->toClassMetadata($metadata);
         static::assertEquals(true, in_array(Container::SCOPE_CONTROLLER, $metadata->scopes));
     }
 }

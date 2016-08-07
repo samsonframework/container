@@ -17,7 +17,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Service implements MetadataInterface
+class Service extends CollectionValue implements ClassInterface
 {
     /** @var string Service unique name */
     protected $name;
@@ -31,15 +31,14 @@ class Service implements MetadataInterface
      */
     public function __construct($name)
     {
-        if (is_array($name) && array_key_exists('value', $name)) {
-            $this->name = $name['value'];
-        } else {
-            throw new \InvalidArgumentException('Service annotation should have name');
-        }
+        parent::__construct($name);
+
+        // Get first argument
+        $this->name = array_shift($this->collection);
     }
 
     /** {@inheritdoc} */
-    public function toMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $metadata)
     {
         $metadata->name = $this->name;
     }
