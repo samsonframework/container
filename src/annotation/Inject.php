@@ -55,6 +55,11 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
                 'Cannot @Inject interface, inherited class name should be specified
                 ');
         }
+
+        // Empty @Inject with type hint - use type hine as injectable
+        if ($propertyMetadata->injectable === null && $propertyMetadata->typeHint !== null) {
+            $propertyMetadata->injectable = $propertyMetadata->typeHint;
+        }
     }
 
     /**

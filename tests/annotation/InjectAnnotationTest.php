@@ -19,26 +19,26 @@ class InjectAnnotationTest extends TestCase
 {
     public function testToMetadata()
     {
-        $scope = new Inject(['value' => CarController::class]);
+        $inject = new Inject(['value' => CarController::class]);
         $metadata = new MethodMetadata();
-        $scope->toMethodMetadata($metadata);
+        $inject->toMethodMetadata($metadata);
         static::assertEquals(true, in_array(CarController::class, $metadata->dependencies, true));
     }
 
     public function testPropertyViolatingInheritance()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $scope = new Inject(['value' => CarController::class]);
+        $inject = new Inject(['value' => CarController::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $propertyMetadata->typeHint = Car::class;
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
     }
 
     public function testPropertyWithoutTypeHint()
     {
-        $scope = new Inject(['value' => Car::class]);
+        $inject = new Inject(['value' => Car::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->injectable);
     }
@@ -47,42 +47,62 @@ class InjectAnnotationTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $scope = new Inject(['value' => '']);
+        $inject = new Inject(['value' => '']);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $propertyMetadata->typeHint = DriverInterface::class;
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(null, $propertyMetadata->injectable);
     }
 
     public function testPropertyWithClassNameWithInterfaceTypeHint()
     {
-        $scope = new Inject(['value' => FastDriver::class]);
+        $inject = new Inject(['value' => FastDriver::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $propertyMetadata->typeHint = DriverInterface::class;
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
+
+        static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
+    }
+
+    public function testPropertyWithoutClassNameWithTypeHint()
+    {
+        $inject = new Inject(['value' => '']);
+        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $propertyMetadata->typeHint = FastDriver::class;
+        $inject->toPropertyMetadata($propertyMetadata);
+
+        static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
+    }
+
+    public function testPropertyWithNamespaceClassNameWithSlash()
+    {
+        $inject = new Inject(['value' => '\\' . FastDriver::class]);
+        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $propertyMetadata->typeHint = FastDriver::class;
+        $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
     }
 
     public function testPropertyWithNamespaceInheritance()
     {
-        $scope = new Inject(['value' => Car::class]);
+        $inject = new Inject(['value' => Car::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $propertyMetadata->typeHint = Car::class;
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->injectable);
     }
 
     public function testPropertyWithoutNamespaceInheritance()
     {
-        $scope = new Inject(['value' => 'Car']);
+        $inject = new Inject(['value' => 'Car']);
         $classMetadata = new ClassMetadata();
         $classMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
         $propertyMetadata = new PropertyMetadata($classMetadata);
         $propertyMetadata->typeHint = 'Car';
-        $scope->toPropertyMetadata($propertyMetadata);
+        $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->injectable);
     }
