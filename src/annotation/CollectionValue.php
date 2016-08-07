@@ -25,9 +25,10 @@ class CollectionValue
     public function __construct($scopeOrScopes)
     {
         if (is_array($scopeOrScopes) && array_key_exists('value', $scopeOrScopes)) {
-            $value = $scopeOrScopes['value'];
+            // Convert empty values to null
+            $value = $scopeOrScopes['value'] !== '' ? $scopeOrScopes['value'] : null;
 
-            if (!is_array($value) && !is_string($value)) {
+            if (!is_array($value) && !is_string($value) && $value !== null) {
                 throw new \InvalidArgumentException('Only string or array is allowed');
             }
 

@@ -46,5 +46,9 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
                 throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance');
             }
         }
+
+        if ($propertyMetadata->typeHint !== null && $propertyMetadata->injectable === null && (new \ReflectionClass($propertyMetadata->typeHint))->isInterface()) {
+            throw new \InvalidArgumentException('Cannot @Inject interface, inherited class name should be specified');
+        }
     }
 }

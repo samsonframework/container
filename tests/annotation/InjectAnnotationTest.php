@@ -11,6 +11,7 @@ use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
+use samsonframework\container\tests\classes\DriverInterface;
 
 class InjectAnnotationTest extends TestCase
 {
@@ -38,6 +39,18 @@ class InjectAnnotationTest extends TestCase
         $scope->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->injectable);
+    }
+
+    public function testPropertyWithoutClassNameWithInterfaceTypeHint()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $scope = new Inject(['value' => '']);
+        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $propertyMetadata->typeHint = DriverInterface::class;
+        $scope->toPropertyMetadata($propertyMetadata);
+
+        static::assertEquals(null, $propertyMetadata->injectable);
     }
 
     public function testPropertyWithNamespaceInheritance()

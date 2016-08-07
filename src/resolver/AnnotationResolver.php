@@ -98,7 +98,7 @@ class AnnotationResolver extends Resolver
         $propertyMetadata->name = $property->getName();
         $propertyMetadata->modifiers = $property->getModifiers();
 
-        // Parse property typeHint hint if present
+        // Parse property type hint if present
         if (preg_match('/@var\s+(?<class>[^\s]+)/', $property->getDocComment(), $matches)) {
             list(, $propertyMetadata->typeHint) = $matches;
         }
