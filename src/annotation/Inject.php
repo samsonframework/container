@@ -33,21 +33,27 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
 
         // Check if we need to append namespace to injectable
         if ($propertyMetadata->injectable !== null && strpos($propertyMetadata->injectable, '\\') === false) {
-            $propertyMetadata->injectable = $propertyMetadata->classMetadata->nameSpace . '\\' . $propertyMetadata->injectable;
+            $propertyMetadata->injectable = $propertyMetadata->classMetadata->nameSpace
+                . '\\' . $propertyMetadata->injectable;
         }
 
         // Check if we need to append namespace to type hint
         if ($propertyMetadata->typeHint !== null && strpos($propertyMetadata->typeHint, '\\') === false) {
-            $propertyMetadata->typeHint = $propertyMetadata->classMetadata->nameSpace . '\\' . $propertyMetadata->typeHint;
+            $propertyMetadata->typeHint = $propertyMetadata->classMetadata->nameSpace
+                . '\\' . $propertyMetadata->typeHint;
         }
 
         // Check for inheritance violation
         if ($this->checkInheritanceViolation($propertyMetadata)) {
-            throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance with ' . $propertyMetadata->injectable);
+            throw new \InvalidArgumentException(
+                '@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance with ' . $propertyMetadata->injectable
+            );
         }
 
         if ($this->checkInterfaceWithoutClassName($propertyMetadata)) {
-            throw new \InvalidArgumentException('Cannot @Inject interface, inherited class name should be specified');
+            throw new \InvalidArgumentException(
+                'Cannot @Inject interface, inherited class name should be specified
+                ');
         }
     }
 
