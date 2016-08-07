@@ -42,7 +42,6 @@ class AnnotationMethodResolverTest extends TestCase
         static::assertArrayHasKey('showAction', $methodMetadata);
         static::assertArrayHasKey('fastDriver', $methodMetadata['showAction']->parametersMetadata);
         static::assertArrayHasKey('slowDriver', $methodMetadata['showAction']->parametersMetadata);
-
         static::assertEquals(true, in_array(tests\FastDriver::class, $methodMetadata['showAction']->dependencies, true));
         static::assertEquals(true, in_array(tests\SlowDriver::class, $methodMetadata['showAction']->dependencies, true));
     }
