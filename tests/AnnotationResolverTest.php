@@ -3,9 +3,8 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 06.08.16 at 10:56
  */
-namespace samsonframework\di\tests;
+namespace samsonframework\container\tests;
 
-use PHPUnit\Framework\TestCase;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;

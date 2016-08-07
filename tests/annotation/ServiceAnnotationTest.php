@@ -8,6 +8,7 @@ namespace samsonframework\container\tests\annotation;
 use samsonframework\container\annotation\Service;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes\CarService;
+use samsonframework\container\tests\TestCase;
 
 class ServiceAnnotationTest extends TestCase
 {

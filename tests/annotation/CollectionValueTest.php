@@ -7,6 +7,7 @@ namespace samsonframework\container\tests\annotation;
 
 use samsonframework\container\annotation\CollectionValue;
 use samsonframework\container\tests\classes\CarController;
+use samsonframework\container\tests\TestCase;
 
 class CollectionValueTest extends TestCase
 {

@@ -8,6 +8,7 @@ namespace samsonframework\container\tests\annotation;
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\Container;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\tests\TestCase;
 
 class ControllerAnnotationTest extends TestCase
 {

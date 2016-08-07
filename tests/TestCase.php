@@ -3,8 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 06.08.16 at 13:56
  */
-namespace samsonframework\container\tests\annotation;
-
+namespace samsonframework\container\tests;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {

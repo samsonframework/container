@@ -8,6 +8,7 @@ namespace samsonframework\container\tests\annotation;
 use samsonframework\container\annotation\Scope;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes\CarController;
+use samsonframework\container\tests\TestCase;
 
 class ScopeAnnotationTest extends TestCase
 {

@@ -7,6 +7,7 @@ namespace samsonframework\container\tests\annotation;
 
 use samsonframework\container\annotation\AutoWire;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\tests\TestCase;
 
 class AutowireAnnotationTest extends TestCase
 {

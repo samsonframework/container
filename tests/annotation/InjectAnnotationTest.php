@@ -12,6 +12,7 @@ use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\DriverInterface;
+use samsonframework\container\tests\TestCase;
 
 class InjectAnnotationTest extends TestCase
 {
