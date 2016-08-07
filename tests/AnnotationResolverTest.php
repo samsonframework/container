@@ -10,21 +10,20 @@ use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
-use samsonframework\container\resolver\Resolver;
 use samsonframework\container\tests\classes as tests;
 
 class AnnotationResolverTest extends TestCase
 {
-    /** @var AnnotationClassResolver */
+    /** @var AnnotationResolver */
     protected $resolver;
 
     public function setUp()
     {
-        /** @var Resolver $classResolver */
+        /** @var AnnotationClassResolver $classResolver */
         $classResolver = $this->createMock(AnnotationClassResolver::class);
-        /** @var Resolver $propertyResolver */
+        /** @var AnnotationPropertyResolver $propertyResolver */
         $propertyResolver = $this->createMock(AnnotationPropertyResolver::class);
-        /** @var Resolver $methodResolver */
+        /** @var AnnotationMethodResolver $methodResolver */
         $methodResolver = $this->createMock(AnnotationMethodResolver::class);
 
         $this->resolver = new AnnotationResolver($classResolver, $propertyResolver, $methodResolver);

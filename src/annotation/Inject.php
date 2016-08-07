@@ -43,7 +43,7 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
 
         // Check for inheritance violation
         if ($this->checkInheritanceViolation($propertyMetadata)) {
-            throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance');
+            throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance with ' . $propertyMetadata->injectable);
         }
 
         if ($this->checkInterfaceWithoutClassName($propertyMetadata)) {
@@ -62,7 +62,11 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     {
         // Check for inheritance violation
         if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== null) {
-            $inheritance = array_merge([$propertyMetadata->injectable], class_parents($propertyMetadata->injectable));
+            $inheritance = array_merge(
+                [$propertyMetadata->injectable],
+                class_parents($propertyMetadata->injectable),
+                class_implements($propertyMetadata->injectable)
+            );
             return !in_array($propertyMetadata->typeHint, $inheritance, true);
         }
 

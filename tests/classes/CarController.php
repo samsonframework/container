@@ -23,18 +23,6 @@ class CarController
 
     /**
      * @var DriverInterface
-     * @Inject
-     */
-    protected $unknownDriver;
-
-    /**
-     * @var DriverInterface
-     * @Inject("Car")
-     */
-    protected $wrongDriver;
-
-    /**
-     * @var DriverInterface
      * @Inject("FastDriver")
      */
     protected $fastDriver;
