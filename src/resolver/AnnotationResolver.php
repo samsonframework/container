@@ -1,23 +1,21 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: root
- * Date: 29.07.2016
- * Time: 21:38.
+ * Created by Vitaly Iegorov <egorov@samsonos.com>.
+ * on 07.08.16 at 13:32
  */
 namespace samsonframework\container\resolver;
 
-use Doctrine\Common\Annotations\Reader;
-use samsonframework\container\annotation\ClassInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
- * Annotation resolver class.
+ * Annotation resolver implementation.
+ *
+ * @package samsonframework\container\resolver
  */
 class AnnotationResolver implements Resolver
 {
-    /** @var Reader */
-    protected $reader;
+    /** @var Resolver */
+    protected $classResolver;
 
     /** @var Resolver */
     protected $propertyResolver;
@@ -28,13 +26,13 @@ class AnnotationResolver implements Resolver
     /**
      * AnnotationResolver constructor.
      *
-     * @param Reader   $reader
+     * @param Resolver $classResolver
      * @param Resolver $propertyResolver
      * @param Resolver $methodResolver
      */
-    public function __construct(Reader $reader, Resolver $propertyResolver, Resolver $methodResolver)
+    public function __construct(Resolver $classResolver, Resolver $propertyResolver, Resolver $methodResolver)
     {
-        $this->reader = $reader;
+        $this->classResolver = $classResolver;
         $this->propertyResolver = $propertyResolver;
         $this->methodResolver = $methodResolver;
     }
@@ -50,31 +48,13 @@ class AnnotationResolver implements Resolver
         $classMetadata = new ClassMetadata();
         $classMetadata->className = $classData->getName();
         $classMetadata->nameSpace = $classData->getNamespaceName();
-        $classMetadata->identifier = $identifier ?: uniqid();
+        $classMetadata->identifier = $identifier ?: uniqid(__CLASS__, true);
         $classMetadata->name = $classMetadata->identifier;
 
-        $this->resolveClassAnnotations($classData, $classMetadata);
-
-        $this->propertyResolver->resolve($classData, $identifier);
-        $this->methodResolver->resolve($classData, $identifier);
-
+        $this->classResolver->resolve($classData, $classMetadata);
+        $this->propertyResolver->resolve($classData, $classMetadata);
+        $this->methodResolver->resolve($classData, $classMetadata);
 
         return $classMetadata;
-    }
-
-    /**
-     * Resolve all class annotations.
-     *
-     * @param \ReflectionClass $classData
-     * @param ClassMetadata    $metadata
-     */
-    protected function resolveClassAnnotations(\ReflectionClass $classData, ClassMetadata $metadata)
-    {
-        /** @var ClassInterface $annotation Read class annotations */
-        foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
-            if ($annotation instanceof ClassInterface) {
-                $annotation->toClassMetadata($metadata);
-            }
-        }
     }
 }

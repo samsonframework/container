@@ -5,80 +5,33 @@
  */
 namespace samsonframework\container\resolver;
 
-use Doctrine\Common\Annotations\Reader;
-use samsonframework\container\annotation\MethodInterface;
 use samsonframework\container\annotation\PropertyInterface;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
  * Class properties annotation resolver.
  */
-class AnnotationPropertyResolver implements Resolver
+class AnnotationPropertyResolver extends AbstractAnnotationResolver implements AnnotationResolverInterface
 {
     /** Property typeHint hint pattern */
     const P_PROPERTY_TYPE_HINT = '/@var\s+(?<class>[^\s]+)/';
 
-    /** @var Reader */
-    protected $reader;
-
-    /** @var ClassMetadata */
-    protected $classMetadata;
-
-    /**
-     * AnnotationPropertyResolver constructor.
-     *
-     * @param mixed         $reader
-     * @param ClassMetadata $classMetadata
-     */
-    public function __construct(Reader $reader, ClassMetadata $classMetadata)
-    {
-        $this->reader = $reader;
-        $this->classMetadata = $classMetadata;
-    }
-
     /**
      * {@inheritDoc}
      */
-    public function resolve($classData, $identifier = null)
+    public function resolve(\ReflectionClass $classData, ClassMetadata $classMetadata)
     {
-        /** @var \ReflectionClass $classData */
-
-        /** @var \ReflectionMethod $method */
-        foreach ($classData->getMethods() as $method) {
-            $this->resolveMethodAnnotation($method, $classMetadata);
+        /** @var \ReflectionProperty $property */
+        foreach ($classData->getProperties() as $property) {
+            $this->resolveClassPropertyAnnotations($property, $this->classMetadata);
         }
 
         return $this->classMetadata;
     }
 
     /**
-     * Resolve all method annotations.
-     *
-     * @param \ReflectionMethod $method
-     * @param ClassMetadata     $metadata
-     */
-    protected function resolveMethodAnnotation(\ReflectionMethod $method, ClassMetadata $metadata)
-    {
-        // Create method metadata instance
-        $methodMetadata = new MethodMetadata();
-        $methodMetadata->name = $method->getName();
-        $methodMetadata->modifiers = $method->getModifiers();
-        $methodMetadata->parameters = $method->getParameters();
-
-        /** @var MethodInterface $annotation */
-        foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
-            if ($annotation instanceof MethodInterface) {
-                $methodMetadata->options[] = $annotation->toMethodMetadata($methodMetadata);
-            }
-        }
-
-        $metadata->methodsMetadata[$method->getName()] = $methodMetadata;
-    }
-
-    /**
-     * Resolve all class property annotations.
+     * Resolve class property annotations.
      *
      * @param \ReflectionProperty $property
      * @param ClassMetadata       $classMetadata
