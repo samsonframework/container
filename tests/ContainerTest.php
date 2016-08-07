@@ -39,7 +39,7 @@ class ContainerTest extends TestCase
         $this->container = new Container($this->fileManager, $this->resolver);
     }
 
-    public function testInit()
+    public function testLoad()
     {
         $this->fileManager->method('scan')->willReturn([
             __DIR__ . '/classes/CarController.php',
@@ -52,7 +52,8 @@ class ContainerTest extends TestCase
             CarController::class,
         ]);
 
-        static::assertEquals(true,
+        static::assertEquals(
+            true,
             in_array(CarController::class, $this->getProperty('scopes', $this->container)[Container::SCOPE_CONTROLLER])
         );
         static::assertArrayHasKey(
