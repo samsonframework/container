@@ -11,6 +11,7 @@ use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
+use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\filemanager\FileManagerInterface;
 
@@ -46,11 +47,9 @@ class ContainerTest extends TestCase
             __DIR__ . '/classes/Car.php',
         ]);
 
-        $this->container->loadFromPaths([__DIR__ . '/classes/']);
-
-        $this->container->loadFromClasses([
-            CarController::class,
-        ]);
+        $this->container
+            ->loadFromPaths([__DIR__ . '/classes/'])
+            ->loadFromClasses([CarController::class, Car::class]);
 
         static::assertEquals(
             true,

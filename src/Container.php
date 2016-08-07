@@ -53,19 +53,26 @@ class Container
      * Load classes from paths.
      *
      * @param array $paths Paths for importing
+     *
+     * @return $this
      */
     public function loadFromPaths(array $paths)
     {
         // Iterate all paths and get files
         foreach ($this->fileManger->scan($paths, ['php']) as $phpFile) {
             // Read all classes in given file
-            $this->loadFromClasses($this->getFileClasses(require_once($phpFile)));
+            $this->loadFromClasses($this->getDefinedClasses(require_once($phpFile)));
         }
+
+        return $this;
     }
 
     /**
-     * Load classes from class names collection
+     * Load classes from class names collection.
+     *
      * @param string[] $classes Collection of class names for resolving
+     *
+     * @return $this
      */
     public function loadFromClasses(array $classes)
     {
@@ -78,6 +85,8 @@ class Container
                 $this->scopes[$scope][] = $className;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -87,7 +96,7 @@ class Container
      *
      * @return string[] Collection of found class names in php code
      */
-    protected function getFileClasses($php) : array
+    protected function getDefinedClasses($php) : array
     {
         $classes = array();
         $tokens = token_get_all(is_string($php) ? $php : '');
