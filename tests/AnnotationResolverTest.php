@@ -5,9 +5,11 @@
  */
 namespace samsonframework\di\tests;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\tests\classes as tests;
 
@@ -21,7 +23,10 @@ class AnnotationResolverTest extends TestCase
 
     public function setUp()
     {
-        $this->resolver = new AnnotationResolver(self::P_CACHE);
+        $propertyResolver = $this->createMock(AnnotationPropertyResolver::class);
+        $methodResolver = $this->createMock(AnnotationPropertyResolver::class);
+
+        $this->resolver = new AnnotationResolver(new AnnotationReader(), $propertyResolver, $methodResolver);
     }
 
     public function testResolve()

@@ -10,7 +10,7 @@ namespace samsonframework\container\resolver;
 
 use samsonframework\container\metadata\ClassMetadata;
 
-abstract class Resolver
+interface Resolver
 {
     /**
      * Convert class reflection to internal metadata class.
@@ -20,5 +20,5 @@ abstract class Resolver
      *
      * @return ClassMetadata Class metadata
      */
-    abstract public function resolve($classData, $identifier = null);
+    public function resolve($classData, $identifier = null);
 }

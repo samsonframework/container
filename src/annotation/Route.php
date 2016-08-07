@@ -8,13 +8,14 @@
 namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\MethodMetadata;
 
 /**
  * Class Route.
  *
  * @Annotation
  */
-class Route extends CollectionValue implements MethodInterface
+class Route extends CollectionValue implements ClassInterface, MethodInterface
 {
     /** @var string Route path */
     protected $path;
@@ -26,22 +27,27 @@ class Route extends CollectionValue implements MethodInterface
      * Route constructor.
      *
      * @param $path
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($scopeOrScopes)
     {
         parent::__construct($scopeOrScopes);
-
     }
 
     /**
-     * Convert to class metadata.
-     *
-     * @param ClassMetadata $metadata Input metadata
-     *
-     * @return ClassMetadata Annotation conversion to metadata
+     * {@inheritDoc}
      */
-    public function toMethodMetadata(ClassMetadata $metadata)
+    public function toMethodMetadata(MethodMetadata $metadata)
     {
         // TODO: Implement toMetadata() method.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toClassMetadata(ClassMetadata $metadata)
+    {
+        // TODO: Implement toClassMetadata() method.
     }
 }
