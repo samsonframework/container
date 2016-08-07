@@ -7,8 +7,6 @@ namespace samsonframework\di\tests;
 
 use PHPUnit\Framework\TestCase;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\AbstractAnnotationMethodResolver;
-use samsonframework\container\resolver\AbstractAnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
