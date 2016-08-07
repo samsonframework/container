@@ -46,10 +46,6 @@ class AnnotationResolver implements Resolver
 
         // Create and fill class metadata base fields
         $classMetadata = new ClassMetadata();
-        $classMetadata->className = $classData->getName();
-        $classMetadata->nameSpace = $classData->getNamespaceName();
-        $classMetadata->identifier = $identifier ?: uniqid(__CLASS__, true);
-        $classMetadata->name = $classMetadata->identifier;
 
         // Resolve class definition annotations
         $this->classResolver->resolve($classData, $classMetadata);
