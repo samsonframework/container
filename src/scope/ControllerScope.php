@@ -25,7 +25,7 @@ class ControllerScope implements Scope
      */
     public function add(ClassMetadata $metadata)
     {
-        $this->list[$metadata->internalId] = $metadata;
+        $this->list[$metadata->identifier] = $metadata;
     }
 
     /**

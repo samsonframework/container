@@ -24,7 +24,7 @@ class ClassMetadata
     public $nameSpace;
 
     /** @var string */
-    public $internalId;
+    public $identifier;
 
     /** @var bool */
     public $autowire = false;

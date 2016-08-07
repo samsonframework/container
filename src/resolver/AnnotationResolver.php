@@ -9,8 +9,6 @@ namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\ClassInterface;
-use samsonframework\container\annotation\MetadataInterface;
-use samsonframework\container\annotation\MethodAnnotation;
 use samsonframework\container\annotation\MethodInterface;
 use samsonframework\container\annotation\PropertyInterface;
 use samsonframework\container\metadata\ClassMetadata;
@@ -25,19 +23,17 @@ class AnnotationResolver extends Resolver
     /** Property typeHint hint pattern */
     const P_PROPERTY_TYPE_HINT = '/@var\s+(?<class>[^\s]+)/';
 
-    /**
-     * @var AnnotationReader
-     */
+    /** @var AnnotationReader */
     protected $reader;
 
     /**
      * AnnotationResolver constructor.
      *
-     * @throws \InvalidArgumentException
+     * @param $reader
      */
-    public function __construct()
+    public function __construct($reader)
     {
-        $this->reader = new AnnotationReader();
+        $this->reader = $reader;
     }
 
     /**
@@ -51,12 +47,12 @@ class AnnotationResolver extends Resolver
         $metadata = new ClassMetadata();
         $metadata->className = $classData->getName();
         $metadata->nameSpace = $classData->getNamespaceName();
-        $metadata->internalId = $identifier ?: uniqid();
-        $metadata->name = $metadata->internalId;
+        $metadata->identifier = $identifier ?: uniqid();
+        $metadata->name = $metadata->identifier;
 
         $this->resolveClassAnnotations($classData, $metadata);
 
-        /** @var \ReflectionProperty $method */
+        /** @var \ReflectionProperty $property */
         foreach ($classData->getProperties() as $property) {
             $this->resolveClassPropertyAnnotations($property, $metadata);
         }

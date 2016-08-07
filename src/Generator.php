@@ -64,7 +64,7 @@ class Generator
      */
     public function addService(ClassMetadata $metadata)
     {
-        $names = array_merge([$metadata->name, $metadata->internalId], $metadata->aliases);
+        $names = array_merge([$metadata->name, $metadata->identifier], $metadata->aliases);
         $ifCondition = '$name === \''.$metadata->className.'\'';
         foreach ($names as $name) {
             $ifCondition .= ' || $name === \''.$name.'\'';
