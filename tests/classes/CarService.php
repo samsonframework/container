@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests\classes;
 
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\InjectArgument;
 use samsonframework\container\annotation\Service;
 
 /**
@@ -25,6 +26,7 @@ class CarService
      * CarService constructor.
      *
      * @param Car $car
+     * @InjectArgument(car="Car")
      */
     public function __construct(Car $car)
     {

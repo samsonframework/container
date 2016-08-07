@@ -149,8 +149,10 @@ class MetadataBuilder
     {
         foreach ($this->classMetadata as $className => $classMetadata) {
             if (in_array($className, $this->scopes[self::SCOPE_SERVICES])) {
-                $this->diContainer->service($className, $classMetadata->alias);
+                $this->diContainer->service($className, $classMetadata->name);
             }
         }
+
+        $this->diContainer->get('car_service');
     }
 }
