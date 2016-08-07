@@ -12,7 +12,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @package samsonframework\container\resolver
  */
-class AnnotationResolver implements Resolver
+class AnnotationResolver implements ResolverInterface
 {
     /** @var AnnotationResolverInterface */
     protected $classResolver;

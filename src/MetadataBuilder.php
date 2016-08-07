@@ -7,8 +7,9 @@
  */
 namespace samsonframework\container;
 
+use Interop\Container\ContainerInterface;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\Resolver;
+use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\filemanager\FileManagerInterface;
 
 /**
@@ -34,16 +35,22 @@ class MetadataBuilder
     /** @var FileManagerInterface */
     protected $fileManger;
 
-    /** @var Resolver */
+    /** @var ResolverInterface */
     protected $classResolver;
+
+    /** @var ContainerInterface */
+    protected $diContainer;
 
     /**
      * Container constructor.
      *
      * @param FileManagerInterface $fileManger
+     * @param ResolverInterface    $classResolver
+     * @param ContainerInterface   $diContainer
      */
-    public function __construct(FileManagerInterface $fileManger, Resolver $classResolver)
+    public function __construct(FileManagerInterface $fileManger, ResolverInterface $classResolver, ContainerInterface $diContainer)
     {
+        $this->diContainer = $diContainer;
         $this->fileManger = $fileManger;
         $this->resolver = $classResolver;
     }

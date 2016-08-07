@@ -9,7 +9,7 @@ namespace samsonframework\container\resolver;
 
 use samsonframework\container\metadata\ClassMetadata;
 
-interface Resolver
+interface ResolverInterface
 {
     /**
      * Convert class reflection to internal metadata class.

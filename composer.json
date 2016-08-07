@@ -20,6 +20,7 @@
     "php": "^7.0",
     "samsonphp/generator": "*",
     "samsonframework/base": "*",
+    "samsonframework/di": "*",
     "doctrine/annotations": "*"
   },
   "require-dev": {

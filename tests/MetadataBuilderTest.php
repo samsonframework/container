@@ -6,11 +6,13 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Interop\Container\ContainerInterface;
 use samsonframework\container\MetadataBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
+use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\filemanager\FileManagerInterface;
@@ -20,8 +22,11 @@ class MetadataBuilderTest extends TestCase
     /** @var MetadataBuilder */
     protected $container;
 
-    /** @var Resolver */
+    /** @var ResolverInterface */
     protected $resolver;
+
+    /** @var ContainerInterface */
+    protected $diContainer;
 
     /** @var FileManagerInterface */
     protected $fileManager;
@@ -36,8 +41,9 @@ class MetadataBuilderTest extends TestCase
             new AnnotationMethodResolver($reader)
         );
         $this->fileManager = $this->createMock(FileManagerInterface::class);
+        $this->diContainer = $this->createMock(ContainerInterface::class);
 
-        $this->container = new MetadataBuilder($this->fileManager, $this->resolver);
+        $this->container = new MetadataBuilder($this->fileManager, $this->resolver, $this->diContainer);
     }
 
     public function testLoadFromPaths()
