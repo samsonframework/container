@@ -39,7 +39,11 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
         $methodMetadata = new MethodMetadata();
         $methodMetadata->name = $method->getName();
         $methodMetadata->modifiers = $method->getModifiers();
-        $methodMetadata->parameters = $method->getParameters();
+
+        /** @var \ReflectionParameter $parameter */
+        foreach ($method->getParameters() as $parameter) {
+            $methodMetadata->parameters[$parameter->getName()] = $parameter->getType()->__toString();
+        }
 
         /** @var MethodInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {

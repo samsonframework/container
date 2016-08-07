@@ -12,11 +12,8 @@ namespace samsonframework\container\metadata;
  *
  * @package samsonframework\container\metadata
  */
-class ClassMetadata
+class ClassMetadata extends AbstractMetadata
 {
-    /** @var string */
-    public $name;
-
     /** @var string */
     public $className;
 

@@ -7,6 +7,7 @@ namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\Route;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\tests\classes as tests;
@@ -27,9 +28,10 @@ class AnnotationMethodResolverTest extends TestCase
         $this->resolver = new AnnotationMethodResolver(new AnnotationReader(), $this->classMetadata);
     }
 
-    public function testInjectResolve()
+    public function testResolve()
     {
         new Inject(['']);
+        new Route(['']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());

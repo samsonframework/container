@@ -41,7 +41,9 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     /** {@inheritdoc} */
     public function toMethodMetadata(MethodMetadata $metadata)
     {
-        $metadata->dependencies = $this->collection;
+        if ($this->dependency !== null) {
+            $metadata->dependencies[] = $this->dependency;
+        }
     }
 
     /** {@inheritdoc} */

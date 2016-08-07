@@ -1,22 +1,21 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: root
- * Date: 29.07.2016
- * Time: 22:22.
+ * User: Vitaly Iegorov
+ * Date: 08.08.2016
+ * Time: 14:22.
  */
 namespace samsonframework\container\metadata;
 
-class MethodMetadata
+/**
+ * Class MethodMetadata
+ * @package samsonframework\container\metadata
+ */
+class MethodMetadata extends AbstractMetadata
 {
-    public $name;
-
+    /** @var int Method modifiers */
     public $modifiers;
 
-    /**
-     * @var \ReflectionParameter[]
-     */
-    public $parameters = [];
-
-    public $options = [];
+    /** @var ParameterMetadata[] */
+    public $parametersMetadata = [];
 }

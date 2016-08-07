@@ -7,7 +7,7 @@ namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\ClassMetadata;
 
-interface ClassInterface
+interface ClassInterface extends AnnotationInterface
 {
     /**
      * Convert to class metadata.
