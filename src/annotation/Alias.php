@@ -17,9 +17,9 @@ use samsonframework\container\metadata\ClassMetadata;
 class Alias extends CollectionValue implements ClassInterface
 {
     /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
         // Add all found annotation collection to metadata collection
-        $metadata->aliases = array_merge($metadata->aliases, $this->collection);
+        $classMetadata->aliases = array_merge($classMetadata->aliases, $this->collection);
     }
 }

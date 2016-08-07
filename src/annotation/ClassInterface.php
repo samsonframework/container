@@ -17,9 +17,9 @@ interface ClassInterface extends AnnotationInterface
     /**
      * Convert to class metadata.
      *
-     * @param ClassMetadata $metadata Input metadata
+     * @param ClassMetadata $classMetadata Input metadata
      *
      * @return ClassMetadata Annotation conversion to metadata
      */
-    public function toClassMetadata(ClassMetadata $metadata);
+    public function toClassMetadata(ClassMetadata $classMetadata);
 }

@@ -26,13 +26,15 @@ class Route extends CollectionValue implements ClassInterface, MethodInterface
     /**
      * Route constructor.
      *
-     * @param $path
-     *
-     * @throws \InvalidArgumentException
+     * @param array $valueOrValues
      */
     public function __construct($valueOrValues)
     {
         parent::__construct($valueOrValues);
+
+        // Set data
+        $this->path = $valueOrValues['value'] ?? null;
+        $this->identifier = $valueOrValues['name'] ?? uniqid(__CLASS__, true);
     }
 
     /**
@@ -40,14 +42,14 @@ class Route extends CollectionValue implements ClassInterface, MethodInterface
      */
     public function toMethodMetadata(MethodMetadata $methodMetadata)
     {
-        // TODO: Implement toMetadata() method.
+        $methodMetadata->routes[$this->identifier] = $this->path;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
-        // TODO: Implement toClassMetadata() method.
+        $classMetadata->routes[$this->identifier] = $this->path;
     }
 }

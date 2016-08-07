@@ -13,6 +13,7 @@ use samsonframework\container\annotation\Route;
 /**
  * Car Controller class.
  * @Controller
+ * @Route("/car")
  * @package samsonframework\di\tests\classes
  */
 class CarController

@@ -21,9 +21,9 @@ use samsonframework\container\metadata\ClassMetadata;
 class Controller implements ClassInterface
 {
     /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
         // Add controller scope to metadata collection
-        $metadata->scopes[] = Container::SCOPE_CONTROLLER;
+        $classMetadata->scopes[] = Container::SCOPE_CONTROLLER;
     }
 }

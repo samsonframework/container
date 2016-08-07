@@ -30,10 +30,10 @@ class ClassMetadata extends AbstractMetadata
     public $scopes = [];
 
     /** @var array */
-    public $dependencies = [];
-
-    /** @var array */
     public $aliases = [];
+
+    /** @var string[string] Class routes collection */
+    public $routes;
 
     /** @var MethodMetadata[string] */
     public $methodsMetadata = [];

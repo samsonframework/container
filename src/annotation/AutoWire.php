@@ -17,8 +17,8 @@ use samsonframework\container\metadata\ClassMetadata;
 class AutoWire implements ClassInterface
 {
     /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
-        $metadata->autowire = true;
+        $classMetadata->autowire = true;
     }
 }

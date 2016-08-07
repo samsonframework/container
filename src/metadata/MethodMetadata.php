@@ -25,6 +25,9 @@ class MethodMetadata extends AbstractMetadata
     /** @var array ArgumentName => ArgumentType */
     public $dependencies;
 
+    /** @var string[string] Class routes collection */
+    public $routes;
+
     /**
      * MethodMetadata constructor.
      *

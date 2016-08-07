@@ -17,9 +17,9 @@ use samsonframework\container\metadata\ClassMetadata;
 class Scope extends CollectionValue implements ClassInterface
 {
     /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
         // Add all found annotation collection to metadata collection
-        $metadata->scopes = array_merge($metadata->scopes, $this->collection);
+        $classMetadata->scopes = array_merge($classMetadata->scopes, $this->collection);
     }
 }

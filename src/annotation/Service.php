@@ -38,8 +38,8 @@ class Service extends CollectionValue implements ClassInterface
     }
 
     /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $metadata)
+    public function toClassMetadata(ClassMetadata $classMetadata)
     {
-        $metadata->name = $this->name;
+        $classMetadata->name = $this->name;
     }
 }
