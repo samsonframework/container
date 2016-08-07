@@ -9,11 +9,13 @@ use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Inject;
 use samsonframework\container\annotation\InjectArgument;
 use samsonframework\container\annotation\Route;
+use samsonframework\container\annotation\Scope;
 
 /**
  * Car Controller class.
  * @Controller
  * @Route("/car")
+ * @Scope("cars")
  * @package samsonframework\di\tests\classes
  */
 class CarController
