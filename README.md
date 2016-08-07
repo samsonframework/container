@@ -9,6 +9,9 @@ SamsonFramework dependency injection container implementation
 [![Total Downloads](https://poser.pugx.org/samsonframework/container/downloads.svg)](https://packagist.org/packages/samsonframework/container)
 [![Stories in Ready](https://badge.waffle.io/samsonframework/container.png?label=ready&title=Ready)](https://waffle.io/samsonframework/container)
 
+##Documentation
+Follow [official documentation](http://github.com/samsonframework/container/blob/master/docs/Index.md).
+
 ##Installation
 You can install this package through Composer:
 ```composer require samsonframework/container```
