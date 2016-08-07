@@ -1,26 +1,26 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: root
- * Date: 27.07.2016
- * Time: 1:55.
+ * User: Vitaly Iegorov
+ * Date: 07.08.2016
+ * Time: 11:55.
  */
-
 namespace samsonframework\container\annotation;
+
+use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Class Route.
  *
  * @Annotation
  */
-class Route implements MethodAnnotation
+class Route implements MethodInterface
 {
-    const METHOD_ALIAS = 'route';
+    /** @var string Route path */
+    protected $path;
 
-    /**
-     * @var string Path to route
-     */
-    public $path;
+    /** @var string Route identifier */
+    protected $identifier;
 
     /**
      * Route constructor.
@@ -33,22 +33,14 @@ class Route implements MethodAnnotation
     }
 
     /**
-     * Get method alias.
+     * Convert to class metadata.
      *
-     * @return string
-     */
-    public function getMethodAlias()
-    {
-        return self::METHOD_ALIAS;
-    }
-
-    /**
-     * Convert annotation to method metadata.
+     * @param ClassMetadata $metadata Input metadata
      *
-     * @return array
+     * @return ClassMetadata Annotation conversion to metadata
      */
-    public function convertToMetadata()
+    public function toMetadata(ClassMetadata $metadata)
     {
-        return ['path' => $this->path['value']];
+        // TODO: Implement toMetadata() method.
     }
 }

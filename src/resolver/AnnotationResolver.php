@@ -10,6 +10,8 @@ namespace samsonframework\container\resolver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\MetadataInterface;
 use samsonframework\container\annotation\MethodAnnotation;
+use samsonframework\container\annotation\MethodInterface;
+use samsonframework\container\annotation\PropertyInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 
@@ -80,16 +82,36 @@ class AnnotationResolver extends Resolver
      */
     protected function resolveMethodAnnotation(\ReflectionMethod $method, ClassMetadata $metadata)
     {
-        $methodAnnotations = $this->reader->getMethodAnnotations($method);
+        // Create method metadata instance
         $methodMetadata = new MethodMetadata();
         $methodMetadata->name = $method->getName();
         $methodMetadata->modifiers = $method->getModifiers();
         $methodMetadata->parameters = $method->getParameters();
 
-        /** @var MethodAnnotation $methodAnnotation */
-        foreach ($methodAnnotations as $methodAnnotation) {
-            $methodMetadata->options[$methodAnnotation->getMethodAlias()] = $methodAnnotation->convertToMetadata();
+        /** @var MethodInterface $annotation */
+        foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
+            if (class_implements($annotation, MethodInterface::class)) {
+
+                $methodMetadata->options[$annotation->getMethodAlias()] = $annotation->convertToMetadata();
+            }
         }
+
         $metadata->methodsMetadata[$method->getName()] = $methodMetadata;
+    }
+
+    /**
+     * Resolve all class property annotations.
+     *
+     * @param \ReflectionProperty $property
+     * @param ClassMetadata       $metadata
+     */
+    protected function resolveClassPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $metadata)
+    {
+        /** @var MetadataInterface $annotation Read class annotations */
+        foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
+            if (class_implements($annotation, PropertyInterface::class)) {
+                $annotation->toMetadata($metadata);
+            }
+        }
     }
 }

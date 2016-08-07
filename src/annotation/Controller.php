@@ -18,7 +18,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Controller implements MetadataInterface
+class Controller implements ClassInterface
 {
     /** {@inheritdoc} */
     public function toMetadata(ClassMetadata $metadata)

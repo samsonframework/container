@@ -5,7 +5,16 @@
  */
 namespace samsonframework\container\annotation;
 
-interface PropertyInterface extends MetadataInterface
-{
+use samsonframework\container\metadata\PropertyMetadata;
 
+interface PropertyInterface
+{
+    /**
+     * Convert to class property metadata.
+     *
+     * @param PropertyMetadata $metadata Input metadata
+     *
+     * @return PropertyMetadata Annotation conversion to metadata
+     */
+    public function toMetadata(PropertyMetadata $metadata);
 }

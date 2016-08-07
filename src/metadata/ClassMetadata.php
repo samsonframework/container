@@ -35,6 +35,6 @@ class ClassMetadata
     /** @var array */
     public $aliases = [];
 
-    /** @var MethodMetadata[] */
+    /** @var MethodMetadata[string] */
     public $methodsMetadata = [];
 }

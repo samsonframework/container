@@ -5,7 +5,16 @@
  */
 namespace samsonframework\container\annotation;
 
-interface MethodInterface extends MetadataInterface
-{
+use samsonframework\container\metadata\MethodMetadata;
 
+interface MethodInterface
+{
+    /**
+     * Convert to class method metadata.
+     *
+     * @param MethodMetadata $metadata Input metadata
+     *
+     * @return MethodMetadata Annotation conversion to metadata
+     */
+    public function toMetadata(MethodMetadata $metadata);
 }

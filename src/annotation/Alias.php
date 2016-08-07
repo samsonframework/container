@@ -14,7 +14,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Alias extends CollectionValue
+class Alias extends CollectionValue implements ClassInterface
 {
     /** {@inheritdoc} */
     public function toMetadata(ClassMetadata $metadata)
