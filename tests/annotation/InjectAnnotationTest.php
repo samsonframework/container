@@ -31,13 +31,13 @@ class InjectAnnotationTest extends TestCase
         $scope->toPropertyMetadata($propertyMetadata);
     }
 
-    public function testPropertyViolatingInheritance()
+    public function testPropertyWithoutTypeHint()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $scope = new Inject(['value' => CarController::class]);
+        $scope = new Inject(['value' => Car::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
-        $propertyMetadata->typeHint = Car::class;
         $scope->toPropertyMetadata($propertyMetadata);
+
+        static::assertEquals(Car::class, $propertyMetadata->injectable);
     }
 
     public function testPropertyWithNamespaceInheritance()

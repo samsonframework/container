@@ -35,12 +35,12 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
         }
 
         // Check if we need to append namespace to type hint
-        if ($propertyMetadata->typeHint !== '' && strpos($propertyMetadata->typeHint, '\\') === false) {
+        if ($propertyMetadata->typeHint !== null && strpos($propertyMetadata->typeHint, '\\') === false) {
             $propertyMetadata->typeHint = $propertyMetadata->classMetadata->nameSpace . '\\' . $propertyMetadata->typeHint;
         }
 
         // Check for inheritance violation
-        if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== '') {
+        if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== null) {
             $inheritance = array_merge([$propertyMetadata->injectable], class_parents($propertyMetadata->injectable));
             if (!in_array($propertyMetadata->typeHint, $inheritance, true)) {
                 throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance');
