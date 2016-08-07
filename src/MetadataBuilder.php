@@ -49,7 +49,7 @@ class MetadataBuilder
      * @param ResolverInterface    $classResolver
      * @param ContainerInterface   $diContainer
      */
-    public function __construct(FileManagerInterface $fileManger, ResolverInterface $classResolver, ContainerInterface $diContainer)
+    public function __construct(FileManagerInterface $fileManger, ResolverInterface $classResolver, Container $diContainer)
     {
         $this->diContainer = $diContainer;
         $this->fileManger = $fileManger;
@@ -143,9 +143,9 @@ class MetadataBuilder
     /**
      * Build container class.
      *
-     * @param string $containerClass
+     * @param string|null $containerClass
      */
-    public function build($containerClass)
+    public function build($containerClass = null)
     {
         foreach ($this->classMetadata as $className => $classMetadata) {
             if (in_array($className, $this->scopes[self::SCOPE_SERVICES])) {

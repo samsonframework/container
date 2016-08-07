@@ -26,13 +26,13 @@ class Service extends AnnotationWithValue implements ClassInterface
     /**
      * Service constructor.
      *
-     * @param string $name Service unique name
+     * @param string|array $valueOrValues Service unique name
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($name)
+    public function __construct($valueOrValues)
     {
-        parent::__construct($name);
+        parent::__construct($valueOrValues);
 
         // Get first argument
         $this->name = array_shift($this->collection);
