@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests\annotation;
 
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\InjectArgument;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
@@ -17,10 +18,10 @@ use samsonframework\container\tests\TestCase;
 
 class InjectAnnotationTest extends TestCase
 {
-    public function testToMetadata()
+    public function testMethodToMetadata()
     {
-        $inject = new Inject(['value' => CarController::class]);
-        $metadata = new MethodMetadata();
+        $inject = new InjectArgument(['value' => CarController::class]);
+        $metadata = new MethodMetadata(new ClassMetadata());
         $inject->toMethodMetadata($metadata);
         static::assertEquals(true, in_array(CarController::class, $metadata->dependencies, true));
     }
@@ -40,7 +41,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(Car::class, $propertyMetadata->injectable);
+        static::assertEquals(Car::class, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithoutClassNameWithInterfaceTypeHint()
@@ -52,7 +53,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = DriverInterface::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(null, $propertyMetadata->injectable);
+        static::assertEquals(null, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithClassNameWithInterfaceTypeHint()
@@ -62,7 +63,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = DriverInterface::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
+        static::assertEquals(FastDriver::class, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithoutClassNameWithTypeHint()
@@ -72,7 +73,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = FastDriver::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
+        static::assertEquals(FastDriver::class, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithNamespaceClassNameWithSlash()
@@ -82,7 +83,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = FastDriver::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(FastDriver::class, $propertyMetadata->injectable);
+        static::assertEquals(FastDriver::class, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithNamespaceInheritance()
@@ -92,7 +93,7 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = Car::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(Car::class, $propertyMetadata->injectable);
+        static::assertEquals(Car::class, $propertyMetadata->dependency);
     }
 
     public function testPropertyWithoutNamespaceInheritance()
@@ -104,6 +105,6 @@ class InjectAnnotationTest extends TestCase
         $propertyMetadata->typeHint = 'Car';
         $inject->toPropertyMetadata($propertyMetadata);
 
-        static::assertEquals(Car::class, $propertyMetadata->injectable);
+        static::assertEquals(Car::class, $propertyMetadata->dependency);
     }
 }

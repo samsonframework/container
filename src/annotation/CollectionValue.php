@@ -18,15 +18,15 @@ class CollectionValue
     /**
      * Scope constructor.
      *
-     * @param array $scopeOrScopes Class collection
+     * @param array $valueOrValues Class collection
      *
      * @throws \InvalidArgumentException Thrown when neither string nor string[] is passed
      */
-    public function __construct($scopeOrScopes)
+    public function __construct($valueOrValues)
     {
-        if (is_array($scopeOrScopes) && array_key_exists('value', $scopeOrScopes)) {
+        if (is_array($valueOrValues) && array_key_exists('value', $valueOrValues)) {
             // Convert empty values to null
-            $value = $scopeOrScopes['value'] !== '' ? $scopeOrScopes['value'] : null;
+            $value = $valueOrValues['value'] !== '' ? $valueOrValues['value'] : null;
 
             if (!is_array($value) && !is_string($value) && $value !== null) {
                 throw new \InvalidArgumentException('Only string or array is allowed');

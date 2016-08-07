@@ -30,15 +30,15 @@ class Route extends CollectionValue implements ClassInterface, MethodInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($scopeOrScopes)
+    public function __construct($valueOrValues)
     {
-        parent::__construct($scopeOrScopes);
+        parent::__construct($valueOrValues);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function toMethodMetadata(MethodMetadata $metadata)
+    public function toMethodMetadata(MethodMetadata $methodMetadata)
     {
         // TODO: Implement toMetadata() method.
     }

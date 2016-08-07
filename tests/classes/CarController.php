@@ -7,6 +7,7 @@ namespace samsonframework\container\tests\classes;
 
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\InjectArgument;
 use samsonframework\container\annotation\Route;
 
 /**
@@ -38,8 +39,8 @@ class CarController
      * @param FastDriver $fastDriver
      * @param SlowDriver $slowDriver
      *
-     * @Inject("FastDriver")
-     * @Inject("SlowDriver")
+     * @InjectArgument(fastDriver="FastDriver")
+     * @InjectArgument(slowDriver="SlowDriver")
      * @Route("/show/", name="car_show")
      *
      * @return FastDriver

@@ -10,24 +10,20 @@ namespace samsonframework\container\metadata;
 /**
  * Method parameter metadata.
  */
-class ParameterMetadata extends AbstractMetadata
+class ParameterMetadata extends PropertyMetadata
 {
     /** @var MethodMetadata */
     public $methodMetadata;
-
-    /** @var int Property modifiers */
-    public $modifiers;
-
-    /** @var string Property type */
-    public $type;
 
     /**
      * ParameterMetadata constructor.
      *
      * @param MethodMetadata $methodMetadata
      */
-    public function __construct(MethodMetadata $methodMetadata)
+    public function __construct(ClassMetadata $classMetadata, MethodMetadata $methodMetadata)
     {
+        parent::__construct($classMetadata);
+
         $this->methodMetadata = $methodMetadata;
     }
 }

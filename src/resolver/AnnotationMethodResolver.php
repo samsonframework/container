@@ -6,8 +6,10 @@
 namespace samsonframework\container\resolver;
 
 use samsonframework\container\annotation\MethodInterface;
+use samsonframework\container\annotation\ParameterInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\metadata\ParameterMetadata;
 
 /**
  * Class method annotation resolver.
@@ -36,19 +38,26 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
     protected function resolveMethodAnnotations(\ReflectionMethod $method, ClassMetadata $classMetadata)
     {
         // Create method metadata instance
-        $methodMetadata = new MethodMetadata();
+        $methodMetadata = new MethodMetadata($classMetadata);
         $methodMetadata->name = $method->getName();
         $methodMetadata->modifiers = $method->getModifiers();
 
         /** @var \ReflectionParameter $parameter */
+        $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
         foreach ($method->getParameters() as $parameter) {
-            $methodMetadata->parameters[$parameter->getName()] = $parameter->getType()->__toString();
+            $parameterMetadata = clone $parameterMetadata;
+            $parameterMetadata->name = $parameter->getName();
+            $parameterMetadata->typeHint = $parameter->getType()->__toString();
+            $methodMetadata->parametersMetadata[$parameterMetadata->name] = $parameterMetadata;
         }
 
-        /** @var MethodInterface $annotation */
+        /** @var MethodInterface|ParameterInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
             if ($annotation instanceof MethodInterface) {
-                $methodMetadata->options[] = $annotation->toMethodMetadata($methodMetadata);
+                $annotation->toMethodMetadata($methodMetadata);
+            }
+            if ($annotation instanceof ParameterInterface) {
+                $annotation->toParameterMetadata(new ParameterMetadata($methodMetadata));
             }
         }
 

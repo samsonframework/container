@@ -6,7 +6,7 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\InjectArgument;
 use samsonframework\container\annotation\Route;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\AnnotationMethodResolver;
@@ -30,7 +30,7 @@ class AnnotationMethodResolverTest extends TestCase
 
     public function testResolve()
     {
-        new Inject(['']);
+        new InjectArgument(['']);
         new Route(['']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
@@ -39,8 +39,11 @@ class AnnotationMethodResolverTest extends TestCase
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
         $methodMetadata = $classMetadata->methodsMetadata;
 
-        //static::assertEquals(tests\Car::class, $methodMetadata['car']->injectable);
-        //static::assertEquals(tests\FastDriver::class, $methodMetadata['fastDriver']->injectable);
-        //static::assertEquals(tests\SlowDriver::class, $methodMetadata['slowDriver']->injectable);
+        static::assertArrayHasKey('showAction', $methodMetadata);
+        static::assertArrayHasKey('fastDriver', $methodMetadata['showAction']->parametersMetadata);
+        static::assertArrayHasKey('slowDriver', $methodMetadata['showAction']->parametersMetadata);
+
+        static::assertEquals(true, in_array(tests\FastDriver::class, $methodMetadata['showAction']->dependencies, true));
+        static::assertEquals(true, in_array(tests\SlowDriver::class, $methodMetadata['showAction']->dependencies, true));
     }
 }

@@ -7,6 +7,11 @@ namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\ClassMetadata;
 
+/**
+ * Class annotation interface.
+ *
+ * @package samsonframework\container\annotation
+ */
 interface ClassInterface extends AnnotationInterface
 {
     /**

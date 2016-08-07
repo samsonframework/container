@@ -9,7 +9,6 @@ declare(strict_types = 1);
  */
 namespace samsonframework\container\annotation;
 
-use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
@@ -17,7 +16,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @Annotation
  */
-class Inject extends CollectionValue implements MethodInterface, PropertyInterface
+class Inject extends CollectionValue implements PropertyInterface
 {
     /** @var string Injectable dependency */
     protected $dependency;
@@ -25,11 +24,11 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     /**
      * Inject constructor.
      *
-     * @param array $scopeOrScopes
+     * @param array $valueOrValues
      */
-    public function __construct(array $scopeOrScopes)
+    public function __construct(array $valueOrValues)
     {
-        parent::__construct($scopeOrScopes);
+        parent::__construct($valueOrValues);
 
         // Get first argument from annotation
         $this->dependency = $this->collection[0] ?? null;
@@ -39,67 +38,85 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     }
 
     /** {@inheritdoc} */
-    public function toMethodMetadata(MethodMetadata $metadata)
-    {
-        if ($this->dependency !== null) {
-            $metadata->dependencies[] = $this->dependency;
-        }
-    }
-
-    /** {@inheritdoc} */
     public function toPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
         // Get @Inject("value")
-        $propertyMetadata->injectable = $this->dependency;
+        $propertyMetadata->dependency = $this->dependency;
 
-        // Check if we need to append namespace to injectable
-        if ($propertyMetadata->injectable !== null && strpos($propertyMetadata->injectable, '\\') === false) {
-            $propertyMetadata->injectable = $propertyMetadata->classMetadata->nameSpace
-                . '\\' . $propertyMetadata->injectable;
-        }
+        $this->validate(
+            $propertyMetadata->typeHint,
+            $propertyMetadata->dependency,
+            $propertyMetadata->classMetadata->nameSpace
+        );
+    }
 
-        // Check if we need to append namespace to type hint
-        if ($propertyMetadata->typeHint !== null && strpos($propertyMetadata->typeHint, '\\') === false) {
-            $propertyMetadata->typeHint = $propertyMetadata->classMetadata->nameSpace
-                . '\\' . $propertyMetadata->typeHint;
-        }
+    /**
+     * Validate dependency.
+     *
+     * @param string $type
+     * @param string $dependency
+     * @param string $namespace
+     */
+    protected function validate(&$type, &$dependency, $namespace)
+    {
+        $dependency = $this->buildFullClassName($dependency, $namespace);
+        $type = $this->buildFullClassName($type, $namespace);
 
         // Check for inheritance violation
-        if ($this->checkInheritanceViolation($propertyMetadata)) {
+        if ($this->checkInheritanceViolation($type, $dependency)) {
             throw new \InvalidArgumentException(
-                '@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance with ' . $propertyMetadata->injectable
+                '@Inject dependency violates ' . $type . ' inheritance with ' . $dependency
             );
         }
 
-        if ($this->checkInterfaceWithoutClassName($propertyMetadata)) {
+        if ($this->checkInterfaceWithoutClassName($type, $dependency)) {
             throw new \InvalidArgumentException(
                 'Cannot @Inject interface, inherited class name should be specified
                 ');
         }
 
-        // Empty @Inject with type hint - use type hine as injectable
-        if ($propertyMetadata->injectable === null && $propertyMetadata->typeHint !== null) {
-            $propertyMetadata->injectable = $propertyMetadata->typeHint;
+        // Empty @Inject with type hint - use type hine as dependency
+        if ($dependency === null && $type !== null) {
+            $dependency = $type;
         }
+    }
+
+    /**
+     * Build full class name.
+     *
+     * @param string $className Full or short class name
+     * @param string $namespace Name space
+     *
+     * @return string Full class name
+     */
+    protected function buildFullClassName($className, $namespace)
+    {
+        // Check if we need to append namespace to dependency
+        if ($className !== null && strpos($className, '\\') === false) {
+            return $namespace . '\\' . $className;
+        }
+
+        return $className;
     }
 
     /**
      * Check if @Inject violates inheritance.
      *
-     * @param PropertyMetadata $propertyMetadata
+     * @param string $type       Property/Parameter type
+     * @param string $dependency @Inject value
      *
      * @return bool True if @Inject violates inheritance
      */
-    protected function checkInheritanceViolation(PropertyMetadata $propertyMetadata) : bool
+    protected function checkInheritanceViolation($type, $dependency) : bool
     {
         // Check for inheritance violation
-        if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== null) {
+        if ($dependency !== null && $type !== null) {
             $inheritance = array_merge(
-                [$propertyMetadata->injectable],
-                class_parents($propertyMetadata->injectable),
-                class_implements($propertyMetadata->injectable)
+                [$dependency],
+                class_parents($dependency),
+                class_implements($dependency)
             );
-            return !in_array($propertyMetadata->typeHint, $inheritance, true);
+            return !in_array($type, $inheritance, true);
         }
 
         return false;
@@ -108,14 +125,15 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     /**
      * Check if @Inject has no class name and type hint is interface.
      *
-     * @param PropertyMetadata $propertyMetadata
+     * @param string $type       Property/Parameter type
+     * @param string $dependency @Inject value
      *
      * @return bool True if @Inject has no class name and type hint is interface.
      */
-    protected function checkInterfaceWithoutClassName(PropertyMetadata $propertyMetadata) : bool
+    protected function checkInterfaceWithoutClassName($type, $dependency) : bool
     {
-        return $propertyMetadata->typeHint !== null
-        && $propertyMetadata->injectable === null
-        && (new \ReflectionClass($propertyMetadata->typeHint))->isInterface();
+        return $type !== null
+        && $dependency === null
+        && (new \ReflectionClass($type))->isInterface();
     }
 }

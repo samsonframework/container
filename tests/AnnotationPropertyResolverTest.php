@@ -38,8 +38,8 @@ class AnnotationPropertyResolverTest extends TestCase
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
         $propertyMetadata = $classMetadata->propertiesMetadata;
 
-        static::assertEquals(tests\Car::class, $propertyMetadata['car']->injectable);
-        static::assertEquals(tests\FastDriver::class, $propertyMetadata['fastDriver']->injectable);
-        static::assertEquals(tests\SlowDriver::class, $propertyMetadata['slowDriver']->injectable);
+        static::assertEquals(tests\Car::class, $propertyMetadata['car']->dependency);
+        static::assertEquals(tests\FastDriver::class, $propertyMetadata['fastDriver']->dependency);
+        static::assertEquals(tests\SlowDriver::class, $propertyMetadata['slowDriver']->dependency);
     }
 }

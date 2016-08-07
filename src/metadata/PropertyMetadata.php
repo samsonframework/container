@@ -22,7 +22,7 @@ class PropertyMetadata
     public $typeHint;
 
     /** @var string Property real typeHint */
-    public $injectable;
+    public $dependency;
 
     /** @var ClassMetadata */
     public $classMetadata;

@@ -16,6 +16,22 @@ class MethodMetadata extends AbstractMetadata
     /** @var int Method modifiers */
     public $modifiers;
 
+    /** @var ClassMetadata */
+    public $classMetadata;
+
     /** @var ParameterMetadata[] */
     public $parametersMetadata = [];
+
+    /** @var array ArgumentName => ArgumentType */
+    public $dependencies;
+
+    /**
+     * MethodMetadata constructor.
+     *
+     * @param ClassMetadata $classMetadata
+     */
+    public function __construct(ClassMetadata $classMetadata)
+    {
+        $this->classMetadata = $classMetadata;
+    }
 }

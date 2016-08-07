@@ -5,13 +5,8 @@
  */
 namespace samsonframework\container\metadata;
 
-use samsonframework\container\annotation\AnnotationInterface;
-
 abstract class AbstractMetadata
 {
     /** @var string */
     public $name;
-
-    /** @var AnnotationInterface[] */
-    public $annotations;
 }

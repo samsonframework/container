@@ -44,7 +44,7 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
         $propertyMetadata->modifiers = $property->getModifiers();
 
         // Parse property type hint if present
-        if (preg_match('/@var\s+(?<class>[^\s]+)/', $property->getDocComment(), $matches)) {
+        if (preg_match(self::P_PROPERTY_TYPE_HINT, $property->getDocComment(), $matches)) {
             list(, $propertyMetadata->typeHint) = $matches;
         }
 

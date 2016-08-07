@@ -7,6 +7,11 @@ namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\PropertyMetadata;
 
+/**
+ * Class property annotaion interface.
+ *
+ * @package samsonframework\container\annotation
+ */
 interface PropertyInterface extends AnnotationInterface
 {
     /**
