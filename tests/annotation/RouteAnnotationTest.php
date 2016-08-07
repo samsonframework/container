@@ -8,7 +8,6 @@ namespace samsonframework\container\tests\annotation;
 use samsonframework\container\annotation\Route;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\TestCase;
 
 class RouteAnnotationTest extends TestCase
@@ -43,6 +42,6 @@ class RouteAnnotationTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $route = new Route(['' => CarController::class]);
+        $route = new Route(['value' => '']);
     }
 }

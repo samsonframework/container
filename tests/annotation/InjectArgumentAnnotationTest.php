@@ -34,6 +34,16 @@ class InjectArgumentAnnotationTest extends TestCase
         $inject->toMethodMetadata($methodMetadata);
     }
 
+    public function testAnnotationArgumentNotExists()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $inject = new InjectArgument(['notValue' => CarController::class]);
+        $methodMetadata = new MethodMetadata(new ClassMetadata());
+        $methodMetadata->parametersMetadata['value'] = new ParameterMetadata($methodMetadata->classMetadata, $methodMetadata);
+        $inject->toMethodMetadata($methodMetadata);
+    }
+
     public function testAnnotationWithoutArgumentType()
     {
         $this->expectException(\InvalidArgumentException::class);

@@ -74,25 +74,8 @@ class MetadataBuilderTest extends TestCase
         );
     }
 
-    public function testLoad()
+    public function testBuild()
     {
-        $this->fileManager->method('scan')->willReturn([
-            __DIR__ . '/classes/CarController.php',
-            __DIR__ . '/classes/Wheel.php',
-            __DIR__ . '/classes/Car.php',
-        ]);
-
-        $this->container
-            ->loadFromPaths([__DIR__ . '/classes/'])
-            ->loadFromClassNames([CarController::class, Car::class]);
-
-        static::assertEquals(
-            true,
-            in_array(CarController::class, $this->getProperty('scopes', $this->container)[MetadataBuilder::SCOPE_CONTROLLER])
-        );
-        static::assertArrayHasKey(
-            CarController::class,
-            $this->getProperty('classMetadata', $this->container)
-        );
+        $this->container->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
     }
 }
