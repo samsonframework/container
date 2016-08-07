@@ -34,7 +34,8 @@ class AnnotationMethodResolverTest extends TestCase
         new Route(['value' => '/test/']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
-        $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());
+        $this->classMetadata->className = $reflectionClass->getName();
+        $this->classMetadata->nameSpace = $reflectionClass->getNamespaceName();
 
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
         $methodMetadata = $classMetadata->methodsMetadata;

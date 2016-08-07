@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 15:46
@@ -24,28 +26,63 @@ class InjectArgument extends CollectionValue implements MethodInterface
      * InjectArgument constructor.
      *
      * @param array $valueOrValues
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $valueOrValues)
     {
         parent::__construct($valueOrValues);
 
-        // Set data
-        foreach ($valueOrValues as $argumentName => $argumentType) {
-            $this->argumentName = $argumentName;
-            $this->argumentType = $argumentType;
+        if (count($valueOrValues)) {
+            list($this->argumentName, $this->argumentType) = each($valueOrValues);
         }
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
+     */
     public function toMethodMetadata(MethodMetadata $methodMetadata)
     {
-        // Inject only @Inject with value
-        if ($this->argumentName !== null && $this->argumentType !== null) {
-            $this->argumentName = $this->argumentName;
-            $this->argumentType = $this->buildFullClassName($this->argumentType, $methodMetadata->classMetadata->nameSpace);
-
-            $methodMetadata->dependencies[$this->argumentName] = $this->argumentType;
+        // Check for argument name input and validity
+        if (!$this->checkArgumentExists($this->argumentName, $methodMetadata)) {
+            throw new \InvalidArgumentException(
+                '@InjectArgument argument "'
+                . $methodMetadata->classMetadata->className . '::'
+                . $methodMetadata->name . ' '
+                . $this->argumentName . '" does not exists'
+            );
         }
+
+        // Check for type input
+        if ($this->argumentType === null) {
+            throw new \InvalidArgumentException(
+                '@InjectArgument argument "'
+                . $methodMetadata->classMetadata->className . '::'
+                . $methodMetadata->name . ' '
+                . $this->argumentName . '" type not specified'
+            );
+        }
+
+        // Store dependency with fully qualified type name
+        $methodMetadata->dependencies[$this->argumentName] = $this->buildFullClassName(
+            $this->argumentType,
+            $methodMetadata->classMetadata->nameSpace
+        );
+    }
+
+    /**
+     * Check method argument existance.
+     *
+     * @param string         $argument
+     * @param MethodMetadata $methodMetadata
+     *
+     * @return bool True if @InjectArgument argument name is valid
+     */
+    protected function checkArgumentExists(string $argument, MethodMetadata $methodMetadata) : bool
+    {
+        return $argument !== null && array_key_exists($argument, $methodMetadata->parametersMetadata);
     }
 
     /**
