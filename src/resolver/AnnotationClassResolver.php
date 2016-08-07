@@ -23,7 +23,7 @@ class AnnotationClassResolver extends AbstractAnnotationResolver implements Anno
         /** @var \ReflectionClass $classData */
 
         // Create and fill class metadata base fields
-        $classMetadata->className = $classData->getName();
+        $classMetadata->className = $classData->name;
         $classMetadata->nameSpace = $classData->getNamespaceName();
         $classMetadata->identifier = uniqid(__CLASS__, true);
         $classMetadata->name = $classMetadata->identifier;

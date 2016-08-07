@@ -6,7 +6,6 @@
 namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\Reader;
-use samsonframework\container\metadata\ClassMetadata;
 
 abstract class AbstractAnnotationResolver
 {
@@ -17,7 +16,6 @@ abstract class AbstractAnnotationResolver
      * AnnotationPropertyResolver constructor.
      *
      * @param Reader        $reader
-     * @param ClassMetadata $classMetadata
      */
     public function __construct(Reader $reader)
     {

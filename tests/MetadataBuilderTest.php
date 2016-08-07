@@ -6,7 +6,6 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Interop\Container\ContainerInterface;
 use samsonframework\container\MetadataBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
@@ -15,6 +14,7 @@ use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
+use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
 
 class MetadataBuilderTest extends TestCase
@@ -25,7 +25,7 @@ class MetadataBuilderTest extends TestCase
     /** @var ResolverInterface */
     protected $resolver;
 
-    /** @var ContainerInterface */
+    /** @var Container */
     protected $diContainer;
 
     /** @var FileManagerInterface */
@@ -41,7 +41,7 @@ class MetadataBuilderTest extends TestCase
             new AnnotationMethodResolver($reader)
         );
         $this->fileManager = $this->createMock(FileManagerInterface::class);
-        $this->diContainer = $this->createMock(ContainerInterface::class);
+        $this->diContainer = $this->createMock(Container::class);
 
         $this->container = new MetadataBuilder($this->fileManager, $this->resolver, $this->diContainer);
     }
@@ -82,6 +82,10 @@ class MetadataBuilderTest extends TestCase
 
     public function testBuild()
     {
-        $this->container->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
+        $this->diContainer->method('set')->willReturn(true);
+
+        $this->container
+            ->loadFromClassNames([CarController::class, Car::class])
+            ->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
     }
 }

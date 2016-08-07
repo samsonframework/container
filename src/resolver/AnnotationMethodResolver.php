@@ -39,28 +39,25 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
     {
         // Create method metadata instance
         $methodMetadata = new MethodMetadata($classMetadata);
-        $methodMetadata->name = $method->getName();
+        $methodMetadata->name = $method->name;
         $methodMetadata->modifiers = $method->getModifiers();
 
         /** @var \ReflectionParameter $parameter */
         $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
         foreach ($method->getParameters() as $parameter) {
             $parameterMetadata = clone $parameterMetadata;
-            $parameterMetadata->name = $parameter->getName();
-            $parameterMetadata->typeHint = $parameter->getType()->__toString();
+            $parameterMetadata->name = $parameter->name;
+            $parameterMetadata->typeHint = (string)$parameter->getType();
             $methodMetadata->parametersMetadata[$parameterMetadata->name] = $parameterMetadata;
         }
 
-        /** @var MethodInterface|ParameterInterface $annotation */
+        /** @var MethodInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
             if ($annotation instanceof MethodInterface) {
                 $annotation->toMethodMetadata($methodMetadata);
             }
-            if ($annotation instanceof ParameterInterface) {
-                $annotation->toParameterMetadata(new ParameterMetadata($methodMetadata));
-            }
         }
 
-        $classMetadata->methodsMetadata[$method->getName()] = $methodMetadata;
+        $classMetadata->methodsMetadata[$methodMetadata->name] = $methodMetadata;
     }
 }

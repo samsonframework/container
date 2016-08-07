@@ -10,6 +10,7 @@ namespace samsonframework\container;
 use Interop\Container\ContainerInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\ResolverInterface;
+use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
 
 /**
@@ -38,7 +39,7 @@ class MetadataBuilder
     /** @var ResolverInterface */
     protected $classResolver;
 
-    /** @var ContainerInterface */
+    /** @var Container */
     protected $diContainer;
 
     /**
@@ -52,7 +53,7 @@ class MetadataBuilder
     {
         $this->diContainer = $diContainer;
         $this->fileManger = $fileManger;
-        $this->resolver = $classResolver;
+        $this->classResolver = $classResolver;
     }
 
     /**
@@ -85,7 +86,7 @@ class MetadataBuilder
         // Read all classes in given file
         foreach ($classes as $className) {
             // Resolve class metadata
-            $this->classMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className));
+            $this->classMetadata[$className] = $this->classResolver->resolve(new \ReflectionClass($className));
             // Store class in defined scopes
             foreach ($this->classMetadata[$className]->scopes as $scope) {
                 $this->scopes[$scope][] = $className;
@@ -132,6 +133,7 @@ class MetadataBuilder
      */
     public function loadFromCode($php)
     {
+        // TODO: Consider writing cache file and require it
         eval($php);
         $this->loadFromClassNames($this->getDefinedClasses($php));
 
@@ -140,9 +142,13 @@ class MetadataBuilder
 
     /**
      * Build container class.
+     *
+     * @param string $containerClass
      */
     public function build($containerClass)
     {
-
+        foreach ($this->classMetadata as $className => $classMetadata) {
+            $this->diContainer->set($className);
+        }
     }
 }
