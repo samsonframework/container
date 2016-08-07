@@ -17,7 +17,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @Annotation
  */
-class Service extends CollectionValue implements ClassInterface
+class Service extends AnnotationWithValue implements ClassInterface
 {
     /** @var string Service unique name */
     protected $name;

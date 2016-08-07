@@ -14,7 +14,7 @@ use samsonframework\container\metadata\MethodMetadata;
  *
  * @Annotation
  */
-class InjectArgument extends CollectionValue implements MethodInterface
+class InjectArgument extends AnnotationWithValue implements MethodInterface
 {
     /** @var string Method argument name */
     protected $argumentName;

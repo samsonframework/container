@@ -13,10 +13,10 @@ use samsonframework\container\annotation\Scope;
 
 /**
  * Car Controller class.
+ *
  * @Controller
  * @Route("/car")
  * @Scope("cars")
- * @package samsonframework\di\tests\classes
  */
 class CarController
 {

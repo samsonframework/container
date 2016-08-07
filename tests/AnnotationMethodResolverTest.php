@@ -30,7 +30,7 @@ class AnnotationMethodResolverTest extends TestCase
 
     public function testResolve()
     {
-        new InjectArgument(['']);
+        new InjectArgument(['value' => '']);
         new Route(['value' => '/test/']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);

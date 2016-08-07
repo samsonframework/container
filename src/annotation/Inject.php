@@ -16,7 +16,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @Annotation
  */
-class Inject extends CollectionValue implements PropertyInterface
+class Inject extends AnnotationWithValue implements PropertyInterface
 {
     /** @var string Injectable dependency */
     protected $dependency;

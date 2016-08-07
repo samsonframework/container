@@ -5,7 +5,7 @@
  */
 namespace samsonframework\container\tests\annotation;
 
-use samsonframework\container\annotation\CollectionValue;
+use samsonframework\container\annotation\AnnotationWithValue;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\TestCase;
 
@@ -13,14 +13,14 @@ class CollectionValueTest extends TestCase
 {
     public function testCreationWithEmptyString()
     {
-        $scope = new CollectionValue('');
+        $scope = new AnnotationWithValue('');
 
         static::assertEquals([], $this->getProperty('collection', $scope));
     }
 
     public function testCreationWithArray()
     {
-        $scope = new CollectionValue(['value' => CarController::class]);
+        $scope = new AnnotationWithValue(['value' => CarController::class]);
 
         static::assertEquals(true, in_array(CarController::class, $this->getProperty('collection', $scope), true));
     }
@@ -29,6 +29,6 @@ class CollectionValueTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new CollectionValue(['value' => new CarController()]);
+        new AnnotationWithValue(['value' => new CarController()]);
     }
 }
