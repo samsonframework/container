@@ -26,9 +26,9 @@ class AnnotationResolver implements Resolver
     /**
      * AnnotationResolver constructor.
      *
-     * @param Resolver $classResolver
-     * @param Resolver $propertyResolver
-     * @param Resolver $methodResolver
+     * @param AnnotationResolverInterface $classResolver
+     * @param AnnotationResolverInterface $propertyResolver
+     * @param AnnotationResolverInterface $methodResolver
      */
     public function __construct(AnnotationResolverInterface $classResolver, AnnotationResolverInterface $propertyResolver, AnnotationResolverInterface $methodResolver)
     {

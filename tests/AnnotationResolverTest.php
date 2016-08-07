@@ -6,8 +6,7 @@
 namespace samsonframework\di\tests;
 
 use PHPUnit\Framework\TestCase;
-use samsonframework\container\annotation\Controller;
-use samsonframework\container\annotation\Inject;
+use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\AbstractAnnotationMethodResolver;
 use samsonframework\container\resolver\AbstractAnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationClassResolver;
@@ -36,14 +35,7 @@ class AnnotationResolverTest extends TestCase
 
     public function testResolve()
     {
-        // Autoload annotations
-        // TODO: Why doctrine not loading them?
-        new Controller();
-        new Inject([]);
-
-        $identifier = 'testID';
-        //$metadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class), $identifier);
-
-        //static::assertEquals(['Car'], $metadata->dependencies);
+        $classMetadata = $this->resolver->resolve(new \ReflectionClass(tests\CarController::class));
+        static::assertEquals(true, $classMetadata instanceof ClassMetadata);
     }
 }
