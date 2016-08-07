@@ -19,6 +19,25 @@ use samsonframework\container\metadata\PropertyMetadata;
  */
 class Inject extends CollectionValue implements MethodInterface, PropertyInterface
 {
+    /** @var string Injectable dependency */
+    protected $dependency;
+
+    /**
+     * Inject constructor.
+     *
+     * @param array $scopeOrScopes
+     */
+    public function __construct(array $scopeOrScopes)
+    {
+        parent::__construct($scopeOrScopes);
+
+        // Get first argument from annotation
+        $this->dependency = $this->collection[0] ?? null;
+
+        // Removed first namespace separator if present
+        $this->dependency = is_string($this->dependency) ? ltrim($this->dependency, '\\') : $this->dependency;
+    }
+
     /** {@inheritdoc} */
     public function toMethodMetadata(MethodMetadata $metadata)
     {
@@ -29,7 +48,7 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
     public function toPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
         // Get @Inject("value")
-        $propertyMetadata->injectable = array_shift($this->collection);
+        $propertyMetadata->injectable = $this->dependency;
 
         // Check if we need to append namespace to injectable
         if ($propertyMetadata->injectable !== null && strpos($propertyMetadata->injectable, '\\') === false) {
