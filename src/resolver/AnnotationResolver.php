@@ -14,13 +14,13 @@ use samsonframework\container\metadata\ClassMetadata;
  */
 class AnnotationResolver implements Resolver
 {
-    /** @var Resolver */
+    /** @var AnnotationResolverInterface */
     protected $classResolver;
 
-    /** @var Resolver */
+    /** @var AnnotationResolverInterface */
     protected $propertyResolver;
 
-    /** @var Resolver */
+    /** @var AnnotationResolverInterface */
     protected $methodResolver;
 
     /**
@@ -30,7 +30,7 @@ class AnnotationResolver implements Resolver
      * @param Resolver $propertyResolver
      * @param Resolver $methodResolver
      */
-    public function __construct(Resolver $classResolver, Resolver $propertyResolver, Resolver $methodResolver)
+    public function __construct(AnnotationResolverInterface $classResolver, AnnotationResolverInterface $propertyResolver, AnnotationResolverInterface $methodResolver)
     {
         $this->classResolver = $classResolver;
         $this->propertyResolver = $propertyResolver;
