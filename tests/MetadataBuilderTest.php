@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\annotation\Service;
 use samsonframework\container\MetadataBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
@@ -14,6 +15,7 @@ use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
+use samsonframework\container\tests\classes\CarService;
 use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
 
@@ -82,10 +84,12 @@ class MetadataBuilderTest extends TestCase
 
     public function testBuild()
     {
+        new Service(['value' => 'service']);
+
         $this->diContainer->method('set')->willReturn(true);
 
         $this->container
-            ->loadFromClassNames([CarController::class, Car::class])
+            ->loadFromClassNames([CarService::class, Car::class])
             ->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
     }
 }

@@ -17,6 +17,6 @@ class AliasAnnotationTest extends TestCase
         $scope = new Alias(['value' => CarController::class]);
         $metadata = new ClassMetadata();
         $scope->toClassMetadata($metadata);
-        static::assertEquals(true, in_array(CarController::class, $metadata->aliases, true));
+        static::assertEquals(true, in_array(CarController::class, $metadata->alias, true));
     }
 }

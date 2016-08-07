@@ -20,6 +20,6 @@ class Alias extends AnnotationWithValue implements ClassInterface
     public function toClassMetadata(ClassMetadata $classMetadata)
     {
         // Add all found annotation collection to metadata collection
-        $classMetadata->aliases = array_merge($classMetadata->aliases, $this->collection);
+        $classMetadata->alias = array_merge($classMetadata->alias, $this->collection);
     }
 }

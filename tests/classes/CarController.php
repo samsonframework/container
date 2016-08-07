@@ -24,19 +24,19 @@ class CarController
      * @var Car
      * @Inject
      */
-    protected $car;
+    public $car;
 
     /**
      * @var DriverInterface
      * @Inject("FastDriver")
      */
-    protected $fastDriver;
+    public $fastDriver;
 
     /**
      * @var DriverInterface
      * @Inject("\samsonframework\container\tests\classes\SlowDriver")
      */
-    protected $slowDriver;
+    public $slowDriver;
 
     /**
      * @param FastDriver $fastDriver

@@ -5,19 +5,29 @@
  */
 namespace samsonframework\container\tests\classes;
 
-use \samsonframework\container\annotation\Inject;
+use samsonframework\container\annotation\Inject;
 use samsonframework\container\annotation\Service;
 
 /**
  * Car service class.
- * @Service(car_service)
- * @package samsonframework\di\tests\classes
+ *
+ * @Service("car_service")
  */
 class CarService
 {
     /**
      * @var Car
-     * @Inject()
+     * @Inject
      */
     protected $car;
+
+    /**
+     * CarService constructor.
+     *
+     * @param Car $car
+     */
+    public function __construct(Car $car)
+    {
+        $this->car = $car;
+    }
 }

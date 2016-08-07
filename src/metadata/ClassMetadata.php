@@ -14,30 +14,30 @@ namespace samsonframework\container\metadata;
  */
 class ClassMetadata extends AbstractMetadata
 {
-    /** @var string */
+    /** @var string Full class name with namesace */
     public $className;
 
-    /** @var string */
+    /** @var string Class name space */
     public $nameSpace;
 
-    /** @var string */
+    /** @var string Unique class identifier, what for? Class is unique */
     public $identifier;
 
-    /** @var bool */
+    /** @var bool Do we need it? */
     public $autowire = false;
 
-    /** @var array */
+    /** @var array Class container scopes */
     public $scopes = [];
 
-    /** @var array */
-    public $aliases = [];
+    /** @var string Class alias? */
+    public $alias;
 
     /** @var string[string] Class routes collection */
     public $routes;
 
-    /** @var MethodMetadata[string] */
+    /** @var MethodMetadata[] Collection of class methods metadata */
     public $methodsMetadata = [];
 
-    /** @var PropertyMetadata[string] */
+    /** @var PropertyMetadata[] Collection of class properties metadata */
     public $propertiesMetadata = [];
 }

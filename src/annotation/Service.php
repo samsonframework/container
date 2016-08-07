@@ -8,6 +8,7 @@
 namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\MetadataBuilder;
 
 /**
  * Service annotation class.
@@ -41,5 +42,6 @@ class Service extends AnnotationWithValue implements ClassInterface
     public function toClassMetadata(ClassMetadata $classMetadata)
     {
         $classMetadata->name = $this->name;
+        $classMetadata->scopes[] = MetadataBuilder::SCOPE_SERVICES;
     }
 }

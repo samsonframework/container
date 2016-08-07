@@ -30,7 +30,7 @@ class MetadataBuilder
         self::SCOPE_SERVICES => []
     ];
 
-    /** @var ClassMetadata[string] Collection of classes metadata */
+    /** @var ClassMetadata[] Collection of classes metadata */
     protected $classMetadata = [];
 
     /** @var FileManagerInterface */
@@ -148,7 +148,9 @@ class MetadataBuilder
     public function build($containerClass)
     {
         foreach ($this->classMetadata as $className => $classMetadata) {
-            $this->diContainer->set($className);
+            if (in_array($className, $this->scopes[self::SCOPE_SERVICES])) {
+                $this->diContainer->service($className, $classMetadata->alias);
+            }
         }
     }
 }
