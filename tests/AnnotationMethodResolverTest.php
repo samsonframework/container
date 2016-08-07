@@ -31,7 +31,7 @@ class AnnotationMethodResolverTest extends TestCase
     public function testResolve()
     {
         new InjectArgument(['']);
-        new Route(['']);
+        new Route(['value' => '/test/']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());

@@ -27,10 +27,16 @@ class Route extends CollectionValue implements ClassInterface, MethodInterface
      * Route constructor.
      *
      * @param array $valueOrValues
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($valueOrValues)
     {
         parent::__construct($valueOrValues);
+
+        if (!array_key_exists('value', $valueOrValues) || $valueOrValues['value'] === '') {
+            throw new \InvalidArgumentException('@Route annotation should have value');
+        }
 
         // Set data
         $this->path = $valueOrValues['value'] ?? null;
