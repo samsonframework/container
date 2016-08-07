@@ -44,6 +44,6 @@ class AnnotationWithValue implements AnnotationInterface
      */
     protected function checkValuePresence(array $valueOrValues)
     {
-        return count(array_keys($valueOrValues));
+        return count(array_filter(array_keys($valueOrValues)));
     }
 }

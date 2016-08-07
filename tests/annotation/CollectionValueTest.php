@@ -11,13 +11,6 @@ use samsonframework\container\tests\TestCase;
 
 class CollectionValueTest extends TestCase
 {
-    public function testCreationWithEmptyString()
-    {
-        $scope = new AnnotationWithValue('');
-
-        static::assertEquals([], $this->getProperty('collection', $scope));
-    }
-
     public function testCreationWithArray()
     {
         $scope = new AnnotationWithValue(['value' => CarController::class]);
@@ -29,6 +22,6 @@ class CollectionValueTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new AnnotationWithValue(['value' => new CarController()]);
+        new AnnotationWithValue([]);
     }
 }

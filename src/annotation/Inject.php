@@ -16,7 +16,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @Annotation
  */
-class Inject extends AnnotationWithValue implements PropertyInterface
+class Inject implements PropertyInterface
 {
     /** @var string Injectable dependency */
     protected $dependency;
@@ -28,10 +28,11 @@ class Inject extends AnnotationWithValue implements PropertyInterface
      */
     public function __construct(array $valueOrValues)
     {
-        parent::__construct($valueOrValues);
-
         // Get first argument from annotation
-        $this->dependency = $this->collection[0] ?? null;
+        $this->dependency = $valueOrValues['value'] ?? null;
+
+        // Convert empty dependency to null
+        $this->dependency = $this->dependency !== '' ? $this->dependency : null;
 
         // Removed first namespace separator if present
         $this->dependency = is_string($this->dependency) ? ltrim($this->dependency, '\\') : $this->dependency;

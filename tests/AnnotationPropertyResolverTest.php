@@ -30,7 +30,7 @@ class AnnotationPropertyResolverTest extends TestCase
 
     public function testInjectResolve()
     {
-        new Inject(['']);
+        new Inject(['value' => 'test']);
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());
