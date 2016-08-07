@@ -7,7 +7,7 @@
  */
 namespace samsonframework\container\resolver;
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use samsonframework\container\annotation\ClassInterface;
 use samsonframework\container\annotation\MethodInterface;
 use samsonframework\container\annotation\PropertyInterface;
@@ -23,7 +23,7 @@ class AnnotationResolver extends Resolver
     /** Property typeHint hint pattern */
     const P_PROPERTY_TYPE_HINT = '/@var\s+(?<class>[^\s]+)/';
 
-    /** @var AnnotationReader */
+    /** @var Reader */
     protected $reader;
 
     /**
@@ -31,7 +31,7 @@ class AnnotationResolver extends Resolver
      *
      * @param $reader
      */
-    public function __construct($reader)
+    public function __construct(Reader $reader)
     {
         $this->reader = $reader;
     }
