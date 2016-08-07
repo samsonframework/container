@@ -31,11 +31,32 @@ class InjectAnnotationTest extends TestCase
         $scope->toPropertyMetadata($propertyMetadata);
     }
 
-    public function testPropertyInheritance()
+    public function testPropertyViolatingInheritance()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $scope = new Inject(['value' => CarController::class]);
+        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $propertyMetadata->typeHint = Car::class;
+        $scope->toPropertyMetadata($propertyMetadata);
+    }
+
+    public function testPropertyWithNamespaceInheritance()
     {
         $scope = new Inject(['value' => Car::class]);
         $propertyMetadata = new PropertyMetadata(new ClassMetadata());
         $propertyMetadata->typeHint = Car::class;
+        $scope->toPropertyMetadata($propertyMetadata);
+
+        static::assertEquals(Car::class, $propertyMetadata->injectable);
+    }
+
+    public function testPropertyWithoutNamespaceInheritance()
+    {
+        $scope = new Inject(['value' => 'Car']);
+        $classMetadata = new ClassMetadata();
+        $classMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->typeHint = 'Car';
         $scope->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->injectable);

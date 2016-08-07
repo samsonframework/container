@@ -101,10 +101,6 @@ class AnnotationResolver extends Resolver
         // Parse property typeHint hint if present
         if (preg_match('/@var\s+(?<class>[^\s]+)/', $property->getDocComment(), $matches)) {
             list(, $propertyMetadata->typeHint) = $matches;
-            // Check if we need to append namespace
-            if (strpos($propertyMetadata->typeHint, '\\') === false) {
-                $propertyMetadata->typeHint = $classMetadata->nameSpace . '\\' . $propertyMetadata->typeHint;
-            }
         }
 
         /** @var PropertyInterface $annotation Read class annotations */
