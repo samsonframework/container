@@ -55,6 +55,6 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
             }
         }
 
-        $classMetadata->propertyMetadata[$propertyMetadata->name] = $propertyMetadata;
+        $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
     }
 }

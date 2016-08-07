@@ -8,12 +8,12 @@ namespace samsonframework\container\tests;
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\Inject;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\AnnotationPropertyResolver;
+use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\tests\classes as tests;
 
-class AnnotationPropertyResolverTest extends TestCase
+class AnnotationMethodResolverTest extends TestCase
 {
-    /** @var AnnotationPropertyResolver */
+    /** @var AnnotationMethodResolver */
     protected $resolver;
 
     /** @var ClassMetadata */
@@ -24,8 +24,7 @@ class AnnotationPropertyResolverTest extends TestCase
         /** @var ClassMetadata $methodResolver */
         $this->classMetadata = new ClassMetadata();
 
-
-        $this->resolver = new AnnotationPropertyResolver(new AnnotationReader(), $this->classMetadata);
+        $this->resolver = new AnnotationMethodResolver(new AnnotationReader(), $this->classMetadata);
     }
 
     public function testInjectResolve()
@@ -36,10 +35,10 @@ class AnnotationPropertyResolverTest extends TestCase
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());
 
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
-        $propertyMetadata = $classMetadata->propertiesMetadata;
+        $methodMetadata = $classMetadata->methodsMetadata;
 
-        static::assertEquals(tests\Car::class, $propertyMetadata['car']->injectable);
-        static::assertEquals(tests\FastDriver::class, $propertyMetadata['fastDriver']->injectable);
-        static::assertEquals(tests\SlowDriver::class, $propertyMetadata['slowDriver']->injectable);
+        static::assertEquals(tests\Car::class, $methodMetadata['car']->injectable);
+        static::assertEquals(tests\FastDriver::class, $methodMetadata['fastDriver']->injectable);
+        static::assertEquals(tests\SlowDriver::class, $methodMetadata['slowDriver']->injectable);
     }
 }

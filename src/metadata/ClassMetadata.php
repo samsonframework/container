@@ -42,5 +42,5 @@ class ClassMetadata
     public $methodsMetadata = [];
 
     /** @var PropertyMetadata[string] */
-    public $propertyMetadata = [];
+    public $propertiesMetadata = [];
 }
