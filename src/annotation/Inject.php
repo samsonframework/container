@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: root
@@ -40,15 +42,44 @@ class Inject extends CollectionValue implements MethodInterface, PropertyInterfa
         }
 
         // Check for inheritance violation
-        if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== null) {
-            $inheritance = array_merge([$propertyMetadata->injectable], class_parents($propertyMetadata->injectable));
-            if (!in_array($propertyMetadata->typeHint, $inheritance, true)) {
-                throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance');
-            }
+        if ($this->checkInheritanceViolation($propertyMetadata)) {
+            throw new \InvalidArgumentException('@Inject dependency violates ' . $propertyMetadata->typeHint . ' inheritance');
         }
 
-        if ($propertyMetadata->typeHint !== null && $propertyMetadata->injectable === null && (new \ReflectionClass($propertyMetadata->typeHint))->isInterface()) {
+        if ($this->checkInterfaceWithoutClassName($propertyMetadata)) {
             throw new \InvalidArgumentException('Cannot @Inject interface, inherited class name should be specified');
         }
+    }
+
+    /**
+     * Check if @Inject violates inheritance.
+     *
+     * @param PropertyMetadata $propertyMetadata
+     *
+     * @return bool True if @Inject violates inheritance
+     */
+    protected function checkInheritanceViolation(PropertyMetadata $propertyMetadata) : bool
+    {
+        // Check for inheritance violation
+        if ($propertyMetadata->injectable !== null && $propertyMetadata->typeHint !== null) {
+            $inheritance = array_merge([$propertyMetadata->injectable], class_parents($propertyMetadata->injectable));
+            return !in_array($propertyMetadata->typeHint, $inheritance, true);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if @Inject has no class name and type hint is interface.
+     *
+     * @param PropertyMetadata $propertyMetadata
+     *
+     * @return bool True if @Inject has no class name and type hint is interface.
+     */
+    protected function checkInterfaceWithoutClassName(PropertyMetadata $propertyMetadata) : bool
+    {
+        return $propertyMetadata->typeHint !== null
+        && $propertyMetadata->injectable === null
+        && (new \ReflectionClass($propertyMetadata->typeHint))->isInterface();
     }
 }
