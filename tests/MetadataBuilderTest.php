@@ -6,7 +6,7 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\Container;
+use samsonframework\container\MetadataBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
@@ -15,9 +15,9 @@ use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\filemanager\FileManagerInterface;
 
-class ContainerTest extends TestCase
+class MetadataBuilderTest extends TestCase
 {
-    /** @var Container */
+    /** @var MetadataBuilder */
     protected $container;
 
     /** @var Resolver */
@@ -37,23 +37,58 @@ class ContainerTest extends TestCase
         );
         $this->fileManager = $this->createMock(FileManagerInterface::class);
 
-        $this->container = new Container($this->fileManager, $this->resolver);
+        $this->container = new MetadataBuilder($this->fileManager, $this->resolver);
+    }
+
+    public function testLoadFromPaths()
+    {
+        $this->fileManager->method('scan')->willReturn([
+            __DIR__ . '/classes/CarController.php',
+            __DIR__ . '/classes/Wheel.php',
+            __DIR__ . '/classes/Car.php',
+        ]);
+
+        $this->container->loadFromPaths([__DIR__ . '/classes/']);
+    }
+
+    public function testLoadFromClassNames()
+    {
+        $this->container->loadFromClassNames([CarController::class, Car::class]);
+
+        static::assertEquals(
+            true,
+            in_array(CarController::class, $this->getProperty('scopes', $this->container)[MetadataBuilder::SCOPE_CONTROLLER])
+        );
+        static::assertArrayHasKey(
+            CarController::class,
+            $this->getProperty('classMetadata', $this->container)
+        );
+    }
+
+    public function testLoadFromCode()
+    {
+        $this->container->loadFromCode('class TestClass {} ');
+        static::assertArrayHasKey(
+            'TestClass',
+            $this->getProperty('classMetadata', $this->container)
+        );
     }
 
     public function testLoad()
     {
         $this->fileManager->method('scan')->willReturn([
             __DIR__ . '/classes/CarController.php',
+            __DIR__ . '/classes/Wheel.php',
             __DIR__ . '/classes/Car.php',
         ]);
 
         $this->container
             ->loadFromPaths([__DIR__ . '/classes/'])
-            ->loadFromClasses([CarController::class, Car::class]);
+            ->loadFromClassNames([CarController::class, Car::class]);
 
         static::assertEquals(
             true,
-            in_array(CarController::class, $this->getProperty('scopes', $this->container)[Container::SCOPE_CONTROLLER])
+            in_array(CarController::class, $this->getProperty('scopes', $this->container)[MetadataBuilder::SCOPE_CONTROLLER])
         );
         static::assertArrayHasKey(
             CarController::class,

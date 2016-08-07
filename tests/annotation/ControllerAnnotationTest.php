@@ -6,8 +6,8 @@
 namespace samsonframework\container\tests\annotation;
 
 use samsonframework\container\annotation\Controller;
-use samsonframework\container\Container;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\MetadataBuilder;
 use samsonframework\container\tests\TestCase;
 
 class ControllerAnnotationTest extends TestCase
@@ -17,6 +17,6 @@ class ControllerAnnotationTest extends TestCase
         $scope = new Controller();
         $metadata = new ClassMetadata();
         $scope->toClassMetadata($metadata);
-        static::assertEquals(true, in_array(Container::SCOPE_CONTROLLER, $metadata->scopes));
+        static::assertEquals(true, in_array(MetadataBuilder::SCOPE_CONTROLLER, $metadata->scopes));
     }
 }

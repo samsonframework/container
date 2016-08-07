@@ -5,7 +5,6 @@
  * Date: 02.08.16
  * Time: 0:46.
  */
-
 namespace samsonframework\container;
 
 use samsonframework\container\metadata\ClassMetadata;
@@ -15,7 +14,7 @@ use samsonframework\filemanager\FileManagerInterface;
 /**
  * Class Container.
  */
-class Container
+class MetadataBuilder
 {
     /** Controller classes scope name */
     const SCOPE_CONTROLLER = 'controllers';
@@ -61,7 +60,7 @@ class Container
         // Iterate all paths and get files
         foreach ($this->fileManger->scan($paths, ['php']) as $phpFile) {
             // Read all classes in given file
-            $this->loadFromClasses($this->getDefinedClasses(require_once($phpFile)));
+            $this->loadFromClassNames($this->getDefinedClasses(require_once($phpFile)));
         }
 
         return $this;
@@ -74,7 +73,7 @@ class Container
      *
      * @return $this
      */
-    public function loadFromClasses(array $classes)
+    public function loadFromClassNames(array $classes)
     {
         // Read all classes in given file
         foreach ($classes as $className) {
@@ -99,7 +98,11 @@ class Container
     protected function getDefinedClasses($php) : array
     {
         $classes = array();
-        $tokens = token_get_all(is_string($php) ? $php : '');
+
+        // Append php marker for parsing file
+        $php = strpos(is_string($php) ? $php : '', '<?php') !== 0 ? '<?php ' . $php : $php;
+
+        $tokens = token_get_all($php);
 
         for ($i = 2, $count = count($tokens); $i < $count; $i++) {
             if ($tokens[$i - 2][0] === T_CLASS
@@ -111,5 +114,28 @@ class Container
         }
 
         return $classes;
+    }
+
+    /**
+     * Load classes from PHP code.
+     *
+     * @param string $php PHP code
+     *
+     * @return $this
+     */
+    public function loadFromCode($php)
+    {
+        eval($php);
+        $this->loadFromClassNames($this->getDefinedClasses($php));
+
+        return $this;
+    }
+
+    /**
+     * Build container class.
+     */
+    public function build($containerClass)
+    {
+
     }
 }
