@@ -17,9 +17,9 @@
     }
   ],
   "require": {
-    "php": "^5.6 || ^7.0",
+    "php": "^7.0",
     "samsonphp/generator": "*",
-    "container-interop/container-interop": "^1.1",
+    "samsonframework/base": "*",
     "doctrine/annotations": "*"
   },
   "require-dev": {

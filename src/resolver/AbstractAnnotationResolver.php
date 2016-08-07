@@ -13,18 +13,14 @@ abstract class AbstractAnnotationResolver
     /** @var Reader */
     protected $reader;
 
-    /** @var ClassMetadata */
-    protected $classMetadata;
-
     /**
      * AnnotationPropertyResolver constructor.
      *
      * @param Reader        $reader
      * @param ClassMetadata $classMetadata
      */
-    public function __construct(Reader $reader, ClassMetadata $classMetadata)
+    public function __construct(Reader $reader)
     {
         $this->reader = $reader;
-        $this->classMetadata = $classMetadata;
     }
 }

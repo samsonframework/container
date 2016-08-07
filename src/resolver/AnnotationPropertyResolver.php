@@ -24,10 +24,10 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
     {
         /** @var \ReflectionProperty $property */
         foreach ($classData->getProperties() as $property) {
-            $this->resolveClassPropertyAnnotations($property, $this->classMetadata);
+            $this->resolveClassPropertyAnnotations($property, $classMetadata);
         }
 
-        return $this->classMetadata;
+        return $classMetadata;
     }
 
     /**

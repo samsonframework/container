@@ -26,7 +26,7 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
             $this->resolveMethodAnnotations($method, $classMetadata);
         }
 
-        return $this->classMetadata;
+        return $classMetadata;
     }
 
     /**

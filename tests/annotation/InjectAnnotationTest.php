@@ -97,4 +97,16 @@ class InjectAnnotationTest extends TestCase
 
         static::assertEquals(Car::class, $propertyMetadata->dependency);
     }
+
+//    public function testPropertyServiceNameValue()
+//    {
+//        $inject = new Inject(['value' => 'car_service']);
+//        $classMetadata = new ClassMetadata();
+//        $classMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
+//        $propertyMetadata = new PropertyMetadata($classMetadata);
+//        $propertyMetadata->typeHint = 'Car';
+//        $inject->toPropertyMetadata($propertyMetadata);
+//
+//        static::assertEquals(Car::class, $propertyMetadata->dependency);
+//    }
 }

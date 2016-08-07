@@ -12,7 +12,7 @@ use samsonframework\container\tests\TestCase;
 
 class ServiceAnnotationTest extends TestCase
 {
-    public function testToMetadata()
+    public function testToClassMetadata()
     {
         $scope = new Service(['value' => CarService::class]);
         $metadata = new ClassMetadata();
