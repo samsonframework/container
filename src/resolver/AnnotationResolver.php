@@ -51,8 +51,11 @@ class AnnotationResolver implements Resolver
         $classMetadata->identifier = $identifier ?: uniqid(__CLASS__, true);
         $classMetadata->name = $classMetadata->identifier;
 
+        // Resolve class definition annotations
         $this->classResolver->resolve($classData, $classMetadata);
+        // Resolve class properties annotations
         $this->propertyResolver->resolve($classData, $classMetadata);
+        // Resolve class methods annotations
         $this->methodResolver->resolve($classData, $classMetadata);
 
         return $classMetadata;
