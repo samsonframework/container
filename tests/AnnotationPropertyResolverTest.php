@@ -28,9 +28,10 @@ class AnnotationPropertyResolverTest extends TestCase
         $this->resolver = new AnnotationPropertyResolver(new AnnotationReader(), $this->classMetadata);
     }
 
-    public function testResolve()
+    public function testInjectResolve()
     {
         new Inject(['']);
+
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());
 
