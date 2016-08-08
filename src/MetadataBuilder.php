@@ -11,6 +11,7 @@ use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
+use samsonphp\generator\Generator;
 
 /**
  * Class Container.
@@ -41,6 +42,9 @@ class MetadataBuilder
     /** @var Container */
     protected $diContainer;
 
+    /** @var Generator */
+    protected $generator;
+
     /**
      * Container constructor.
      *
@@ -51,12 +55,14 @@ class MetadataBuilder
     public function __construct(
         FileManagerInterface $fileManger,
         ResolverInterface $classResolver,
+        Generator $generator,
         Container $diContainer
     )
     {
         $this->diContainer = $diContainer;
         $this->fileManger = $fileManger;
         $this->classResolver = $classResolver;
+        $this->generator = $generator;
     }
 
     /**
@@ -148,10 +154,21 @@ class MetadataBuilder
     /**
      * Build container class.
      *
-     * @param string|null $containerClass
+     * @param string|null $containerClass Container class name
+     *
+     * @return string Generated Container class code
      */
-    public function build($containerClass = null)
+    public function build($containerClass = 'Container')
     {
+        $this->generator
+            ->multiComment([
+                'Application container',
+            ])
+            ->defClass($containerClass);
+
+        // Build dependency injection container function name
+        $diFunctionName = uniqid('container_');
+
         foreach ($this->classMetadata as $className => $classMetadata) {
             // Process constructor dependencies
             $constructorDeps = [];
@@ -159,12 +176,26 @@ class MetadataBuilder
                 $constructorDeps = $classMetadata->methodsMetadata['__construct']->dependencies;
             }
 
+            $dependencyName = $className;
+
             // If this class has services scope
             if (in_array($className, $this->scopes[self::SCOPE_SERVICES], true)) {
-                $this->diContainer->service($className, $constructorDeps, $classMetadata->name);
+                $this->diContainer->service($className, $constructorDeps, $dependencyName = $classMetadata->name);
             } else { // Handle not service classes dependencies
-                $this->diContainer->set($className, $constructorDeps, $classMetadata->name);
+                $this->diContainer->set($className, $constructorDeps, $dependencyName);
             }
+
+            $this->generator
+                ->defClassFunction('get' . str_replace(' ', '', ucwords(ucfirst(str_replace(['\\', '_'], ' ', $dependencyName)))))
+                ->newLine('return \\' . $diFunctionName . '(\'' . $dependencyName . '\');')
+                ->endClassFunction();
+
         }
+
+        // Build di container function and add to container class and return class code
+        return $this->generator
+            ->endClass()
+            ->newLine($this->diContainer->build($diFunctionName))
+            ->flush();
     }
 }
