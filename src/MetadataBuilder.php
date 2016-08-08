@@ -155,10 +155,10 @@ class MetadataBuilder
             }
 
             // If this class has services scope
-            if (in_array($className, $this->scopes[self::SCOPE_SERVICES])) {
-                $this->diContainer->service($className, $classMetadata->name, $constructorDependencies);
+            if (in_array($className, $this->scopes[self::SCOPE_SERVICES], true)) {
+                $this->diContainer->service($className, $constructorDependencies, $classMetadata->name);
             } else { // Handle not service classes dependencies
-                $this->diContainer->set($className, $classMetadata->name, $constructorDependencies);
+                $this->diContainer->set($className, $constructorDependencies, $classMetadata->name);
             }
         }
     }

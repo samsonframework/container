@@ -17,7 +17,6 @@ use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\CarService;
 use samsonframework\container\tests\classes\CarServiceWithInterface;
-use samsonframework\container\tests\classes\DriverInterface;
 use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\SlowDriver;
 use samsonframework\di\Container;
@@ -92,7 +91,12 @@ class MetadataBuilderTest extends TestCase
         new Service(['value' => 'service']);
 
         $this->container
-            ->loadFromClassNames([CarService::class, Car::class])
+            ->loadFromClassNames([
+                CarService::class,
+                Car::class,
+                FastDriver::class,
+                SlowDriver::class,
+            ])
             ->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
 
         // Compile dependency injection container function
@@ -100,7 +104,7 @@ class MetadataBuilderTest extends TestCase
         file_put_contents($path, '<?php ' . $this->diContainer->generateFunction(uniqid('container')));
         require $path;
 
-        static::assertEquals(Car::class, get_class($this->getProperty('car', $this->diContainer->get('car_service'))));
+        static::assertInstanceOf(Car::class, $this->getProperty('car', $this->diContainer->get('car_service')));
     }
 
     public function testBuildServiceConstructorWithInterfaceDependency()
@@ -110,7 +114,6 @@ class MetadataBuilderTest extends TestCase
         $this->container
             ->loadFromClassNames([
                 Car::class,
-                DriverInterface::class,
                 FastDriver::class,
                 SlowDriver::class,
                 CarServiceWithInterface::class
