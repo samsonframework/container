@@ -178,7 +178,10 @@ class MetadataBuilder
             ->commentVar('array', 'Loaded dependencies')
             ->defClassVar('$dependencies', 'protected', array_keys($this->classMetadata))
             ->commentVar('array', 'Loaded services')
-            ->defClassVar('$' . self::SCOPE_SERVICES, 'protected', $this->scopes[self::SCOPE_SERVICES]);
+            ->defClassVar('$' . self::SCOPE_SERVICES, 'protected', $this->scopes[self::SCOPE_SERVICES])
+            ->defClassFunction('logic', 'protected', ['$dependency'], ['Overridden dependency resolving function'])
+            ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
+            ->endClassFunction();
 
         foreach ($this->classMetadata as $className => $classMetadata) {
             $dependencyName = $className;
