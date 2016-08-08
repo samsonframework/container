@@ -200,6 +200,13 @@ class MetadataBuilder
             ->flush();
     }
 
+    /**
+     * Build dependency resolving function.
+     *
+     * @param string $functionName Function name
+     *
+     * @throws \InvalidArgumentException
+     */
     protected function buildDependencyResolver($functionName)
     {
         $inputVariable = '$aliasOrClassName';
@@ -212,9 +219,7 @@ class MetadataBuilder
         $this->generateConditions($inputVariable, false);
 
         // Add method not found
-        return $this->generator
-            ->endIfCondition()
-            ->endFunction();
+        $this->generator->endIfCondition()->endFunction();
     }
 
     /**
