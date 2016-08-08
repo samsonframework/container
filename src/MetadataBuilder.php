@@ -173,9 +173,7 @@ class MetadataBuilder
             ->text('<?php declare(strict_types = 1);')
             ->newLine()
             ->defNamespace($namespace)
-            ->multiComment([
-                'Application container',
-            ])
+            ->multiComment(['Application container'])
             ->defClass($containerClass, '\\' . Container::class)
             ->commentVar('array', 'Loaded dependencies')
             ->defClassVar('$dependencies', 'protected', array_keys($this->classMetadata))
