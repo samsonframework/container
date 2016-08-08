@@ -24,6 +24,9 @@ class MetadataBuilder
     /** Service classes scope name */
     const SCOPE_SERVICES = 'services';
 
+    /** Generated dependency injecttion resolving function name prefix */
+    const DI_FUNCTION_PREFIX = 'container';
+
     /** @var string[] Collection of available container scopes */
     protected $scopes = [
         self::SCOPE_CONTROLLER => [],
@@ -155,19 +158,25 @@ class MetadataBuilder
      * Build container class.
      *
      * @param string|null $containerClass Container class name
+     * @param string      $namespace      Name space
      *
      * @return string Generated Container class code
      */
-    public function build($containerClass = 'Container')
+    public function build($containerClass = 'Container', $namespace = '')
     {
+        // Build dependency injection container function name
+        $diFunctionName = uniqid(self::DI_FUNCTION_PREFIX);
+
         $this->generator
+            ->text('declare(strict_types = 1);')
+            ->newLine()
+            ->defNamespace($namespace)
             ->multiComment([
                 'Application container',
             ])
-            ->defClass($containerClass);
-
-        // Build dependency injection container function name
-        $diFunctionName = uniqid('container_');
+            ->defClass($containerClass, '\\' . Container::class)
+            ->commentVar('callable', 'Logic function')
+            ->defClassVar('$logicCallable', 'protected', $diFunctionName);
 
         foreach ($this->classMetadata as $className => $classMetadata) {
             // Process constructor dependencies
@@ -187,7 +196,7 @@ class MetadataBuilder
 
             $this->generator
                 ->defClassFunction('get' . str_replace(' ', '', ucwords(ucfirst(str_replace(['\\', '_'], ' ', $dependencyName)))))
-                ->newLine('return \\' . $diFunctionName . '(\'' . $dependencyName . '\');')
+                ->newLine('return ' . $diFunctionName . '(\'' . $dependencyName . '\');')
                 ->endClassFunction();
 
         }

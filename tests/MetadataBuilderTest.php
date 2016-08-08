@@ -127,7 +127,7 @@ class MetadataBuilderTest extends TestCase
                 SlowDriver::class,
                 CarServiceWithInterface::class
             ])
-            ->build('Container');
+            ->build('Container', 'DI');
 
         file_put_contents(__DIR__ . '/Container.php', '<?php' . $containerClass);
 
