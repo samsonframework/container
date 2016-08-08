@@ -250,8 +250,10 @@ class MetadataBuilder
                 $argumentsCount = count($constructorArguments);
                 $i = 0;
 
-                // Add tab to move declaration arguments
+                // Add indentation to move declaration arguments
                 $this->generator->tabs++;
+
+                // Process constructor arguments
                 foreach ($constructorArguments as $argument => $dependency) {
                     $this->buildResolverArgument($dependency);
 
@@ -260,6 +262,8 @@ class MetadataBuilder
                         $this->generator->text(',');
                     }
                 }
+
+                // Restore indentation
                 $this->generator->tabs--;
             }
 
