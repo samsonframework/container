@@ -31,5 +31,6 @@ class CarService
     public function __construct(Car $car, DriverInterface $driver)
     {
         $this->car = $car;
+        $this->driver = $driver;
     }
 }
