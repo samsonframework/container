@@ -159,10 +159,11 @@ class MetadataBuilder
      *
      * @param string|null $containerClass Container class name
      * @param string      $namespace      Name space
+     * @param string      $diFunctionName DI resolver function name
      *
      * @return string Generated Container class code
      */
-    public function build($containerClass = 'Container', $namespace = '')
+    public function build($containerClass = 'Container', $namespace = '', &$diFunctionName)
     {
         // Build dependency injection container function name
         $diFunctionName = uniqid(self::DI_FUNCTION_PREFIX);
