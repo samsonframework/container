@@ -5,6 +5,8 @@
  */
 namespace samsonframework\container\tests\classes;
 
+use samsonframework\container\annotation\InjectArgument;
+
 class Car
 {
     /** @var Wheel */
@@ -16,6 +18,18 @@ class Car
     /** @var Wheel */
     protected $backRightWheel;
 
-    /** @var FastDriver */
+    /** @var DriverInterface */
     protected $driver;
+
+    /**
+     * Car constructor.
+     *
+     * @param DriverInterface $driver
+     *
+     * @InjectArgument(driver="SlowDriver")
+     */
+    public function __construct(DriverInterface $driver)
+    {
+
+    }
 }

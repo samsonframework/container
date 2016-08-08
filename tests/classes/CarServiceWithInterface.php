@@ -11,9 +11,9 @@ use samsonframework\container\annotation\Service;
 /**
  * Car service class.
  *
- * @Service("car_service")
+ * @Service("car_service_with_interface")
  */
-class CarService
+class CarServiceWithInterface
 {
     /** @var Car */
     protected $car;
@@ -24,12 +24,15 @@ class CarService
     /**
      * CarService constructor.
      *
-     * @param Car $car
+     * @param Car             $car
+     * @param DriverInterface $driver
+     *
      * @InjectArgument(car="Car")
      * @InjectArgument(driver="FastDriver")
      */
     public function __construct(Car $car, DriverInterface $driver)
     {
         $this->car = $car;
+        $this->driver = $driver;
     }
 }

@@ -148,11 +148,18 @@ class MetadataBuilder
     public function build($containerClass = null)
     {
         foreach ($this->classMetadata as $className => $classMetadata) {
+            // Process constructor dependencies
+            $constructorDependencies = [];
+            if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
+                $constructorDependencies = $classMetadata->methodsMetadata['__construct']->dependencies;
+            }
+
+            // If this class has services scope
             if (in_array($className, $this->scopes[self::SCOPE_SERVICES])) {
-                $this->diContainer->service($className, $classMetadata->name);
+                $this->diContainer->service($className, $classMetadata->name, $constructorDependencies);
+            } else { // Handle not service classes dependencies
+                $this->diContainer->set($className, $classMetadata->name, $constructorDependencies);
             }
         }
-
-        $this->diContainer->get('car_service');
     }
 }
