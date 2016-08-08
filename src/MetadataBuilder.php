@@ -7,7 +7,6 @@
  */
 namespace samsonframework\container;
 
-use Interop\Container\ContainerInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
@@ -47,9 +46,13 @@ class MetadataBuilder
      *
      * @param FileManagerInterface $fileManger
      * @param ResolverInterface    $classResolver
-     * @param ContainerInterface   $diContainer
+     * @param Container            $diContainer
      */
-    public function __construct(FileManagerInterface $fileManger, ResolverInterface $classResolver, Container $diContainer)
+    public function __construct(
+        FileManagerInterface $fileManger,
+        ResolverInterface $classResolver,
+        Container $diContainer
+    )
     {
         $this->diContainer = $diContainer;
         $this->fileManger = $fileManger;
@@ -133,9 +136,11 @@ class MetadataBuilder
      */
     public function loadFromCode($php)
     {
-        // TODO: Consider writing cache file and require it
-        eval($php);
-        $this->loadFromClassNames($this->getDefinedClasses($php));
+        if (count($classes = $this->getDefinedClasses($php))) {
+            // TODO: Consider writing cache file and require it
+            eval($php);
+            $this->loadFromClassNames($classes);
+        }
 
         return $this;
     }
@@ -149,16 +154,16 @@ class MetadataBuilder
     {
         foreach ($this->classMetadata as $className => $classMetadata) {
             // Process constructor dependencies
-            $constructorDependencies = [];
+            $constructorDeps = [];
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
-                $constructorDependencies = $classMetadata->methodsMetadata['__construct']->dependencies;
+                $constructorDeps = $classMetadata->methodsMetadata['__construct']->dependencies;
             }
 
             // If this class has services scope
             if (in_array($className, $this->scopes[self::SCOPE_SERVICES], true)) {
-                $this->diContainer->service($className, $constructorDependencies, $classMetadata->name);
+                $this->diContainer->service($className, $constructorDeps, $classMetadata->name);
             } else { // Handle not service classes dependencies
-                $this->diContainer->set($className, $constructorDependencies, $classMetadata->name);
+                $this->diContainer->set($className, $constructorDeps, $classMetadata->name);
             }
         }
     }

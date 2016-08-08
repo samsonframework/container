@@ -101,7 +101,7 @@ class MetadataBuilderTest extends TestCase
 
         // Compile dependency injection container function
         $path = __DIR__ . '/container1.php';
-        file_put_contents($path, '<?php ' . $this->diContainer->generateFunction(uniqid('container')));
+        file_put_contents($path, '<?php ' . $this->diContainer->build(uniqid('container')));
         require $path;
 
         static::assertInstanceOf(Car::class, $this->getProperty('car', $this->diContainer->get('car_service')));
@@ -122,7 +122,7 @@ class MetadataBuilderTest extends TestCase
 
         // Compile dependency injection container function
         $path = __DIR__ . '/container2.php';
-        file_put_contents($path, '<?php ' . $this->diContainer->generateFunction(uniqid('container')));
+        file_put_contents($path, '<?php ' . $this->diContainer->build(uniqid('container')));
         require $path;
 
         static::assertEquals(Car::class, get_class($this->getProperty('car', $this->diContainer->get('car_service_with_interface'))));
