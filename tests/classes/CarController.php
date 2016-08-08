@@ -27,7 +27,7 @@ class CarController
     public $car;
 
     /**
-     * @var DriverInterface
+     * @var FastDriver
      * @Inject("FastDriver")
      */
     public $fastDriver;
@@ -48,8 +48,17 @@ class CarController
      *
      * @return FastDriver
      */
-    public function showAction(FastDriver $fastDriver, SlowDriver $slowDriver)
+    public function showAction()
     {
         return $fastDriver;
+    }
+
+    /**
+     * @param Leg $leg
+     * @InjectArgument(leg="Leg")
+     */
+    public function stopCarAction(Leg $leg)
+    {
+        $this->fastDriver->stopCar($leg);
     }
 }

@@ -7,5 +7,11 @@ namespace samsonframework\container\tests\classes;
 
 class FastDriver implements DriverInterface
 {
-
+    /**
+     * @param Leg $leg
+     */
+    public function stopCar(Leg $leg)
+    {
+        $leg->pressPedal();
+    }
 }

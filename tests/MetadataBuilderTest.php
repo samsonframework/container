@@ -95,6 +95,7 @@ class MetadataBuilderTest extends TestCase
         $containerClass = $this->container
             ->loadFromClassNames([
                 Car::class,
+                CarController::class,
                 FastDriver::class,
                 SlowDriver::class,
                 CarServiceWithInterface::class

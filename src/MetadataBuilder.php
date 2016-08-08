@@ -184,7 +184,7 @@ class MetadataBuilder
             ->endClassFunction();
 
         foreach ($this->classMetadata as $className => $classMetadata) {
-            $dependencyName = $className;
+            $dependencyName = $classMetadata->name ?? $className;
 
             // Generate camel case getter method
             $camelMethodName = 'get' . str_replace(' ', '', ucwords(ucfirst(str_replace(['\\', '_'], ' ', $dependencyName))));
