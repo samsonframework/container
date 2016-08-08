@@ -8,6 +8,7 @@
 namespace samsonframework\container;
 
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
@@ -215,7 +216,7 @@ class MetadataBuilder
         $inputVariable = '$aliasOrClassName';
         $this->generator
             ->defClassFunction($functionName, 'protected', [$inputVariable], ['Dependency resolving function'])
-            ->defVar('static $services')
+            ->defVar('static ' . self::DI_FUNCTION_SERVICES . ' = [];')
             ->newLine();
 
         // Generate all container and delegate conditions
@@ -243,9 +244,12 @@ class MetadataBuilder
                 $this->buildResolverCondition($inputVariable, $className, $classMetadata->name)
             );
 
-            $this->generator->newLine('return ');
+            $staticContainerName = self::DI_FUNCTION_SERVICES . '[\'' . $className . '\']';
 
-            $this->buildResolvingDeclaration($className, $classMetadata->name);
+            // Check if dependency was instantiated
+            $this->generator->defIfCondition('!array_key_exists(' . $inputVariable . ', ' . self::DI_FUNCTION_SERVICES . ')');
+            $this->generator->newLine($staticContainerName . ' = ');
+            $this->buildResolvingClassDeclaration($className);
 
             // Process constructor dependencies
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
@@ -273,9 +277,62 @@ class MetadataBuilder
             // Close declaration block
             $this->generator->newLine(');');
 
+            // Process property dependencies
+            if ($propertyCount = count($classMetadata->propertiesMetadata)) {
+                $isCreatedReflectionClass = false;
+                // Process constructor arguments
+                foreach ($classMetadata->propertiesMetadata as $property) {
+                    // If such property has the dependency
+                    if ($property->dependency) {
+                        // Set value via refection
+                        $this->buildResolverPropertyDeclaration(
+                            $className,
+                            $property->name,
+                            $property->dependency,
+                            $staticContainerName,
+                            $isCreatedReflectionClass
+                        );
+                    }
+                }
+            }
+
+            $this->generator->endIfCondition();
+            $this->generator->newLine('return ' . $staticContainerName . ';');
+
+
             // Set flag that condition is started
             $started = true;
         }
+    }
+
+    /**
+     * Build resolving property declaration.
+     *
+     * @param string $className
+     * @param string $propertyName
+     * @param string $dependency
+     * @param string $staticContainerName
+     * @param bool $isCreatedReflectionClass
+     *
+     * @return string
+     */
+    protected function buildResolverPropertyDeclaration(
+        string $className,
+        string $propertyName,
+        string $dependency,
+        string $staticContainerName,
+        bool &$isCreatedReflectionClass
+    ) {
+        if (!$isCreatedReflectionClass) {
+            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+            $isCreatedReflectionClass = true;
+        }
+        $this->generator->newLine('$reflectionClass->getProperty(\'' . $propertyName. '\')->setAccessible(true);');
+        $this->generator->newLine('$reflectionClass->getProperty(\'' . $propertyName. '\')->setValue(' . $staticContainerName . ', ');
+        $this->generator->tabs++;
+        $this->buildResolverArgument($dependency);
+        $this->generator->tabs--;
+        $this->generator->text(');');
     }
 
     /**
@@ -297,42 +354,6 @@ class MetadataBuilder
         }
 
         return $condition;
-    }
-
-    /**
-     * Build resolving function declaration block.
-     *
-     * @param string $className Service class name for new instance creation
-     * @param string $alias     Service alias for static storage and retrieval
-     */
-    protected function buildResolvingDeclaration(string $className, string $alias = null)
-    {
-        if (in_array($className, $this->scopes[self::SCOPE_SERVICES], true)) {
-            $this->buildResolvingServiceDeclaration($className, $alias);
-        } else {
-            $this->buildResolvingClassDeclaration($className);
-        }
-    }
-
-    /**
-     * Build resolving function service block.
-     *
-     * @param string $alias     Service alias for static storage and retrieval
-     * @param string $className Service class name for new instance creation
-     */
-    protected function buildResolvingServiceDeclaration(string $className, string $alias = null)
-    {
-        // Use class name if alias is not passed
-        $alias = $alias ?? $className;
-
-        // Start service search or creation
-        $this->generator
-            ->text('array_key_exists(\'' . $alias . '\', ' . self::DI_FUNCTION_SERVICES . ')')
-            ->newLine('? ' . self::DI_FUNCTION_SERVICES . '[\'' . $alias . '\']')
-            ->newLine(': ' . self::DI_FUNCTION_SERVICES . '[\'' . $alias . '\'] = ');
-
-        // Regular class creation
-        $this->buildResolvingClassDeclaration($className);
     }
 
     /**

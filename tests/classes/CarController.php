@@ -41,7 +41,7 @@ class CarController
     /**
      * @Route("/show/", name="car_show")
      * @InjectArgument(fastDriver="FastDriver")
-     * * @InjectArgument(slowDriver="SlowDriver")
+     * @InjectArgument(slowDriver="SlowDriver")
      * @return FastDriver
      */
     public function showAction(FastDriver $fastDriver, SlowDriver $slowDriver)

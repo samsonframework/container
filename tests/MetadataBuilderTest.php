@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\tests;
 
+use DI\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\Service;
 use samsonframework\container\MetadataBuilder;
@@ -107,8 +108,7 @@ class MetadataBuilderTest extends TestCase
 //        // Compile dependency injection container function
 //        $path = __DIR__ . '/container2.php';
 //        file_put_contents($path, '<?php ' . $this->diContainer->build(uniqid('container')));
-//        require $path;
-//
+
 //        static::assertEquals(Car::class, get_class($this->getProperty('car', $this->diContainer->get('car_service_with_interface'))));
 //        static::assertEquals(FastDriver::class, get_class($this->getProperty('driver', $this->diContainer->get('car_service_with_interface'))));
     }
