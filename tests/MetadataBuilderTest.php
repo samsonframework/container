@@ -15,11 +15,9 @@ use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
-use samsonframework\container\tests\classes\CarService;
 use samsonframework\container\tests\classes\CarServiceWithInterface;
 use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\SlowDriver;
-use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
 use samsonphp\generator\Generator;
 
@@ -30,9 +28,6 @@ class MetadataBuilderTest extends TestCase
 
     /** @var ResolverInterface */
     protected $resolver;
-
-    /** @var Container */
-    protected $diContainer;
 
     /** @var FileManagerInterface */
     protected $fileManager;
@@ -51,13 +46,11 @@ class MetadataBuilderTest extends TestCase
         );
         $this->generator = new Generator();
         $this->fileManager = $this->createMock(FileManagerInterface::class);
-        $this->diContainer = new \samsonframework\di\Container($this->generator);//$this->createMock(Container::class);
 
         $this->container = new MetadataBuilder(
             $this->fileManager,
             $this->resolver,
-            $this->generator,
-            $this->diContainer
+            $this->generator
         );
     }
 
@@ -95,27 +88,6 @@ class MetadataBuilderTest extends TestCase
         );
     }
 
-    public function testBuildServiceConstructorWithClassDependency()
-    {
-        new Service(['value' => 'service']);
-
-        $this->container
-            ->loadFromClassNames([
-                CarService::class,
-                Car::class,
-                FastDriver::class,
-                SlowDriver::class,
-            ])
-            ->build(__DIR__ . '/Container' . uniqid(__CLASS__, true) . '.php');
-
-        // Compile dependency injection container function
-        $path = __DIR__ . '/container1.php';
-        file_put_contents($path, '<?php ' . $this->diContainer->build(uniqid('container')));
-        require $path;
-
-        static::assertInstanceOf(Car::class, $this->getProperty('car', $this->diContainer->get('car_service')));
-    }
-
     public function testBuildServiceConstructorWithInterfaceDependency()
     {
         new Service(['value' => 'service']);
@@ -129,7 +101,7 @@ class MetadataBuilderTest extends TestCase
             ])
             ->build('Container', 'DI');
 
-        file_put_contents(__DIR__ . '/Container.php', '<?php' . $containerClass);
+        file_put_contents(__DIR__ . '/Container.php', $containerClass);
 
 //        // Compile dependency injection container function
 //        $path = __DIR__ . '/container2.php';

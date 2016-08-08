@@ -25,7 +25,7 @@ class AnnotationClassResolver extends AbstractAnnotationResolver implements Anno
         // Create and fill class metadata base fields
         $classMetadata->className = $classData->name;
         $classMetadata->nameSpace = $classData->getNamespaceName();
-        $classMetadata->identifier = uniqid(__CLASS__, true);
+        $classMetadata->identifier = $classData->name;
         $classMetadata->name = $classMetadata->identifier;
 
         $this->resolveClassAnnotations($classData, $classMetadata);

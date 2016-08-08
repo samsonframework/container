@@ -21,6 +21,7 @@
     "samsonphp/generator": "*",
     "samsonframework/base": "*",
     "samsonframework/di": "*",
+    "container-interop/container-interop": "^1.1",
     "doctrine/annotations": "*"
   },
   "require-dev": {
