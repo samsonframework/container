@@ -192,7 +192,7 @@ class ContainerBuilder
             $camelMethodName = 'get' . str_replace(' ', '', ucwords(ucfirst(str_replace(['\\', '_'], ' ', $dependencyName))));
 
             $this->generator
-                ->defClassFunction($camelMethodName, 'public', [], ['@return \\' . $dependencyName . ' Get ' . $dependencyName . ' instance'])
+                ->defClassFunction($camelMethodName, 'public', [], ['@return \\' . $className . ' Get ' . $dependencyName . ' instance'])
                 ->newLine('return $this->' . $this->resolverFunction . '(\'' . $dependencyName . '\');')
                 ->endClassFunction();
         }
