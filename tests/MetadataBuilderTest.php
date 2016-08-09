@@ -5,10 +5,9 @@
  */
 namespace samsonframework\container\tests;
 
-use DI\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\Service;
-use samsonframework\container\MetadataBuilder;
+use samsonframework\container\ContainerBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
@@ -24,7 +23,7 @@ use samsonphp\generator\Generator;
 
 class MetadataBuilderTest extends TestCase
 {
-    /** @var MetadataBuilder */
+    /** @var ContainerBuilder */
     protected $container;
 
     /** @var ResolverInterface */
@@ -48,7 +47,7 @@ class MetadataBuilderTest extends TestCase
         $this->generator = new Generator();
         $this->fileManager = $this->createMock(FileManagerInterface::class);
 
-        $this->container = new MetadataBuilder(
+        $this->container = new ContainerBuilder(
             $this->fileManager,
             $this->resolver,
             $this->generator
@@ -72,7 +71,7 @@ class MetadataBuilderTest extends TestCase
 
         static::assertEquals(
             true,
-            in_array(CarController::class, $this->getProperty('scopes', $this->container)[MetadataBuilder::SCOPE_CONTROLLER])
+            in_array(CarController::class, $this->getProperty('scopes', $this->container)[ContainerBuilder::SCOPE_CONTROLLER])
         );
         static::assertArrayHasKey(
             CarController::class,

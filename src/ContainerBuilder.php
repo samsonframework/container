@@ -18,7 +18,7 @@ use samsonphp\generator\Generator;
 /**
  * Class Container.
  */
-class MetadataBuilder
+class ContainerBuilder
 {
     /** Controller classes scope name */
     const SCOPE_CONTROLLER = 'controllers';
@@ -293,22 +293,10 @@ class MetadataBuilder
             $reflectionVariable = '$reflectionClass';
 
             /** @var MethodMetadata[] Gather only valid method for container */
-            $classValidMethods = [];
-            foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
-                // Skip constructor method and empty dependencies
-                if ($methodName !== '__construct' && count($methodMetadata->dependencies) > 0) {
-                    $classValidMethods[$methodName] = $methodMetadata;
-                }
-            }
+            $classValidMethods = $this->getValidClassMethodsMetadata($classMetadata->methodsMetadata);
 
             /** @var PropertyMetadata[] Gather only valid property for container */
-            $classValidProperties = [];
-            foreach ($classMetadata->propertiesMetadata as $propertyName => $propertyMetadata) {
-                // Skip constructor method and empty dependencies
-                if ($propertyMetadata->dependency) {
-                    $classValidProperties[$propertyName] = $propertyMetadata;
-                }
-            }
+            $classValidProperties = $this->getValidClassPropertiesMetadata($classMetadata->propertiesMetadata);
 
             /**
              * Iterate all properties and create internal scope reflection class instance if
@@ -424,6 +412,48 @@ class MetadataBuilder
         } elseif (is_array($argument)) { // Dependency value is array
             $this->generator->$textFunction()->arrayValue($argument);
         }
+    }
+
+    /**
+     * Get valid class methods metadata.
+     *
+     * @param MethodMetadata[] $classMethodsMetadata All class methods metadata
+     *
+     * @return array Valid class methods metadata
+     */
+    protected function getValidClassMethodsMetadata(array $classMethodsMetadata)
+    {
+        /** @var MethodMetadata[] Gather only valid method for container */
+        $classValidMethods = [];
+        foreach ($classMethodsMetadata as $methodName => $methodMetadata) {
+            // Skip constructor method and empty dependencies
+            if ($methodName !== '__construct' && count($methodMetadata->dependencies) > 0) {
+                $classValidMethods[$methodName] = $methodMetadata;
+            }
+        }
+
+        return $classValidMethods;
+    }
+
+    /**
+     * Get valid class properties metadata.
+     *
+     * @param PropertyMetadata[] $classPropertiesMetadata All class properties metadata
+     *
+     * @return array Valid class properties metadata
+     */
+    protected function getValidClassPropertiesMetadata(array $classPropertiesMetadata)
+    {
+        /** @var PropertyMetadata[] Gather only valid property for container */
+        $classValidProperties = [];
+        foreach ($classPropertiesMetadata as $propertyName => $propertyMetadata) {
+            // Skip constructor method and empty dependencies
+            if ($propertyMetadata->dependency) {
+                $classValidProperties[$propertyName] = $propertyMetadata;
+            }
+        }
+
+        return $classValidProperties;
     }
 
     /**

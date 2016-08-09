@@ -7,7 +7,7 @@ namespace samsonframework\container\tests;
 
 use DI\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\MetadataBuilder;
+use samsonframework\container\ContainerBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
@@ -38,7 +38,7 @@ class PropertyBuilderTest extends TestCase
 
         $generator = new Generator();
 
-        $container = new MetadataBuilder(
+        $container = new ContainerBuilder(
             $fileManager,
             $resolver,
             $generator

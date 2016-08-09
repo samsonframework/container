@@ -6,8 +6,8 @@
 namespace samsonframework\container\tests\annotation;
 
 use samsonframework\container\annotation\Service;
+use samsonframework\container\ContainerBuilder;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\MetadataBuilder;
 use samsonframework\container\tests\classes\CarService;
 use samsonframework\container\tests\TestCase;
 
@@ -26,6 +26,6 @@ class ServiceAnnotationTest extends TestCase
         $scope = new Service(['value' => CarService::class]);
         $metadata = new ClassMetadata();
         $scope->toClassMetadata($metadata);
-        static::assertEquals(true, in_array(MetadataBuilder::SCOPE_SERVICES, $metadata->scopes, true));
+        static::assertEquals(true, in_array(ContainerBuilder::SCOPE_SERVICES, $metadata->scopes, true));
     }
 }
