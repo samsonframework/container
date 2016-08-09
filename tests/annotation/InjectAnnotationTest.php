@@ -28,7 +28,10 @@ class InjectAnnotationTest extends TestCase
     public function testPropertyWithoutTypeHint()
     {
         $inject = new Inject(['value' => Car::class]);
-        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $classMetadata = new ClassMetadata();
+        $classMetadata->className = Car::class;
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $inject->toPropertyMetadata($propertyMetadata);
 
         static::assertEquals(Car::class, $propertyMetadata->dependency);
@@ -49,7 +52,10 @@ class InjectAnnotationTest extends TestCase
     public function testPropertyWithClassNameWithInterfaceTypeHint()
     {
         $inject = new Inject(['value' => FastDriver::class]);
-        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $classMetadata = new ClassMetadata();
+        $classMetadata->className = Car::class;
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $propertyMetadata->typeHint = DriverInterface::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
@@ -59,7 +65,10 @@ class InjectAnnotationTest extends TestCase
     public function testPropertyWithoutClassNameWithTypeHint()
     {
         $inject = new Inject(['value' => '']);
-        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $classMetadata = new ClassMetadata();
+        $classMetadata->className = Car::class;
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $propertyMetadata->typeHint = FastDriver::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
@@ -69,7 +78,10 @@ class InjectAnnotationTest extends TestCase
     public function testPropertyWithNamespaceClassNameWithSlash()
     {
         $inject = new Inject(['value' => '\\' . FastDriver::class]);
-        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $classMetadata = new ClassMetadata();
+        $classMetadata->className = Car::class;
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $propertyMetadata->typeHint = FastDriver::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
@@ -79,7 +91,10 @@ class InjectAnnotationTest extends TestCase
     public function testPropertyWithNamespaceInheritance()
     {
         $inject = new Inject(['value' => Car::class]);
-        $propertyMetadata = new PropertyMetadata(new ClassMetadata());
+        $classMetadata = new ClassMetadata();
+        $classMetadata->className = Car::class;
+        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $propertyMetadata->typeHint = Car::class;
         $inject->toPropertyMetadata($propertyMetadata);
 
@@ -91,7 +106,9 @@ class InjectAnnotationTest extends TestCase
         $inject = new Inject(['value' => 'Car']);
         $classMetadata = new ClassMetadata();
         $classMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
+        $classMetadata->className = Car::class;
         $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata->name = 'driver';
         $propertyMetadata->typeHint = 'Car';
         $inject->toPropertyMetadata($propertyMetadata);
 

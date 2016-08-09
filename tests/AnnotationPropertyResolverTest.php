@@ -34,6 +34,7 @@ class AnnotationPropertyResolverTest extends TestCase
 
         $reflectionClass = new \ReflectionClass(tests\CarController::class);
         $this->classMetadata->nameSpace = ($reflectionClass->getNamespaceName());
+        $this->classMetadata->className = (tests\CarController::class);
 
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
         $propertyMetadata = $classMetadata->propertiesMetadata;

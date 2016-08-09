@@ -18,6 +18,9 @@ class PropertyMetadata
     /** @var int Property modifiers */
     public $modifiers;
 
+    /** @var bool Flag that property is public */
+    public $isPublic;
+
     /** @var string Property typeHint from typeHint hint */
     public $typeHint;
 
