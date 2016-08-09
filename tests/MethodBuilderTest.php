@@ -7,13 +7,11 @@ namespace samsonframework\container\tests;
 
 use DI\Container;
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\annotation\Service;
 use samsonframework\container\MetadataBuilder;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
-use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\CarServiceWithInterface;
@@ -67,9 +65,11 @@ class MethodBuilderTest extends TestCase
 
     public function testExistingMethod()
     {
-        static::assertEquals(
-            true,
-            $this->getProperty('leg', $this->container->getCarServiceWithInterface()) instanceof Leg
-        );
+        static::assertInstanceOf(Leg::class, $this->getProperty('leg', $this->container->getCarServiceWithInterface()));
+    }
+
+    public function testMethodsWithoutDependencyIgnorance()
+    {
+        static::assertNull($this->getProperty('noInjection', $this->container->getCarServiceWithInterface()));
     }
 }

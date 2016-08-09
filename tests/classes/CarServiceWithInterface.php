@@ -24,6 +24,9 @@ class CarServiceWithInterface
     /** @var  Leg */
     protected $leg;
 
+    /** @var  NoTypehint */
+    protected $noInjection;
+
     /**
      * CarService constructor.
      *
