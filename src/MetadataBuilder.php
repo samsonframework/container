@@ -288,12 +288,6 @@ class MetadataBuilder
             $argumentsCount ? $this->generator->newLine(');') : $this->generator->text(');');
             $this->generator->newLine();
 
-            // Get class properties
-            $propertyCount = count($classMetadata->propertiesMetadata);
-
-            // Get class methods count
-            $methodCount = count($classMetadata->methodsMetadata);
-
             // Internal scope reflection variable
             $reflectionVariable = '$reflectionClass';
 
