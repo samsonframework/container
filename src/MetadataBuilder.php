@@ -457,7 +457,7 @@ class MetadataBuilder
             $this->generator
                 ->decreaseIndentation()
                 ->newLine(');')
-                //->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(false);')
+                ->newLine('$property->setAccessible(false);')
                 ->newLine();
         }
     }
