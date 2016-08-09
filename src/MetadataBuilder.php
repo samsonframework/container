@@ -9,7 +9,6 @@ namespace samsonframework\container;
 
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
@@ -217,7 +216,7 @@ class MetadataBuilder
         $inputVariable = '$aliasOrClassName';
         $this->generator
             ->defClassFunction($functionName, 'protected', [$inputVariable], ['Dependency resolving function'])
-            ->defVar('static ' . self::DI_FUNCTION_SERVICES . ' = [];')
+            ->defVar('static ' . self::DI_FUNCTION_SERVICES . ' = []')
             ->newLine();
 
         // Generate all container and delegate conditions
@@ -245,14 +244,24 @@ class MetadataBuilder
                 $this->buildResolverCondition($inputVariable, $className, $classMetadata->name)
             );
 
-            $staticContainerName = self::DI_FUNCTION_SERVICES . '[\'' . $className . '\']';
+            // Define if this class has service scope
+            $isService = in_array($className, $this->scopes[self::SCOPE_SERVICES], true);
 
-            // Check if dependency was instantiated
-            $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', ' . self::DI_FUNCTION_SERVICES . ')');
+            // Define class or service variable
+            $staticContainerName = $isService
+                ? self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
+                : '$temp';
+
+            if ($isService) {
+                // Check if dependency was instantiated
+                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', ' . self::DI_FUNCTION_SERVICES . ')');
+            }
+
             $this->generator->newLine($staticContainerName . ' = ');
             $this->buildResolvingClassDeclaration($className);
 
             // Process constructor dependencies
+            $argumentsCount = 0;
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
                 $constructorArguments = $classMetadata->methodsMetadata['__construct']->dependencies;
                 $argumentsCount = count($constructorArguments);
@@ -275,8 +284,9 @@ class MetadataBuilder
                 $this->generator->tabs--;
             }
 
-            // Close declaration block
-            $this->generator->newLine(');');
+            // Close declaration block, multiline if we have dependencies
+            $argumentsCount ? $this->generator->newLine(');') : $this->generator->text(');');
+            $this->generator->newLine();
 
             // Process property dependencies
             if ($propertyCount = count($classMetadata->propertiesMetadata)) {
@@ -299,7 +309,6 @@ class MetadataBuilder
 
             // Process method dependencies
             if (count($classMetadata->methodsMetadata)) {
-
                 /**
                  * Iterate methods
                  * @var string $methodName
@@ -342,43 +351,15 @@ class MetadataBuilder
                 }
             }
 
-            $this->generator->endIfCondition();
+            if ($isService) {
+                $this->generator->endIfCondition();
+            }
+
             $this->generator->newLine('return ' . $staticContainerName . ';');
 
             // Set flag that condition is started
             $started = true;
         }
-    }
-
-    /**
-     * Build resolving property declaration.
-     *
-     * @param string $className
-     * @param string $propertyName
-     * @param string $dependency
-     * @param string $staticContainerName
-     * @param bool $isCreatedReflectionClass
-     *
-     * @return string
-     */
-    protected function buildResolverPropertyDeclaration(
-        string $className,
-        string $propertyName,
-        string $dependency,
-        string $staticContainerName,
-        bool &$isCreatedReflectionClass
-    ) {
-        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
-        if (!$isCreatedReflectionClass) {
-            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
-            $isCreatedReflectionClass = true;
-        }
-        $this->generator->newLine('$reflectionClass->getProperty(\'' . $propertyName. '\')->setAccessible(true);');
-        $this->generator->newLine('$reflectionClass->getProperty(\'' . $propertyName. '\')->setValue(' . $staticContainerName . ', ');
-        $this->generator->tabs++;
-        $this->buildResolverArgument($dependency);
-        $this->generator->tabs--;
-        $this->generator->text(');');
     }
 
     /**
@@ -428,5 +409,46 @@ class MetadataBuilder
         } elseif (is_array($argument)) { // Dependency value is array
             $this->generator->newLine()->arrayValue($argument);
         }
+    }
+
+    /**
+     * Build resolving property declaration.
+     *
+     * @param string $className
+     * @param string $propertyName
+     * @param string $dependency
+     * @param string $staticContainerName
+     * @param bool   $isCreatedReflectionClass
+     *
+     * @return string
+     */
+    protected function buildResolverPropertyDeclaration(
+        string $className,
+        string $propertyName,
+        string $dependency,
+        string $staticContainerName,
+        bool &$isCreatedReflectionClass
+    )
+    {
+        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
+        if (!$isCreatedReflectionClass) {
+            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+            $isCreatedReflectionClass = true;
+        }
+
+        $this->generator
+            ->comment('Inject dependency for $' . $propertyName)
+            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(true);')
+            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setValue(')
+            ->increaseIndentation()
+            ->newLine($staticContainerName . ',');
+
+        $this->buildResolverArgument($dependency);
+
+        $this->generator
+            ->decreaseIndentation()
+            ->newLine(');')
+            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(false);')
+            ->newLine();
     }
 }
