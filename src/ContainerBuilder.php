@@ -248,6 +248,12 @@ class ContainerBuilder
             // Define if this class has service scope
             $isService = in_array($className, $this->scopes[self::SCOPE_SERVICES], true);
 
+            /** @var MethodMetadata[] Gather only valid method for container */
+            $classValidMethods = $this->getValidClassMethodsMetadata($classMetadata->methodsMetadata);
+
+            /** @var PropertyMetadata[] Gather only valid property for container */
+            $classValidProperties = $this->getValidClassPropertiesMetadata($classMetadata->propertiesMetadata);
+
             // Define class or service variable
             $staticContainerName = $isService
                 ? self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
@@ -258,79 +264,52 @@ class ContainerBuilder
                 $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', ' . self::DI_FUNCTION_SERVICES . ')');
             }
 
-            $this->generator->newLine($staticContainerName . ' = ');
-            $this->buildResolvingClassDeclaration($className);
+            if (count($classValidMethods) || count($classValidProperties)) {
+                $this->generator->newLine($staticContainerName . ' = ');
+                $this->buildResolvingClassDeclaration($className);
+                $this->buildConstructorDependencies($classMetadata->methodsMetadata);
 
-            // Process constructor dependencies
-            $argumentsCount = 0;
-            if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
-                $constructorArguments = $classMetadata->methodsMetadata['__construct']->dependencies;
-                $argumentsCount = count($constructorArguments);
-                $i = 0;
+                // Internal scope reflection variable
+                $reflectionVariable = '$reflectionClass';
 
-                // Add indentation to move declaration arguments
-                $this->generator->tabs++;
+                $this->buildReflectionClass($className, $classValidProperties, $classValidMethods, $reflectionVariable);
 
-                // Process constructor arguments
-                foreach ($constructorArguments as $argument => $dependency) {
-                    $this->buildResolverArgument($dependency);
-
-                    // Add comma if this is not last dependency
-                    if (++$i < $argumentsCount) {
-                        $this->generator->text(',');
+                // Process class properties
+                foreach ($classValidProperties as $property) {
+                    // If such property has the dependency
+                    if ($property->dependency) {
+                        // Set value via refection
+                        $this->buildResolverPropertyDeclaration(
+                            $property->name,
+                            $property->dependency,
+                            $staticContainerName,
+                            $reflectionVariable,
+                            $property->isPublic
+                        );
                     }
                 }
 
-                // Restore indentation
-                $this->generator->tabs--;
-            }
-
-            // Close declaration block, multiline if we have dependencies
-            $argumentsCount ? $this->generator->newLine(');') : $this->generator->text(');');
-            $this->generator->newLine();
-
-            // Internal scope reflection variable
-            $reflectionVariable = '$reflectionClass';
-
-            /** @var MethodMetadata[] Gather only valid method for container */
-            $classValidMethods = $this->getValidClassMethodsMetadata($classMetadata->methodsMetadata);
-
-            /** @var PropertyMetadata[] Gather only valid property for container */
-            $classValidProperties = $this->getValidClassPropertiesMetadata($classMetadata->propertiesMetadata);
-
-            $this->buildReflectionClass($className, $classValidProperties, $classValidMethods, $reflectionVariable);
-
-            // Process class properties
-            foreach ($classValidProperties as $property) {
-                // If such property has the dependency
-                if ($property->dependency) {
-                    // Set value via refection
-                    $this->buildResolverPropertyDeclaration(
-                        $property->name,
-                        $property->dependency,
+                /** @var MethodMetadata $methodMetadata */
+                foreach ($classValidMethods as $methodName => $methodMetadata) {
+                    $this->buildResolverMethodDeclaration(
+                        $methodMetadata->dependencies,
+                        $methodName,
                         $staticContainerName,
                         $reflectionVariable,
-                        $property->isPublic
+                        $methodMetadata->isPublic
                     );
                 }
-            }
 
-            /** @var MethodMetadata $methodMetadata */
-            foreach ($classValidMethods as $methodName => $methodMetadata) {
-                $this->buildResolverMethodDeclaration(
-                    $methodMetadata->dependencies,
-                    $methodName,
-                    $staticContainerName,
-                    $reflectionVariable,
-                    $methodMetadata->isPublic
-                );
-            }
+                if ($isService) {
+                    $this->generator->endIfCondition();
+                }
 
-            if ($isService) {
-                $this->generator->endIfCondition();
+                $this->generator->newLine()->newLine('return ' . $staticContainerName . ';');
+            } else {
+                $this->generator->newLine('return ' . $staticContainerName . ' = ');
+                $this->buildResolvingClassDeclaration($className);
+                $this->buildConstructorDependencies($classMetadata->methodsMetadata);
             }
-
-            $this->generator->newLine()->newLine('return ' . $staticContainerName . ';');
 
             // Set flag that condition is started
             $started = true;
@@ -356,34 +335,6 @@ class ContainerBuilder
         }
 
         return $condition;
-    }
-
-    /**
-     * Build resolving function class block.
-     *
-     * @param string $className Class name for new instance creation
-     */
-    protected function buildResolvingClassDeclaration(string $className)
-    {
-        $this->generator->text('new \\' . ltrim($className, '\\') . '(');
-    }
-
-    /**
-     * Build resolving function dependency argument.
-     *
-     * @param mixed $argument Dependency argument
-     */
-    protected function buildResolverArgument($argument, $textFunction = 'newLine')
-    {
-        // This is a dependency which invokes resolving function
-        if (array_key_exists($argument, $this->classMetadata)) {
-            // Call container logic for this dependency
-            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
-        } elseif (is_string($argument)) { // String variable
-            $this->generator->$textFunction()->stringValue($argument);
-        } elseif (is_array($argument)) { // Dependency value is array
-            $this->generator->$textFunction()->arrayValue($argument);
-        }
     }
 
     /**
@@ -426,6 +377,69 @@ class ContainerBuilder
         }
 
         return $classValidProperties;
+    }
+
+    /**
+     * Build resolving function class block.
+     *
+     * @param string $className Class name for new instance creation
+     */
+    protected function buildResolvingClassDeclaration(string $className)
+    {
+        $this->generator->text('new \\' . ltrim($className, '\\') . '(');
+    }
+
+    /**
+     * Build constructor arguments injection.
+     *
+     * @param MethodMetadata[] $methodsMetaData
+     */
+    protected function buildConstructorDependencies(array $methodsMetaData)
+    {
+        // Process constructor dependencies
+        $argumentsCount = 0;
+        if (array_key_exists('__construct', $methodsMetaData)) {
+            $constructorArguments = $methodsMetaData['__construct']->dependencies;
+            $argumentsCount = count($constructorArguments);
+            $i = 0;
+
+            // Add indentation to move declaration arguments
+            $this->generator->tabs++;
+
+            // Process constructor arguments
+            foreach ($constructorArguments as $argument => $dependency) {
+                $this->buildResolverArgument($dependency);
+
+                // Add comma if this is not last dependency
+                if (++$i < $argumentsCount) {
+                    $this->generator->text(',');
+                }
+            }
+
+            // Restore indentation
+            $this->generator->tabs--;
+        }
+
+        // Close declaration block, multiline if we have dependencies
+        $argumentsCount ? $this->generator->newLine(');') : $this->generator->text(');');
+    }
+
+    /**
+     * Build resolving function dependency argument.
+     *
+     * @param mixed $argument Dependency argument
+     */
+    protected function buildResolverArgument($argument, $textFunction = 'newLine')
+    {
+        // This is a dependency which invokes resolving function
+        if (array_key_exists($argument, $this->classMetadata)) {
+            // Call container logic for this dependency
+            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+        } elseif (is_string($argument)) { // String variable
+            $this->generator->$textFunction()->stringValue($argument);
+        } elseif (is_array($argument)) { // Dependency value is array
+            $this->generator->$textFunction()->arrayValue($argument);
+        }
     }
 
     /**
