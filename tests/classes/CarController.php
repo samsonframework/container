@@ -36,7 +36,7 @@ class CarController
      * @var DriverInterface
      * @Inject("\samsonframework\container\tests\classes\SlowDriver")
      */
-    public $slowDriver;
+    private $slowDriver;
 
     /**
      * @Route("/show/", name="car_show")

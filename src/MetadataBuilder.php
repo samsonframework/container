@@ -301,6 +301,7 @@ class MetadataBuilder
                             $property->name,
                             $property->dependency,
                             $staticContainerName,
+                            $property->isPublic,
                             $isCreatedReflectionClass
                         );
                     }
@@ -398,16 +399,16 @@ class MetadataBuilder
      *
      * @param mixed $argument Dependency argument
      */
-    protected function buildResolverArgument($argument)
+    protected function buildResolverArgument($argument, $textFunction = 'newLine')
     {
         // This is a dependency which invokes resolving function
         if (array_key_exists($argument, $this->classMetadata)) {
             // Call container logic for this dependency
-            $this->generator->newLine('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
         } elseif (is_string($argument)) { // String variable
-            $this->generator->newLine()->stringValue($argument);
+            $this->generator->$textFunction()->stringValue($argument);
         } elseif (is_array($argument)) { // Dependency value is array
-            $this->generator->newLine()->arrayValue($argument);
+            $this->generator->$textFunction()->arrayValue($argument);
         }
     }
 
@@ -417,7 +418,7 @@ class MetadataBuilder
      * @param string $className
      * @param string $propertyName
      * @param string $dependency
-     * @param string $staticContainerName
+     * @param string $containerVariable
      * @param bool   $isCreatedReflectionClass
      *
      * @return string
@@ -426,29 +427,38 @@ class MetadataBuilder
         string $className,
         string $propertyName,
         string $dependency,
-        string $staticContainerName,
+        string $containerVariable,
+        bool $isPublic,
         bool &$isCreatedReflectionClass
     )
     {
-        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
-        if (!$isCreatedReflectionClass) {
-            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
-            $isCreatedReflectionClass = true;
+        $this->generator->comment('Inject dependency for $' . $propertyName);
+
+        if ($isPublic) {
+            $this->generator->newLine($containerVariable . '->' . $propertyName . ' = ');
+            $this->buildResolverArgument($dependency, 'text');
+            $this->generator->text(';');
+        } else {
+            // Create reflection class only once
+            if (!$isCreatedReflectionClass) {
+                $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+                $isCreatedReflectionClass = true;
+            }
+
+            $this->generator
+                ->newLine('$property = $reflectionClass->getProperty(\'' . $propertyName . '\');')
+                ->newLine('$property->setAccessible(true);')
+                ->newLine('$property->setValue(')
+                ->increaseIndentation()
+                ->newLine($containerVariable . ',');
+
+            $this->buildResolverArgument($dependency);
+
+            $this->generator
+                ->decreaseIndentation()
+                ->newLine(');')
+                //->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(false);')
+                ->newLine();
         }
-
-        $this->generator
-            ->comment('Inject dependency for $' . $propertyName)
-            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(true);')
-            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setValue(')
-            ->increaseIndentation()
-            ->newLine($staticContainerName . ',');
-
-        $this->buildResolverArgument($dependency);
-
-        $this->generator
-            ->decreaseIndentation()
-            ->newLine(');')
-            ->newLine('$reflectionClass->getProperty(\'' . $propertyName . '\')->setAccessible(false);')
-            ->newLine();
     }
 }
