@@ -42,6 +42,7 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
         $propertyMetadata = new PropertyMetadata($classMetadata);
         $propertyMetadata->name = $property->getName();
         $propertyMetadata->modifiers = $property->getModifiers();
+        $propertyMetadata->isPublic = $property->isPublic();
 
         // Parse property type hint if present
         if (preg_match(self::P_PROPERTY_TYPE_HINT, $property->getDocComment(), $matches)) {

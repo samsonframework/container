@@ -41,6 +41,7 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
         $methodMetadata = new MethodMetadata($classMetadata);
         $methodMetadata->name = $method->name;
         $methodMetadata->modifiers = $method->getModifiers();
+        $methodMetadata->isPublic = $method->isPublic();
 
         /** @var \ReflectionParameter $parameter */
         $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);

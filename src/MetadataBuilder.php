@@ -329,70 +329,69 @@ class MetadataBuilder
                 }
             }
 
-            // Process property dependencies
-            if ($propertyCount) {
-                // Process constructor arguments
-                foreach ($classMetadata->propertiesMetadata as $property) {
-                    // If such property has the dependency
-                    if ($property->dependency) {
-                        // Set value via refection
-                        $this->buildResolverPropertyDeclaration(
-                            $property->name,
-                            $property->dependency,
-                            $staticContainerName,
-                            $reflectionVariable,
-                            $property->isPublic
-                        );
-                    }
+            // Process class properties
+            foreach ($classMetadata->propertiesMetadata as $property) {
+                // If such property has the dependency
+                if ($property->dependency) {
+                    // Set value via refection
+                    $this->buildResolverPropertyDeclaration(
+                        $property->name,
+                        $property->dependency,
+                        $staticContainerName,
+                        $reflectionVariable,
+                        $property->isPublic
+                    );
                 }
             }
 
-            // Process method dependencies
-            if (count($classMetadata->methodsMetadata)) {
-                /**
-                 * Iterate methods
-                 * @var string $methodName
-                 * @var MethodMetadata $methodMetadata
-                 */
-                foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
-                    // Skip constructor method and empty dependencies
-                    if ($methodName === '__construct' || !count($methodMetadata->dependencies)) {
-                        continue;
-                    }
+            /**
+             * Iterate methods
+             * @var string         $methodName
+             * @var MethodMetadata $methodMetadata
+             */
+            foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
+                // Get method arguments
+                $argumentsCount = count($methodMetadata->dependencies);
 
-                    $this->generator->newLine();
-                    $argumentsCount = count($methodMetadata->dependencies);
-
-                    //TODO: Check if method is private or protected and create reflection class otherwise simply set property value to instance
-
-                    // Set accessible
-                    $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName. '\')->setAccessible(true);');
-                    // Call method with dependencies
-                    $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName . '\')->invoke(' . $staticContainerName . ', ');
-                    $this->generator->tabs++;
-
-                    $i = 0;
-                    // Iterate method arguments
-                    foreach ($methodMetadata->dependencies as $argument => $dependency) {
-                        // Add dependencies
-                        $this->buildResolverArgument($dependency);
-
-                        // Add comma if this is not last dependency
-                        if (++$i < $argumentsCount) {
-                            $this->generator->text(',');
-                        }
-                    }
-                    $this->generator->tabs--;
-                    // Close method calling
-                    $this->generator->newLine(');');
+                // Skip constructor method and empty dependencies
+                if ($methodName === '__construct' || $argumentsCount === 0) {
+                    continue;
                 }
+
+                $this->generator->newLine()->comment('Invoke ' . $methodName . '() and pass dependencies(y)');
+
+                if ($methodMetadata->isPublic) {
+                    $this->generator->newLine($staticContainerName . '->' . $methodName . '(')->increaseIndentation();
+                } else {
+                    $this->generator
+                        ->newLine('$method = ' . $reflectionVariable . '->getMethod(\'' . $methodName . '\');')
+                        ->newLine('$method->setAccessible(true);')
+                        ->newLine('$method->invoke(')
+                        ->increaseIndentation()
+                        ->newLine($staticContainerName . ',');
+                }
+
+                $i = 0;
+                // Iterate method arguments
+                foreach ($methodMetadata->dependencies as $argument => $dependency) {
+                    // Add dependencies
+                    $this->buildResolverArgument($dependency);
+
+                    // Add comma if this is not last dependency
+                    if (++$i < $argumentsCount) {
+                        $this->generator->text(',');
+                    }
+                }
+
+                $this->generator->decreaseIndentation()->newLine(');');
             }
+
 
             if ($isService) {
                 $this->generator->endIfCondition();
             }
 
-            $this->generator->newLine('return ' . $staticContainerName . ';');
+            $this->generator->newLine()->newLine('return ' . $staticContainerName . ';');
 
             // Set flag that condition is started
             $started = true;
