@@ -21,6 +21,9 @@ class CarServiceWithInterface
     /** @var DriverInterface */
     protected $driver;
 
+    /** @var  Leg */
+    protected $leg;
+
     /**
      * CarService constructor.
      *
@@ -34,5 +37,15 @@ class CarServiceWithInterface
     {
         $this->car = $car;
         $this->driver = $driver;
+    }
+
+    /**
+     * Set leg
+     *
+     * @InjectArgument(leg="Leg")
+     */
+    public function setLeg(Leg $leg)
+    {
+        $this->leg = $leg;
     }
 }

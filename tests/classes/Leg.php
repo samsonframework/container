@@ -5,6 +5,12 @@
  */
 namespace samsonframework\container\tests\classes;
 
+use samsonframework\container\annotation\Service;
+
+/**
+ * Class Leg
+ * @package samsonframework\container\tests\classes
+ */
 class Leg
 {
     public function pressPedal()

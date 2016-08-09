@@ -23,7 +23,7 @@ use samsonframework\container\tests\classes\SlowDriver;
 use samsonframework\filemanager\FileManagerInterface;
 use samsonphp\generator\Generator;
 
-class PropertyBuilderTest extends TestCase
+class MethodBuilderTest extends TestCase
 {
     /** @var Container */
     protected $container;
@@ -65,27 +65,11 @@ class PropertyBuilderTest extends TestCase
         $this->container = new Container($generator);
     }
 
-    public function testExistingPropertyByClassName()
+    public function testExistingMethod()
     {
         static::assertEquals(
             true,
-            $this->container->getSamsonframeworkContainerTestsClassesCarController()->fastDriver instanceof FastDriver
-        );
-    }
-
-    public function testExistingPropertyByClassNameWithNamespace()
-    {
-        static::assertEquals(
-            true,
-            $this->container->getSamsonframeworkContainerTestsClassesCarController()->slowDriver instanceof SlowDriver
-        );
-    }
-
-    public function testExistingPropertyByClassNameWithTypeHint()
-    {
-        static::assertEquals(
-            true,
-            $this->container->getSamsonframeworkContainerTestsClassesCarController()->car instanceof Car
+            $this->getProperty('leg', $this->container->getCarServiceWithInterface()) instanceof Leg
         );
     }
 }

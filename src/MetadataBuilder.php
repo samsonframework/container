@@ -8,6 +8,7 @@
 namespace samsonframework\container;
 
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
@@ -296,12 +297,65 @@ class MetadataBuilder
                 }
             }
 
+            if (count($classMetadata->methodsMetadata)) {
+
+                /**
+                 * @var string $methodName
+                 * @var MethodMetadata $methodMetadata
+                 */
+                foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
+                    if ($methodName === '__construct' || !count($methodMetadata->dependencies)) {
+                        continue;
+                    }
+                    $this->generator->newLine();
+                    $argumentsCount = count($methodMetadata->dependencies);
+                    $this->buildResolverSetterDeclaration($className, $methodName, $isCreatedReflectionClass);
+                    $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName . '\')->invoke(' . $staticContainerName . ', ');
+                    $i = 0;
+                    $this->generator->tabs++;
+                    foreach ($methodMetadata->dependencies as $argument => $dependency) {
+                        $this->buildResolverArgument($dependency);
+
+                        // Add comma if this is not last dependency
+                        if (++$i < $argumentsCount) {
+                            $this->generator->text(',');
+                        }
+                    }
+                    $this->generator->tabs--;
+                    $this->generator->newLine(');');
+                }
+            }
+
             $this->generator->endIfCondition();
             $this->generator->newLine('return ' . $staticContainerName . ';');
 
             // Set flag that condition is started
             $started = true;
         }
+    }
+
+    /**
+     * Build resolving setter declaration.
+     *
+     * @param string $className
+     * @param string $propertyName
+     * @param string $dependency
+     * @param string $staticContainerName
+     * @param bool $isCreatedReflectionClass
+     *
+     * @return string
+     */
+    protected function buildResolverSetterDeclaration(
+        string $className,
+        string $methodName,
+        bool &$isCreatedReflectionClass
+    ) {
+        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
+        if (!$isCreatedReflectionClass) {
+            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+            $isCreatedReflectionClass = true;
+        }
+        $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName. '\')->setAccessible(true);');
     }
 
     /**
