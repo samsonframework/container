@@ -298,7 +298,6 @@ class MetadataBuilder
             foreach ($classMetadata->propertiesMetadata as $propertyMetadata) {
                 if (!$propertyMetadata->isPublic) {
                     $this->generator
-                        ->newLine()
                         ->comment('Create reflection class for injecting private/protected properties and methods')
                         ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
                         ->newLine();
@@ -307,14 +306,23 @@ class MetadataBuilder
                 }
             }
 
+            /** @var MethodMetadata[] Gather only valid method for container */
+            $classValidMethods = [];
+            foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
+                // Skip constructor method and empty dependencies
+                if ($methodName !== '__construct' && count($methodMetadata->dependencies) > 0) {
+                    $classValidMethods[$methodName] = $methodMetadata;
+                }
+            }
+
+
             /**
              * Iterate all properties and create internal scope reflection class instance if
              * at least one property in not public
              */
-            foreach ($classMetadata->methodsMetadata as $methodMetadata) {
+            foreach ($classValidMethods as $methodMetadata) {
                 if (!$methodMetadata->isPublic) {
                     $this->generator
-                        ->newLine()
                         ->comment('Create reflection class for injecting private/protected properties and methods')
                         ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
                         ->newLine();
@@ -338,48 +346,17 @@ class MetadataBuilder
                 }
             }
 
-            /**
-             * Iterate methods
-             * @var string         $methodName
-             * @var MethodMetadata $methodMetadata
-             */
-            foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
-                // Get method arguments
-                $argumentsCount = count($methodMetadata->dependencies);
 
-                // Skip constructor method and empty dependencies
-                if ($methodName === '__construct' || $argumentsCount === 0) {
-                    continue;
-                }
-
-                $this->generator->newLine()->comment('Invoke ' . $methodName . '() and pass dependencies(y)');
-
-                if ($methodMetadata->isPublic) {
-                    $this->generator->newLine($staticContainerName . '->' . $methodName . '(')->increaseIndentation();
-                } else {
-                    $this->generator
-                        ->newLine('$method = ' . $reflectionVariable . '->getMethod(\'' . $methodName . '\');')
-                        ->newLine('$method->setAccessible(true);')
-                        ->newLine('$method->invoke(')
-                        ->increaseIndentation()
-                        ->newLine($staticContainerName . ',');
-                }
-
-                $i = 0;
-                // Iterate method arguments
-                foreach ($methodMetadata->dependencies as $argument => $dependency) {
-                    // Add dependencies
-                    $this->buildResolverArgument($dependency);
-
-                    // Add comma if this is not last dependency
-                    if (++$i < $argumentsCount) {
-                        $this->generator->text(',');
-                    }
-                }
-
-                $this->generator->decreaseIndentation()->newLine(');');
+            /** @var MethodMetadata $methodMetadata */
+            foreach ($classValidMethods as $methodName => $methodMetadata) {
+                $this->buildResolverMethodDeclaration(
+                    $methodMetadata->dependencies,
+                    $methodName,
+                    $staticContainerName,
+                    $reflectionVariable,
+                    $methodMetadata->isPublic
+                );
             }
-
 
             if ($isService) {
                 $this->generator->endIfCondition();
@@ -486,55 +463,48 @@ class MetadataBuilder
     /**
      * Build resolving method injection declaration.
      *
-     * @param string $className
-     * @param string $propertyName
-     * @param string $dependency
-     * @param string $containerVariable
-     * @param bool   $isPublic
-     * @param bool   $isCreatedReflectionClass
-     *
-     * @return string
+     * @param array  $dependencies       Collection of method dependencies
+     * @param string $methodName         Method name
+     * @param string $containerVariable  Container declaration variable name
+     * @param string $reflectionVariable Reflection class variable name
+     * @param bool   $isPublic           Flag if method is public
      */
     protected function buildResolverMethodDeclaration(
-        string $className,
-        string $propertyName,
-        string $dependency,
+        array $dependencies,
+        string $methodName,
         string $containerVariable,
-        bool $isPublic,
-        bool &$isCreatedReflectionClass
+        string $reflectionVariable,
+        bool $isPublic
     )
     {
-        if ($isPublic) {
-            $this->generator
-                ->comment('Inject public dependency for $' . $propertyName)
-                ->newLine($containerVariable . '->' . $propertyName . ' = ');
-            $this->buildResolverArgument($dependency, 'text');
-            $this->generator->text(';');
-        } else {
-            // Create reflection class only once
-            if (!$isCreatedReflectionClass) {
-                $this->generator
-                    ->newLine()
-                    ->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');')
-                    ->newLine();
-                $isCreatedReflectionClass = true;
-            }
+        // Get method arguments
+        $argumentsCount = count($dependencies);
 
+        $this->generator->comment('Invoke ' . $methodName . '() and pass dependencies(y)');
+
+        if ($isPublic) {
+            $this->generator->newLine($containerVariable . '->' . $methodName . '(')->increaseIndentation();
+        } else {
             $this->generator
-                ->comment('Inject private dependency for $' . $propertyName)
-                ->newLine('$property = $reflectionClass->getProperty(\'' . $propertyName . '\');')
-                ->newLine('$property->setAccessible(true);')
-                ->newLine('$property->setValue(')
+                ->newLine('$method = ' . $reflectionVariable . '->getMethod(\'' . $methodName . '\');')
+                ->newLine('$method->setAccessible(true);')
+                ->newLine('$method->invoke(')
                 ->increaseIndentation()
                 ->newLine($containerVariable . ',');
+        }
 
+        $i = 0;
+        // Iterate method arguments
+        foreach ($dependencies as $argument => $dependency) {
+            // Add dependencies
             $this->buildResolverArgument($dependency);
 
-            $this->generator
-                ->decreaseIndentation()
-                ->newLine(');')
-                ->newLine('$property->setAccessible(false);')
-                ->newLine();
+            // Add comma if this is not last dependency
+            if (++$i < $argumentsCount) {
+                $this->generator->text(',');
+            }
         }
+
+        $this->generator->decreaseIndentation()->newLine(');');
     }
 }
