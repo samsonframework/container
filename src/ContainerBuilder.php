@@ -306,7 +306,7 @@ class ContainerBuilder
 
                 $this->generator->newLine()->newLine('return ' . $staticContainerName . ';');
             } else {
-                $this->generator->newLine('return ' . $staticContainerName . ' = ');
+                $this->generator->newLine('return ');
                 $this->buildResolvingClassDeclaration($className);
                 $this->buildConstructorDependencies($classMetadata->methodsMetadata);
             }
