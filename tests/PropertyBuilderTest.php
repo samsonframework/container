@@ -65,26 +65,21 @@ class PropertyBuilderTest extends TestCase
 
     public function testExistingPropertyByClassName()
     {
-        static::assertEquals(
-            true,
-            $this->container->getSamsonframeworkContainerTestsClassesCarController()->fastDriver instanceof FastDriver
-        );
+        static::assertInstanceOf(FastDriver::class, $this->container->getSamsonframeworkContainerTestsClassesCarController()->fastDriver);
     }
 
     public function testExistingPropertyByClassNameWithNamespace()
     {
-        $property = $this->getProperty('slowDriver', $this->container->getSamsonframeworkContainerTestsClassesCarController());
-        static::assertEquals(
-            true,
-            $property instanceof SlowDriver
-        );
+        static::assertInstanceOf(SlowDriver::class, $this->getProperty('slowDriver', $this->container->getSamsonframeworkContainerTestsClassesCarController()));
     }
 
     public function testExistingPropertyByClassNameWithTypeHint()
     {
-        static::assertEquals(
-            true,
-            $this->container->getSamsonframeworkContainerTestsClassesCarController()->car instanceof Car
-        );
+        static::assertInstanceOf(Car::class, $this->container->getSamsonframeworkContainerTestsClassesCarController()->car);
+    }
+
+    public function testMethodsWithoutDependencyIgnorance()
+    {
+        static::assertNull($this->getProperty('noInjection', $this->container->getCarServiceWithInterface()));
     }
 }

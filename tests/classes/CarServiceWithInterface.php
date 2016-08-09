@@ -51,4 +51,9 @@ class CarServiceWithInterface
     {
         $this->leg = $leg;
     }
+
+    public function noInjectionMethod()
+    {
+        $this->noInjection = false;
+    }
 }
