@@ -56,16 +56,34 @@ class PropertyBuilderTest extends TestCase
             ->build('Container', 'DI');
 
         file_put_contents(__DIR__ . '/Container.php', $containerClass);
-        require __DIR__ . '/Container.php';
+        if (!class_exists(Container::class)) {
+            require __DIR__ . '/Container.php';
+        }
 
         $this->container = new Container($generator);
     }
 
-    public function testExistingProperty()
+    public function testExistingPropertyByClassName()
     {
         static::assertEquals(
             true,
             $this->container->getSamsonframeworkContainerTestsClassesCarController()->fastDriver instanceof FastDriver
+        );
+    }
+
+    public function testExistingPropertyByClassNameWithNamespace()
+    {
+        static::assertEquals(
+            true,
+            $this->container->getSamsonframeworkContainerTestsClassesCarController()->slowDriver instanceof SlowDriver
+        );
+    }
+
+    public function testExistingPropertyByClassNameWithTypeHint()
+    {
+        static::assertEquals(
+            true,
+            $this->container->getSamsonframeworkContainerTestsClassesCarController()->car instanceof Car
         );
     }
 }

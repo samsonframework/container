@@ -247,7 +247,7 @@ class MetadataBuilder
             $staticContainerName = self::DI_FUNCTION_SERVICES . '[\'' . $className . '\']';
 
             // Check if dependency was instantiated
-            $this->generator->defIfCondition('!array_key_exists(' . $inputVariable . ', ' . self::DI_FUNCTION_SERVICES . ')');
+            $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', ' . self::DI_FUNCTION_SERVICES . ')');
             $this->generator->newLine($staticContainerName . ' = ');
             $this->buildResolvingClassDeclaration($className);
 
@@ -299,7 +299,6 @@ class MetadataBuilder
             $this->generator->endIfCondition();
             $this->generator->newLine('return ' . $staticContainerName . ';');
 
-
             // Set flag that condition is started
             $started = true;
         }
@@ -323,6 +322,7 @@ class MetadataBuilder
         string $staticContainerName,
         bool &$isCreatedReflectionClass
     ) {
+        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
         if (!$isCreatedReflectionClass) {
             $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
             $isCreatedReflectionClass = true;
