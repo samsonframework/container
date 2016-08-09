@@ -9,6 +9,7 @@ namespace samsonframework\container;
 
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\metadata\PropertyMetadata;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\di\Container;
 use samsonframework\filemanager\FileManagerInterface;
@@ -291,21 +292,6 @@ class MetadataBuilder
             // Internal scope reflection variable
             $reflectionVariable = '$reflectionClass';
 
-            /**
-             * Iterate all properties and create internal scope reflection class instance if
-             * at least one property in not public
-             */
-            foreach ($classMetadata->propertiesMetadata as $propertyMetadata) {
-                if (!$propertyMetadata->isPublic) {
-                    $this->generator
-                        ->comment('Create reflection class for injecting private/protected properties and methods')
-                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
-                        ->newLine();
-
-                    break;
-                }
-            }
-
             /** @var MethodMetadata[] Gather only valid method for container */
             $classValidMethods = [];
             foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
@@ -315,6 +301,29 @@ class MetadataBuilder
                 }
             }
 
+            /** @var PropertyMetadata[] Gather only valid property for container */
+            $classValidProperties = [];
+            foreach ($classMetadata->propertiesMetadata as $propertyName => $propertyMetadata) {
+                // Skip constructor method and empty dependencies
+                if ($propertyMetadata->dependency) {
+                    $classValidProperties[$propertyName] = $propertyMetadata;
+                }
+            }
+
+            /**
+             * Iterate all properties and create internal scope reflection class instance if
+             * at least one property in not public
+             */
+            foreach ($classValidProperties as $propertyMetadata) {
+                if (!$propertyMetadata->isPublic) {
+                    $this->generator
+                        ->comment('Create reflection class for injecting private/protected properties and methods')
+                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                        ->newLine();
+
+                    break;
+                }
+            }
 
             /**
              * Iterate all properties and create internal scope reflection class instance if
@@ -332,7 +341,7 @@ class MetadataBuilder
             }
 
             // Process class properties
-            foreach ($classMetadata->propertiesMetadata as $property) {
+            foreach ($classValidProperties as $property) {
                 // If such property has the dependency
                 if ($property->dependency) {
                     // Set value via refection
@@ -345,7 +354,6 @@ class MetadataBuilder
                     );
                 }
             }
-
 
             /** @var MethodMetadata $methodMetadata */
             foreach ($classValidMethods as $methodName => $methodMetadata) {
