@@ -297,23 +297,38 @@ class MetadataBuilder
                 }
             }
 
+            // Process method dependencies
             if (count($classMetadata->methodsMetadata)) {
 
                 /**
+                 * Iterate methods
                  * @var string $methodName
                  * @var MethodMetadata $methodMetadata
                  */
                 foreach ($classMetadata->methodsMetadata as $methodName => $methodMetadata) {
+                    // Skip constructor method and empty dependencies
                     if ($methodName === '__construct' || !count($methodMetadata->dependencies)) {
                         continue;
                     }
+
                     $this->generator->newLine();
                     $argumentsCount = count($methodMetadata->dependencies);
-                    $this->buildResolverSetterDeclaration($className, $methodName, $isCreatedReflectionClass);
+
+                    //TODO: Check if method is private or protected and create reflection class otherwise simply set property value to instance
+                    if (!$isCreatedReflectionClass) {
+                        $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+                        $isCreatedReflectionClass = true;
+                    }
+                    // Set accessible
+                    $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName. '\')->setAccessible(true);');
+                    // Call method with dependencies
                     $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName . '\')->invoke(' . $staticContainerName . ', ');
-                    $i = 0;
                     $this->generator->tabs++;
+
+                    $i = 0;
+                    // Iterate method arguments
                     foreach ($methodMetadata->dependencies as $argument => $dependency) {
+                        // Add dependencies
                         $this->buildResolverArgument($dependency);
 
                         // Add comma if this is not last dependency
@@ -322,6 +337,7 @@ class MetadataBuilder
                         }
                     }
                     $this->generator->tabs--;
+                    // Close method calling
                     $this->generator->newLine(');');
                 }
             }
@@ -332,30 +348,6 @@ class MetadataBuilder
             // Set flag that condition is started
             $started = true;
         }
-    }
-
-    /**
-     * Build resolving setter declaration.
-     *
-     * @param string $className
-     * @param string $propertyName
-     * @param string $dependency
-     * @param string $staticContainerName
-     * @param bool $isCreatedReflectionClass
-     *
-     * @return string
-     */
-    protected function buildResolverSetterDeclaration(
-        string $className,
-        string $methodName,
-        bool &$isCreatedReflectionClass
-    ) {
-        //TODO: Check if property is private or protected and create reflection class otherwise simply set property value to instance
-        if (!$isCreatedReflectionClass) {
-            $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
-            $isCreatedReflectionClass = true;
-        }
-        $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName. '\')->setAccessible(true);');
     }
 
     /**
