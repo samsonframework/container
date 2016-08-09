@@ -70,6 +70,9 @@ class InjectArgument extends AnnotationWithValue implements MethodInterface
             $this->argumentType,
             $methodMetadata->classMetadata->nameSpace
         );
+
+        // Define if method id public
+        $methodMetadata->isPublic = ($methodMetadata->modifiers & \ReflectionMethod::IS_PUBLIC) === \ReflectionMethod::IS_PUBLIC;
     }
 
     /**

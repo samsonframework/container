@@ -19,6 +19,9 @@ class MethodMetadata extends AbstractMetadata
     /** @var ClassMetadata */
     public $classMetadata;
 
+    /** @var bool Flag that method is public */
+    public $isPublic;
+
     /** @var ParameterMetadata[] */
     public $parametersMetadata = [];
 

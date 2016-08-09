@@ -51,9 +51,7 @@ class Inject implements PropertyInterface
         );
 
         // Store property visibility
-        $propertyMetadata->isPublic = (new \ReflectionClass($propertyMetadata->classMetadata->className))
-            ->getProperty($propertyMetadata->name)
-            ->isPublic();
+        $propertyMetadata->isPublic = ($propertyMetadata->modifiers & \ReflectionProperty::IS_PUBLIC) === \ReflectionProperty::IS_PUBLIC;
     }
 
     /**

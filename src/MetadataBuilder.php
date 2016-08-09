@@ -288,21 +288,60 @@ class MetadataBuilder
             $argumentsCount ? $this->generator->newLine(');') : $this->generator->text(');');
             $this->generator->newLine();
 
+            // Get class properties
+            $propertyCount = count($classMetadata->propertiesMetadata);
+
+            // Get class methods count
+            $methodCount = count($classMetadata->methodsMetadata);
+
+            // Internal scope reflection variable
+            $reflectionVariable = '$reflectionClass';
+
+            /**
+             * Iterate all properties and create internal scope reflection class instance if
+             * at least one property in not public
+             */
+            foreach ($classMetadata->propertiesMetadata as $propertyMetadata) {
+                if (!$propertyMetadata->isPublic) {
+                    $this->generator
+                        ->newLine()
+                        ->comment('Create reflection class for injecting private/protected properties and methods')
+                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                        ->newLine();
+
+                    break;
+                }
+            }
+
+            /**
+             * Iterate all properties and create internal scope reflection class instance if
+             * at least one property in not public
+             */
+            foreach ($classMetadata->methodsMetadata as $methodMetadata) {
+                if (!$methodMetadata->isPublic) {
+                    $this->generator
+                        ->newLine()
+                        ->comment('Create reflection class for injecting private/protected properties and methods')
+                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                        ->newLine();
+
+                    break;
+                }
+            }
+
             // Process property dependencies
-            if ($propertyCount = count($classMetadata->propertiesMetadata)) {
-                $isCreatedReflectionClass = false;
+            if ($propertyCount) {
                 // Process constructor arguments
                 foreach ($classMetadata->propertiesMetadata as $property) {
                     // If such property has the dependency
                     if ($property->dependency) {
                         // Set value via refection
                         $this->buildResolverPropertyDeclaration(
-                            $className,
                             $property->name,
                             $property->dependency,
                             $staticContainerName,
-                            $property->isPublic,
-                            $isCreatedReflectionClass
+                            $reflectionVariable,
+                            $property->isPublic
                         );
                     }
                 }
@@ -325,10 +364,7 @@ class MetadataBuilder
                     $argumentsCount = count($methodMetadata->dependencies);
 
                     //TODO: Check if method is private or protected and create reflection class otherwise simply set property value to instance
-                    if (!$isCreatedReflectionClass) {
-                        $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
-                        $isCreatedReflectionClass = true;
-                    }
+
                     // Set accessible
                     $this->generator->newLine('$reflectionClass->getMethod(\'' . $methodName. '\')->setAccessible(true);');
                     // Call method with dependencies
@@ -413,17 +449,60 @@ class MetadataBuilder
     }
 
     /**
-     * Build resolving property declaration.
+     * Build resolving property injection declaration.
+     *
+     * @param string $propertyName       Target property name
+     * @param string $dependency         Dependency class name
+     * @param string $containerVariable  Container declaration variable name
+     * @param string $reflectionVariable Reflection class variable name
+     * @param bool   $isPublic           Flag if property is public
+     */
+    protected function buildResolverPropertyDeclaration(
+        string $propertyName,
+        string $dependency,
+        string $containerVariable,
+        string $reflectionVariable,
+        bool $isPublic
+    )
+    {
+        if ($isPublic) {
+            $this->generator
+                ->comment('Inject public dependency for $' . $propertyName)
+                ->newLine($containerVariable . '->' . $propertyName . ' = ');
+            $this->buildResolverArgument($dependency, 'text');
+            $this->generator->text(';');
+        } else {
+            $this->generator
+                ->comment('Inject private dependency for $' . $propertyName)
+                ->newLine('$property = ' . $reflectionVariable . '->getProperty(\'' . $propertyName . '\');')
+                ->newLine('$property->setAccessible(true);')
+                ->newLine('$property->setValue(')
+                ->increaseIndentation()
+                ->newLine($containerVariable . ',');
+
+            $this->buildResolverArgument($dependency);
+
+            $this->generator
+                ->decreaseIndentation()
+                ->newLine(');')
+                ->newLine('$property->setAccessible(false);')
+                ->newLine();
+        }
+    }
+
+    /**
+     * Build resolving method injection declaration.
      *
      * @param string $className
      * @param string $propertyName
      * @param string $dependency
      * @param string $containerVariable
+     * @param bool   $isPublic
      * @param bool   $isCreatedReflectionClass
      *
      * @return string
      */
-    protected function buildResolverPropertyDeclaration(
+    protected function buildResolverMethodDeclaration(
         string $className,
         string $propertyName,
         string $dependency,
@@ -432,20 +511,24 @@ class MetadataBuilder
         bool &$isCreatedReflectionClass
     )
     {
-        $this->generator->comment('Inject dependency for $' . $propertyName);
-
         if ($isPublic) {
-            $this->generator->newLine($containerVariable . '->' . $propertyName . ' = ');
+            $this->generator
+                ->comment('Inject public dependency for $' . $propertyName)
+                ->newLine($containerVariable . '->' . $propertyName . ' = ');
             $this->buildResolverArgument($dependency, 'text');
             $this->generator->text(';');
         } else {
             // Create reflection class only once
             if (!$isCreatedReflectionClass) {
-                $this->generator->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');');
+                $this->generator
+                    ->newLine()
+                    ->newLine('$reflectionClass = new \ReflectionClass(\'' . $className . '\');')
+                    ->newLine();
                 $isCreatedReflectionClass = true;
             }
 
             $this->generator
+                ->comment('Inject private dependency for $' . $propertyName)
                 ->newLine('$property = $reflectionClass->getProperty(\'' . $propertyName . '\');')
                 ->newLine('$property->setAccessible(true);')
                 ->newLine('$property->setValue(')

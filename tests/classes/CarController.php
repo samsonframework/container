@@ -25,13 +25,13 @@ class CarController
      * @Inject
      */
     public $car;
-
     /**
      * @var DriverInterface
      * @Inject("FastDriver")
      */
     public $fastDriver;
-
+    /** @var Leg */
+    protected $leg;
     /**
      * @var DriverInterface
      * @Inject("\samsonframework\container\tests\classes\SlowDriver")
@@ -46,7 +46,7 @@ class CarController
      */
     public function showAction(FastDriver $fastDriver, SlowDriver $slowDriver)
     {
-        return $this->fastDriver;
+
     }
 
     /**
@@ -55,6 +55,15 @@ class CarController
      */
     public function stopCarAction(Leg $leg)
     {
-        $this->fastDriver->stopCar($leg);
+
+    }
+
+    /**
+     * @param Leg $leg
+     * @InjectArgument(leg="Leg")
+     */
+    protected function setLeg(Leg $leg)
+    {
+        $this->leg = $leg;
     }
 }
