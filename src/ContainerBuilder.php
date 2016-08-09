@@ -298,35 +298,7 @@ class ContainerBuilder
             /** @var PropertyMetadata[] Gather only valid property for container */
             $classValidProperties = $this->getValidClassPropertiesMetadata($classMetadata->propertiesMetadata);
 
-            /**
-             * Iterate all properties and create internal scope reflection class instance if
-             * at least one property in not public
-             */
-            foreach ($classValidProperties as $propertyMetadata) {
-                if (!$propertyMetadata->isPublic) {
-                    $this->generator
-                        ->comment('Create reflection class for injecting private/protected properties and methods')
-                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
-                        ->newLine();
-
-                    break;
-                }
-            }
-
-            /**
-             * Iterate all properties and create internal scope reflection class instance if
-             * at least one property in not public
-             */
-            foreach ($classValidMethods as $methodMetadata) {
-                if (!$methodMetadata->isPublic) {
-                    $this->generator
-                        ->comment('Create reflection class for injecting private/protected properties and methods')
-                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
-                        ->newLine();
-
-                    break;
-                }
-            }
+            $this->buildReflectionClass($className, $classValidProperties, $classValidMethods, $reflectionVariable);
 
             // Process class properties
             foreach ($classValidProperties as $property) {
@@ -454,6 +426,55 @@ class ContainerBuilder
         }
 
         return $classValidProperties;
+    }
+
+    /**
+     * Generate reflection class for private/protected methods or properties
+     * in current scope.
+     *
+     * @param string             $className          Reflection class source class name
+     * @param PropertyMetadata[] $propertiesMetadata Properties metadata
+     * @param MethodMetadata[]   $methodsMetadata    Methods metadata
+     * @param string             $reflectionVariable Reflection class variable name
+     */
+    protected function buildReflectionClass(string $className, array $propertiesMetadata, array $methodsMetadata, string $reflectionVariable)
+    {
+        /** @var bool $reflectionClassCreated Flag showing that reflection class already created in current scope */
+        $reflectionClassCreated = false;
+
+        /**
+         * Iterate all properties and create internal scope reflection class instance if
+         * at least one property in not public
+         */
+        foreach ($propertiesMetadata as $propertyMetadata) {
+            if (!$propertyMetadata->isPublic) {
+                $this->generator
+                    ->comment('Create reflection class for injecting private/protected properties and methods')
+                    ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                    ->newLine();
+
+                $reflectionClassCreated = true;
+
+                break;
+            }
+        }
+
+        /**
+         * Iterate all properties and create internal scope reflection class instance if
+         * at least one property in not public
+         */
+        if (!$reflectionClassCreated) {
+            foreach ($methodsMetadata as $methodMetadata) {
+                if (!$methodMetadata->isPublic) {
+                    $this->generator
+                        ->comment('Create reflection class for injecting private/protected properties and methods')
+                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                        ->newLine();
+
+                    break;
+                }
+            }
+        }
     }
 
     /**
