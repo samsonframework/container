@@ -7,24 +7,20 @@
  */
 namespace samsonframework\container;
 
-
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\annotation\Scope;
-use samsonframework\container\annotation\Service;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
-use samsonframework\di\Container;
+use samsonframework\container\tests\classes\Car;
+use samsonframework\container\tests\classes\CarService;
+use samsonframework\container\tests\TestCase;
+use samsonframework\filemanager\FileManagerInterface;
 use samsonphp\generator\Generator;
 
-/**
- * @Service("container_configuration")
- * @Scope("configuration")
- */
-class ContainerConfiguration implements ConfigurationInterface
+class ContainerConfigurationTest extends TestCase
 {
-    public function configure(Container $container, array $configData = [])
+    public function testConfigure()
     {
         $reader = new AnnotationReader();
         $resolver = new AnnotationResolver(
@@ -35,12 +31,12 @@ class ContainerConfiguration implements ConfigurationInterface
 
         $generator = new Generator();
 
-        $container = new ContainerBuilder(new LocalFileManager(), $resolver, new Generator());
+        $container = new ContainerBuilder($this->createMock(FileManagerInterface::class), $resolver, new Generator());
 
         $containerClass = $container
             ->loadFromClassNames([
-                Read::class,
-                Logger::class
+                Car::class,
+                CarService::class
             ]);
 
         foreach ($container->classMetadata as $className => $classMetadata) {
@@ -57,9 +53,9 @@ class ContainerConfiguration implements ConfigurationInterface
         $containerClass = $containerClass->build('Container1', 'DI');
 
         $className = 'Container1.php';
-        file_put_contents(__DIR__ . '/' . $className, $containerClass);
+        file_put_contents(__DIR__ . 'ContainerConfiguration.php/' . $className, $containerClass);
         if (!class_exists(Container1::class, false)) {
-            require_once __DIR__ . '/' . $className;
+            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
         }
 
         return new \DI\Container1($generator);
