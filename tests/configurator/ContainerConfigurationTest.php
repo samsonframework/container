@@ -54,12 +54,17 @@ class ContainerConfigurationTest extends TestCase
 
         $containerClass = $containerClass->build('Container', 'DI');
 
-        $className = 'Container.php';
-        file_put_contents(__DIR__ . $className, $containerClass);
+        $path = __DIR__ . '/Container2.php';
+        file_put_contents(__DIR__ . $path, $containerClass);
+
 //        if (!class_exists(Container::class, false)) {
 //            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
 //        }
 
         //return new \DI\Container($generator);
+
+        //$container = $containerConfig->configure(null, $configData);
+
+        static::assertInstanceOf(Logger::class, $container->getReader()->logger);
     }
 }
