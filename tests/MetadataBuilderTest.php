@@ -17,6 +17,7 @@ use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\CarServiceWithInterface;
 use samsonframework\container\tests\classes\FastDriver;
+use samsonframework\container\tests\classes\Leg;
 use samsonframework\container\tests\classes\SlowDriver;
 use samsonframework\filemanager\FileManagerInterface;
 use samsonphp\generator\Generator;
@@ -92,9 +93,11 @@ class MetadataBuilderTest extends TestCase
     {
         new Service(['value' => 'service']);
 
+        // Build container
         $containerClass = $this->container
             ->loadFromClassNames([
                 Car::class,
+                Leg::class,
                 CarController::class,
                 FastDriver::class,
                 SlowDriver::class,
@@ -102,13 +105,14 @@ class MetadataBuilderTest extends TestCase
             ])
             ->build('Container', 'DI');
 
-        file_put_contents(__DIR__ . '/Container.php', $containerClass);
+        // Execute container class
+        $path = __DIR__ . '/Container.php';
+        file_put_contents($path, $containerClass);
+        require $path;
+        $container = new \DI\Container();
 
-//        // Compile dependency injection container function
-//        $path = __DIR__ . '/container2.php';
-//        file_put_contents($path, '<?php ' . $this->diContainer->build(uniqid('container')));
-
-//        static::assertEquals(Car::class, get_class($this->getProperty('car', $this->diContainer->get('car_service_with_interface'))));
-//        static::assertEquals(FastDriver::class, get_class($this->getProperty('driver', $this->diContainer->get('car_service_with_interface'))));
+        static::assertInstanceOf(Car::class, $container->getSamsonframeworkContainerTestsClassesCar());
+        static::assertInstanceOf(CarServiceWithInterface::class, $container->getCarServiceWithInterface());
+        static::assertInstanceOf(Leg::class, $this->getProperty('leg', $container->getCarServiceWithInterface()));
     }
 }
