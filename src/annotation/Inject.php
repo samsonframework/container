@@ -60,21 +60,21 @@ class Inject implements PropertyInterface
      */
     protected function validate(&$type, &$dependency, $namespace)
     {
-        $dependency = $this->buildFullClassName($dependency, $namespace);
+        //$dependency = $this->buildFullClassName($dependency, $namespace);
         $type = $this->buildFullClassName($type, $namespace);
 
-        // Check for inheritance violation
-        if ($this->checkInheritanceViolation($type, $dependency)) {
-            throw new \InvalidArgumentException(
-                '@Inject dependency violates ' . $type . ' inheritance with ' . $dependency
-            );
-        }
-
-        if ($this->checkInterfaceWithoutClassName($type, $dependency)) {
-            throw new \InvalidArgumentException(
-                'Cannot @Inject interface, inherited class name should be specified
-                ');
-        }
+//        // Check for inheritance violation
+//        if ($this->checkInheritanceViolation($type, $dependency)) {
+//            throw new \InvalidArgumentException(
+//                '@Inject dependency violates ' . $type . ' inheritance with ' . $dependency
+//            );
+//        }
+//
+//        if ($this->checkInterfaceWithoutClassName($type, $dependency)) {
+//            throw new \InvalidArgumentException(
+//                'Cannot @Inject interface, inherited class name should be specified
+//                ');
+//        }
 
         // Empty @Inject with type hint - use type hine as dependency
         if ($dependency === null && $type !== null) {

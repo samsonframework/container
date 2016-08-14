@@ -27,7 +27,7 @@ class CarController
     public $car;
     /**
      * @var DriverInterface
-     * @Inject("FastDriver")
+     * @Inject("\samsonframework\container\tests\classes\FastDriver")
      */
     public $fastDriver;
     /** @var Leg */

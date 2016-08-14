@@ -41,6 +41,9 @@ class ContainerBuilder
     /** @var ClassMetadata[] Collection of classes metadata */
     protected $classMetadata = [];
 
+    /** @var array Collection of dependencies aliases */
+    protected $classAliases = [];
+
     /** @var FileManagerInterface */
     protected $fileManger;
 
@@ -56,17 +59,17 @@ class ContainerBuilder
     /**
      * Container constructor.
      *
-     * @param FileManagerInterface $fileManger
+     * @param FileManagerInterface $fileManager
      * @param ResolverInterface    $classResolver
      * @param Generator            $generator
      */
     public function __construct(
-        FileManagerInterface $fileManger,
+        FileManagerInterface $fileManager,
         ResolverInterface $classResolver,
         Generator $generator
     )
     {
-        $this->fileManger = $fileManger;
+        $this->fileManger = $fileManager;
         $this->classResolver = $classResolver;
         $this->generator = $generator;
     }
@@ -82,8 +85,9 @@ class ContainerBuilder
     {
         // Iterate all paths and get files
         foreach ($this->fileManger->scan($paths, ['php']) as $phpFile) {
+            require_once($phpFile);
             // Read all classes in given file
-            $this->loadFromClassNames($this->getDefinedClasses(require_once($phpFile)));
+            $this->loadFromClassNames($this->getDefinedClasses(file_get_contents($phpFile)));
         }
 
         return $this;
@@ -102,6 +106,8 @@ class ContainerBuilder
         foreach ($classes as $className) {
             // Resolve class metadata
             $this->classMetadata[$className] = $this->classResolver->resolve(new \ReflectionClass($className));
+            // Store by metadata name as alias
+            $this->classAliases[$this->classMetadata[$className]->name] = $className;
             // Store class in defined scopes
             foreach ($this->classMetadata[$className]->scopes as $scope) {
                 $this->scopes[$scope][] = $className;
@@ -118,9 +124,10 @@ class ContainerBuilder
      *
      * @return string[] Collection of found class names in php code
      */
-    protected function getDefinedClasses($php) : array
+    protected function getDefinedClasses(string $php) : array
     {
-        $classes = array();
+        $classes = [];
+        $namespace = null;
 
         // Append php marker for parsing file
         $php = strpos(is_string($php) ? $php : '', '<?php') !== 0 ? '<?php ' . $php : $php;
@@ -132,7 +139,14 @@ class ContainerBuilder
                 && $tokens[$i - 1][0] === T_WHITESPACE
                 && $tokens[$i][0] === T_STRING
             ) {
-                $classes[] = $tokens[$i][1];
+                $classes[] = $namespace ? $namespace . '\\' . $tokens[$i][1] : $tokens[$i][1];
+            } elseif ($tokens[$i - 2][0] === T_NAMESPACE
+                && $tokens[$i - 1][0] === T_WHITESPACE
+                && $tokens[$i][0] === T_STRING
+            ) {
+                while (isset($tokens[$i]) && is_array($tokens[$i])) {
+                    $namespace .= $tokens[$i++][1];
+                }
             }
         }
 
@@ -140,7 +154,7 @@ class ContainerBuilder
     }
 
     /**
-     * Load classes from PHP code.
+     * Load classes from PHP c ode.
      *
      * @param string $php PHP code
      *
@@ -322,6 +336,11 @@ class ContainerBuilder
                 $this->generator->newLine('return ');
                 $this->buildResolvingClassDeclaration($className);
                 $this->buildConstructorDependencies($classMetadata->methodsMetadata);
+
+                if ($isService) {
+                    $this->generator->endIfCondition()->newLine('return ' . $staticContainerName . ';');
+                }
+
             }
 
             // Set flag that condition is started
@@ -446,6 +465,9 @@ class ContainerBuilder
     {
         // This is a dependency which invokes resolving function
         if (array_key_exists($argument, $this->classMetadata)) {
+            // Call container logic for this dependency
+            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+        } elseif (array_key_exists($argument, $this->classAliases)) {
             // Call container logic for this dependency
             $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
         } elseif (is_string($argument)) { // String variable

@@ -12,32 +12,40 @@ use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
-use samsonframework\container\tests\classes\Car;
-use samsonframework\container\tests\classes\CarService;
 use samsonframework\container\tests\TestCase;
-use samsonframework\filemanager\FileManagerInterface;
+use samsonframework\localfilemanager\LocalFileManager;
 use samsonphp\generator\Generator;
 
 class ContainerConfigurationTest extends TestCase
 {
     public function testConfigure()
     {
+        $xmlConfig = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+    <container_builder>
+        <fileManager>samsonframework\localfilemanager\LocalFileManager</fileManager>
+        <classResolver>samsonframework\container\\resolver\AnnotationClassResolver</classResolver>
+        <generator>samsonphp\generator\Generator</generator>
+    </container_builder>
+  <car_service>
+    <car>\samsonframework\container\\tests\classes\Car</car>
+    <driver>samsonframework\container\\tests\classes\Driver</driver>
+  </car_service>
+</container>
+XML;
+
         $reader = new AnnotationReader();
+
         $resolver = new AnnotationResolver(
             new AnnotationClassResolver($reader),
             new AnnotationPropertyResolver($reader),
             new AnnotationMethodResolver($reader)
         );
 
-        $generator = new Generator();
+        $container = new ContainerBuilder(new LocalFileManager(), $resolver, new Generator());
 
-        $container = new ContainerBuilder($this->createMock(FileManagerInterface::class), $resolver, new Generator());
-
-        $containerClass = $container
-            ->loadFromClassNames([
-                Car::class,
-                CarService::class
-            ]);
+        $containerClass = $container->loadFromPaths([realpath(__DIR__ . '/../classes/')]);
 
         $configData = [];
 
@@ -55,7 +63,7 @@ class ContainerConfigurationTest extends TestCase
         $containerClass = $containerClass->build('Container', 'DI');
 
         $path = __DIR__ . '/Container2.php';
-        file_put_contents(__DIR__ . $path, $containerClass);
+        file_put_contents($path, $containerClass);
 
 //        if (!class_exists(Container::class, false)) {
 //            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
@@ -65,6 +73,6 @@ class ContainerConfigurationTest extends TestCase
 
         //$container = $containerConfig->configure(null, $configData);
 
-        static::assertInstanceOf(Logger::class, $container->getReader()->logger);
+        //static::assertInstanceOf(Logger::class, $container->getReader()->logger);
     }
 }

@@ -8,7 +8,8 @@ namespace samsonframework\container\configurator;
 /**
  * Dependency inject container configuration interface.
  *
- * @package samsonframework\container\configurator
+ * @author Vitaly Iegorov <egorov@samsonos.com>
+ * @author Ruslan Molodyko  <molodyko@samsonos.com>
  */
 interface ConfiguratorInterface
 {

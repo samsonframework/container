@@ -10,7 +10,7 @@ use samsonframework\container\annotation\Service;
 
 /**
  * Driver service class.
- * @Service(driver_service)
+ * @Service("driver_service")
  * @package samsonframework\di\tests\classes
  */
 class DriverService
