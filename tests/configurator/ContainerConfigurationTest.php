@@ -8,6 +8,7 @@
 namespace samsonframework\container;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\configurator\XMLConfigurator;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
@@ -22,18 +23,30 @@ class ContainerConfigurationTest extends TestCase
     {
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<container>
-    <container_builder>
-        <fileManager>samsonframework\localfilemanager\LocalFileManager</fileManager>
-        <classResolver>samsonframework\container\\resolver\AnnotationClassResolver</classResolver>
-        <generator>samsonphp\generator\Generator</generator>
-    </container_builder>
-  <car_service>
-    <car>\samsonframework\container\\tests\classes\Car</car>
-    <driver>samsonframework\container\\tests\classes\Driver</driver>
-  </car_service>
-</container>
+<dependency>
+    <container class="samsonframework\container\ContainerBuilder">
+        <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+        <classResolver class="samsonframework\container\AnnotationResolver">
+            <classResolver class="samsonframework\\container\\AnnotationClassResolver">
+                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+            </classResolver>
+            <propertyResolver class="samsonframework\\container\\AnnotationPropertyResolver">
+                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+            </propertyResolver>
+            <methodResolver class="samsonframework\\container\\AnnotationMethodResolver">
+                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+            </methodResolver>
+        </classResolver>
+        <generator class="samsonphp\generator\Generator"></generator>
+    </container>
+    <car_service class=""></car_service>
+</dependency>
 XML;
+
+        $xmlConfigurator = new XMLConfigurator();
+        $data = $xmlConfigurator->configure($xmlConfig);
+
+
 
         $reader = new AnnotationReader();
 

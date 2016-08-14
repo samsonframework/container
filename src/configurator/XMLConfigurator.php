@@ -12,17 +12,32 @@ namespace samsonframework\container\configurator;
  */
 class XMLConfigurator
 {
-    public function configure(string $configuration)
+    public function configure(string $inputConfiguration) : array
     {
-        $configString = file_get_contents(__DIR__ . '/../../../app/config/prod.xml');
-        $config = new \SimpleXMLElement($configString);
+        return $this->xml2array(new \SimpleXMLElement($inputConfiguration));
+    }
 
-        // Find all configuration classes
-        $configData = [];
-        foreach ($config->container as $service) {
-            foreach ($service as $serviceName => $configuration) {
-                $configData[$serviceName] = (array)$configuration;
-            }
+    /**
+     * function xml2array
+     *
+     * This function is part of the PHP manual.
+     *
+     * The PHP manual text and comments are covered by the Creative Commons
+     * Attribution 3.0 License, copyright (c) the PHP Documentation Group
+     *
+     * @author  k dot antczak at livedata dot pl
+     * @date    2011-04-22 06:08 UTC
+     * @link    http://www.php.net/manual/en/ref.simplexml.php#103617
+     * @license http://www.php.net/license/index.php#doc-lic
+     * @license http://creativecommons.org/licenses/by/3.0/
+     * @license CC-BY-3.0 <http://spdx.org/licenses/CC-BY-3.0>
+     */
+    protected function xml2array($xmlObject, $out = array())
+    {
+        foreach ((array)$xmlObject as $index => $node) {
+            $out[$index] = (is_object($node)) ? $this->xml2array($node) : $node;
         }
+
+        return $out;
     }
 }
