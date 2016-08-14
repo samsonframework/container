@@ -47,6 +47,9 @@ XML;
         $data = $xmlConfigurator->configure($xmlConfig);
 
 
+        //$xmlResolver = new XMLResolver();
+        //$xmlResolver->resolve($xml);
+
 
         $reader = new AnnotationReader();
 
@@ -55,6 +58,12 @@ XML;
             new AnnotationPropertyResolver($reader),
             new AnnotationMethodResolver($reader)
         );
+
+        new Injectable();
+
+        $metadata = $resolver->resolve(new \ReflectionClass(ContainerBuilder::class));
+
+
 
         $container = new ContainerBuilder(new LocalFileManager(), $resolver, new Generator());
 

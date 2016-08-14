@@ -44,13 +44,22 @@ class ContainerBuilder
     /** @var array Collection of dependencies aliases */
     protected $classAliases = [];
 
-    /** @var FileManagerInterface */
+    /**
+     * @var FileManagerInterface
+     * @Injectable
+     */
     protected $fileManger;
 
-    /** @var ResolverInterface */
+    /**
+     * @var ResolverInterface
+     * @Injectable
+     */
     protected $classResolver;
 
-    /** @var Generator */
+    /**
+     * @var Generator
+     * @Injectable
+     */
     protected $generator;
 
     /** @var string Resolver function name */
