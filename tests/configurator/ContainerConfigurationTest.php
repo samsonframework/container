@@ -39,7 +39,9 @@ class ContainerConfigurationTest extends TestCase
                 CarService::class
             ]);
 
-        foreach ($container->classMetadata as $className => $classMetadata) {
+        $configData = [];
+
+        foreach ($this->getProperty('classMetadata', $container) as $className => $classMetadata) {
             $serviceName = $classMetadata->name;
             if (array_key_exists($serviceName, $configData)) {
                 foreach ($configData[$serviceName] as $propertyName => $dependency) {
@@ -50,14 +52,14 @@ class ContainerConfigurationTest extends TestCase
             }
         }
 
-        $containerClass = $containerClass->build('Container1', 'DI');
+        $containerClass = $containerClass->build('Container', 'DI');
 
-        $className = 'Container1.php';
-        file_put_contents(__DIR__ . 'ContainerConfiguration.php/' . $className, $containerClass);
-        if (!class_exists(Container1::class, false)) {
-            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
-        }
+        $className = 'Container.php';
+        file_put_contents(__DIR__ . $className, $containerClass);
+//        if (!class_exists(Container::class, false)) {
+//            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
+//        }
 
-        return new \DI\Container1($generator);
+        //return new \DI\Container($generator);
     }
 }
