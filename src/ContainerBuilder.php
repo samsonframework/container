@@ -194,7 +194,7 @@ class ContainerBuilder
             ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
             ->newLine('$this->' . self::SCOPE_SERVICES . ' = ')->arrayValue($this->scopes[self::SCOPE_SERVICES])->text(';')
             ->endClassFunction()
-            ->defClassFunction('logic', 'protected', ['$dependency'], ['Overridden dependency resolving function'])
+            ->defClassFunction('logic', 'protected', ['$dependency'], ['{@inheritdoc}'])
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
             ->endClassFunction();
 
