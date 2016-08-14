@@ -171,6 +171,18 @@ class ContainerBuilder
         // Build dependency injection container function name
         $this->resolverFunction = uniqid(self::DI_FUNCTION_PREFIX);
 
+        $containerDependencies = [];
+        $containerAliases = [];
+        foreach ($this->classMetadata as $className => $classMetadata) {
+            if ($classMetadata->alias !== null) {
+                $containerAliases[$className] = $classMetadata->alias;
+            }
+            // Store inner dependencies
+            if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
+                $containerDependencies[$className] = array_values($classMetadata->methodsMetadata['__construct']->dependencies);
+            }
+        }
+
         $this->generator
             ->text('<?php declare(strict_types = 1);')
             ->newLine()
@@ -178,7 +190,9 @@ class ContainerBuilder
             ->multiComment(['Application container'])
             ->defClass($containerClass, '\\' . Container::class)
             ->commentVar('array', 'Loaded dependencies')
-            ->defClassVar('$dependencies', 'protected', array_keys($this->classMetadata))
+            ->defClassVar('$dependencies', 'protected', $containerDependencies)
+            ->commentVar('array', 'Dependency aliases')
+            ->defClassVar('$aliases', 'protected', $containerAliases)
             ->commentVar('array', 'Loaded services')
             ->defClassVar('$' . self::SCOPE_SERVICES, 'protected', $this->scopes[self::SCOPE_SERVICES])
             ->defClassFunction('logic', 'protected', ['$dependency'], ['Overridden dependency resolving function'])

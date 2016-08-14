@@ -17,6 +17,7 @@ use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\CarServiceWithInterface;
 use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\Leg;
+use samsonframework\container\tests\classes\PublicCar;
 use samsonframework\container\tests\classes\SlowDriver;
 use samsonframework\filemanager\FileManagerInterface;
 use samsonphp\generator\Generator;
@@ -51,6 +52,7 @@ class MethodBuilderTest extends TestCase
                 FastDriver::class,
                 SlowDriver::class,
                 CarServiceWithInterface::class,
+                PublicCar::class,
                 Leg::class
             ])
             ->build('Container', 'DI');
