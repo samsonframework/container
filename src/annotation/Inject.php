@@ -9,6 +9,7 @@ declare(strict_types = 1);
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
@@ -16,7 +17,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @Annotation
  */
-class Inject implements PropertyInterface
+class Inject implements PropertyConfiguratorInterface
 {
     use AnnotationValueTrait;
 

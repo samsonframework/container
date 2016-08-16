@@ -7,12 +7,7 @@
  */
 namespace samsonframework\container;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\annotation\Injectable;
-use samsonframework\container\resolver\AnnotationClassResolver;
-use samsonframework\container\resolver\AnnotationMethodResolver;
-use samsonframework\container\resolver\AnnotationPropertyResolver;
-use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\resolver\ArrayClassResolver;
 use samsonframework\container\resolver\XMLResolver;
 use samsonframework\container\tests\TestCase;
@@ -48,23 +43,78 @@ class ContainerConfigurationTest extends TestCase
 </dependency>
 XML;
 
+        $xmlConfig = <<<XML
+    <?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+    <service class="samsonframework\localfilemanager\LocalFileManager"></service>
+    <service class="samsonframework\container\ContainerBuilder" name="container">
+        <arguments>
+            <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+            <classResolver class="samsonframework\container\\resolver\AnnotationResolver"></classResolver>
+            <generator class="samsonphp\generator\Generator"></generator>
+        </arguments>
+    </service>
+    <service class="samsonframework\container\\resolver\AnnotationResolver">
+        <arguments>
+            <classResolver class="samsonframework\container\\resolver\AnnotationClassResolver"></classResolver>
+            <propertyResolver class="samsonframework\container\\resolver\AnnotationPropertyResolver"></propertyResolver>
+            <methodResolver class="samsonframework\container\\resolver\AnnotationMethodResolver"></methodResolver>
+        </arguments>
+    </service>
+    <service class="samsonframework\container\\resolver\AnnotationClassResolver">
+        <arguments>
+            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+        </arguments>
+    </service>
+    <service class="samsonframework\container\\resolver\AnnotationPropertyResolver">
+        <arguments>
+            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+        </arguments>
+    </service>
+    <service class="samsonframework\container\\resolver\AnnotationMethodResolver">
+        <arguments>
+            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+        </arguments>
+    </service>
+    <service class="samsonphp\generator\Generator"></service>
+    <service class="Doctrine\Common\Annotations\AnnotationReader"></service>
+    <service class="samsonframework\container\\tests\classes\Leg" name="leg"></service>
+    
+    <service class="samsonframework\container\\tests\classes\CarController" scope="controller">
+        <properties>
+            <car class="samsonframework\container\\tests\classes\Car"></car>
+        </properties>
+        <methods>
+            <stopCarAction>
+                <arguments>
+                    <leg class="samsonframework\container\\tests\classes\Leg"></leg>
+                </arguments>
+            </stopCarAction>
+        </methods>
+    </service>
+    <service class="samsonframework\container\\tests\classes\Car">
+        <arguments>
+            <car class="samsonframework\container\\tests\classes\SlowDriver"></car>
+        </arguments>
+    </service>
+    <service class="samsonframework\container\\tests\classes\SlowDriver"></service>
+</dependencies>
+XML;
+
         new Injectable();
 
         $xmlConfigurator = new XMLResolver(new ArrayClassResolver());
         $data = $xmlConfigurator->resolve($xmlConfig);
 
 
-        //$xmlResolver = new XMLResolver();
-        //$xmlResolver->resolve($xml);
-
-
-        $reader = new AnnotationReader();
-
-        $resolver = new AnnotationResolver(
-            new AnnotationClassResolver($reader),
-            new AnnotationPropertyResolver($reader),
-            new AnnotationMethodResolver($reader)
-        );
+//
+//        $reader = new AnnotationReader();
+//
+//        $resolver = new AnnotationResolver(
+//            new AnnotationClassResolver($reader),
+//            new AnnotationPropertyResolver($reader),
+//            new AnnotationMethodResolver($reader)
+//        );
 
 
 //        $metadata = $resolver->resolve(new \ReflectionClass(ContainerBuilder::class));

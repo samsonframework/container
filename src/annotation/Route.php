@@ -7,6 +7,8 @@
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\configurator\ClassConfiguratorInterface;
+use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 
@@ -15,7 +17,7 @@ use samsonframework\container\metadata\MethodMetadata;
  *
  * @Annotation
  */
-class Route extends AnnotationWithValue implements ClassInterface, MethodInterface
+class Route extends AnnotationWithValue implements ClassConfiguratorInterface, MethodConfiguratorInterface
 {
     /** @var string Route path */
     protected $path;
