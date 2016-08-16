@@ -14,7 +14,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class InjectablePropertyConfigurator implements PropertyConfiguratorInterface
+class InjectablePropertyConfigurator extends InjectableAbstractConfigurator implements PropertyConfiguratorInterface
 {
     /**
      * Convert to class property metadata.
@@ -30,13 +30,17 @@ class InjectablePropertyConfigurator implements PropertyConfiguratorInterface
     public function toPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
         // Check if there is no type hint - we cannot inject without it
-        if ($propertyMetadata->typeHint === null || $propertyMetadata->typeHint === '') {
+        if ($this->argumentType === null || $this->argumentType === '') {
             throw new TypeHintDoesNotExists('Cannot configure property "' . $propertyMetadata->name . '" injection');
         }
 
         // Check if specified type hint exists
-        if (!class_exists($propertyMetadata->typeHint)) {
-            throw new ClassDoesNotExists('Cannot configure property "' . $propertyMetadata->name . '" with "' . $propertyMetadata->typeHint . '"');
+        if (!class_exists($this->argumentType)) {
+            throw new ClassDoesNotExists('Cannot configure property "' . $this->argumentName . '" with "' . $this->argumentType . '"');
         }
+
+        // Store property metadata
+        $propertyMetadata->typeHint = $this->argumentType;
+        $propertyMetadata->name = $this->argumentName;
     }
 }

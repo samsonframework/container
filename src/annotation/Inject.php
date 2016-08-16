@@ -18,6 +18,8 @@ use samsonframework\container\metadata\PropertyMetadata;
  */
 class Inject implements PropertyInterface
 {
+    use AnnotationValueTrait;
+
     /** @var string Injectable dependency */
     protected $dependency;
 
@@ -62,19 +64,6 @@ class Inject implements PropertyInterface
     {
         //$dependency = $this->buildFullClassName($dependency, $namespace);
         $type = $this->buildFullClassName($type, $namespace);
-
-//        // Check for inheritance violation
-//        if ($this->checkInheritanceViolation($type, $dependency)) {
-//            throw new \InvalidArgumentException(
-//                '@Inject dependency violates ' . $type . ' inheritance with ' . $dependency
-//            );
-//        }
-//
-//        if ($this->checkInterfaceWithoutClassName($type, $dependency)) {
-//            throw new \InvalidArgumentException(
-//                'Cannot @Inject interface, inherited class name should be specified
-//                ');
-//        }
 
         // Empty @Inject with type hint - use type hine as dependency
         if ($dependency === null && $type !== null) {
