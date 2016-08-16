@@ -7,6 +7,7 @@ namespace samsonframework\container\resolver;
 
 use samsonframework\container\annotation\MethodInterface;
 use samsonframework\container\annotation\ParameterInterface;
+use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\ParameterMetadata;
@@ -54,7 +55,7 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
 
         /** @var MethodInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
-            if ($annotation instanceof MethodInterface) {
+            if ($annotation instanceof MethodConfiguratorInterface) {
                 $annotation->toMethodMetadata($methodMetadata);
             }
         }

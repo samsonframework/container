@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\MethodMetadata;
 
 /**
@@ -12,7 +13,7 @@ use samsonframework\container\metadata\MethodMetadata;
  *
  * @package samsonframework\container\annotation
  */
-interface MethodInterface extends AnnotationInterface
+interface MethodInterface extends MethodConfiguratorInterface
 {
     /**
      * Convert to class method metadata.

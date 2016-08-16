@@ -12,6 +12,9 @@ namespace samsonframework\container\annotation;
  */
 class AnnotationWithValue implements AnnotationInterface
 {
+    /** @var string[] Collection of class collection */
+    protected $collection = [];
+
     /**
      * Scope constructor.
      *

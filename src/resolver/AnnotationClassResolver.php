@@ -8,6 +8,7 @@
 namespace samsonframework\container\resolver;
 
 use samsonframework\container\annotation\ClassInterface;
+use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -43,7 +44,7 @@ class AnnotationClassResolver extends AbstractAnnotationResolver implements Anno
     {
         /** @var ClassInterface $annotation Read class annotations */
         foreach ($this->reader->getClassAnnotations($classData) as $annotation) {
-            if ($annotation instanceof ClassInterface) {
+            if ($annotation instanceof ClassConfiguratorInterface) {
                 $annotation->toClassMetadata($metadata);
             }
         }

@@ -6,6 +6,7 @@
 namespace samsonframework\container\resolver;
 
 use samsonframework\container\annotation\PropertyInterface;
+use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
@@ -51,7 +52,7 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
 
         /** @var PropertyInterface $annotation Read class annotations */
         foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
-            if ($annotation instanceof PropertyInterface) {
+            if ($annotation instanceof PropertyConfiguratorInterface) {
                 $annotation->toPropertyMetadata($propertyMetadata);
             }
         }

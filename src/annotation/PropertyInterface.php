@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
@@ -12,7 +13,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @package samsonframework\container\annotation
  */
-interface PropertyInterface extends AnnotationInterface
+interface PropertyInterface extends PropertyConfiguratorInterface
 {
     /**
      * Convert to class property metadata.

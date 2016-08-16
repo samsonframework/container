@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\annotation;
 
+use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -12,7 +13,7 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @package samsonframework\container\annotation
  */
-interface ClassInterface extends AnnotationInterface
+interface ClassInterface extends ClassConfiguratorInterface
 {
     /**
      * Convert to class metadata.

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -7,19 +7,33 @@
  */
 namespace samsonframework\container\annotation;
 
-use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
- * Class Scope.
+ * Scope configurator annotation class.
+ * @see    \samsonframework\container\configurator\ScopeConfigurator
+ *
+ * @author Vitaly Egorov <egorov@samsonos.com>
  *
  * @Annotation
  */
-class Scope extends AnnotationWithValue implements ClassInterface
+class Scope extends ScopeConfigurator
 {
-    /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $classMetadata)
+    use AnnotationValueTrait;
+
+    /**
+     * Scope annotation configurator constructor.
+     *
+     * @param string|array $valueOrValues Service unique name
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function __construct($valueOrValues)
     {
-        // Add all found annotation collection to metadata collection
-        $classMetadata->scopes = array_merge($classMetadata->scopes, $this->collection);
+        // Parse annotation value
+        $scopeNameData = $this->parseAnnotationValue($valueOrValues);
+
+        // Pass to scope configurator
+        parent::__construct(array_shift($scopeNameData));
     }
 }

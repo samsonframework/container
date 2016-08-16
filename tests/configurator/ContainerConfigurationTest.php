@@ -51,6 +51,7 @@ class ContainerConfigurationTest extends TestCase
 XML;
 
         new Injectable();
+
         $xmlConfigurator = new XMLResolver(new ArrayClassResolver());
         $data = $xmlConfigurator->resolve($xmlConfig);
 

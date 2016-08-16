@@ -22,7 +22,7 @@ class Service extends ServiceConfigurator
     use AnnotationValueTrait;
 
     /**
-     * Service constructor.
+     * Service annotation configurator constructor.
      *
      * @param string|array $valueOrValues Service unique name
      *
@@ -30,7 +30,10 @@ class Service extends ServiceConfigurator
      */
     public function __construct($valueOrValues)
     {
-        // Parse annotation value and pass to configurator
-        parent::__construct($this->parseAnnotationValue($valueOrValues));
+        // Parse annotation value
+        $serviceNameData = $this->parseAnnotationValue($valueOrValues);
+
+        // Pass to service configurator
+        parent::__construct(array_shift($serviceNameData));
     }
 }

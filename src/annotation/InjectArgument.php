@@ -16,8 +16,6 @@ use samsonframework\container\configurator\InjectableArgumentConfigurator;
  */
 class InjectArgument extends InjectableArgumentConfigurator
 {
-    use AnnotationValueTrait;
-
     /**
      * InjectArgument constructor.
      *
@@ -27,10 +25,7 @@ class InjectArgument extends InjectableArgumentConfigurator
      */
     public function __construct(array $valueOrValues)
     {
-        // Parse argument injection data
-        list($argumentName, $argumentType) = each($this->parseAnnotationValue($valueOrValues));
-
         // Pass to injectable argument configurator
-        parent::__construct($argumentName, $argumentType);
+        parent::__construct(key($valueOrValues), $valueOrValues[key($valueOrValues)]);
     }
 }
