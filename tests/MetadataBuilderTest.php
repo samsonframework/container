@@ -6,12 +6,12 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\annotation\AnnotationClassResolver;
+use samsonframework\container\annotation\AnnotationMethodResolver;
+use samsonframework\container\annotation\AnnotationPropertyResolver;
+use samsonframework\container\annotation\AnnotationResolver;
 use samsonframework\container\annotation\Service;
 use samsonframework\container\ContainerBuilder;
-use samsonframework\container\resolver\AnnotationClassResolver;
-use samsonframework\container\resolver\AnnotationMethodResolver;
-use samsonframework\container\resolver\AnnotationPropertyResolver;
-use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\resolver\ResolverInterface;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;

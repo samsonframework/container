@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:30
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\annotation;
 
 use Doctrine\Common\Annotations\Reader;
 

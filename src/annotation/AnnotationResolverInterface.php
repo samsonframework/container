@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:38
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\AbstractMetadata;
 use samsonframework\container\metadata\ClassMetadata;
@@ -13,15 +13,15 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-interface ArrayResolverInterface
+interface AnnotationResolverInterface
 {
     /**
      * Resolve class annotations.
      *
-     * @param array         $classDataArray
-     * @param ClassMetadata $classMetadata
+     * @param \ReflectionClass $classReflection
+     * @param ClassMetadata    $classMetadata
      *
      * @return AbstractMetadata
      */
-    public function resolve(array $classDataArray, ClassMetadata $classMetadata);
+    public function resolve(\ReflectionClass $classReflection, ClassMetadata $classMetadata);
 }

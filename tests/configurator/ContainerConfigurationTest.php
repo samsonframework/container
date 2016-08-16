@@ -8,7 +8,7 @@
 namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
-use samsonframework\container\resolver\ArrayClassResolver;
+use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\resolver\XMLResolver;
 use samsonframework\container\tests\TestCase;
 
@@ -18,92 +18,21 @@ class ContainerConfigurationTest extends TestCase
     {
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<dependency>
-    <container class="samsonframework\container\ContainerBuilder">
-        <controller></controller>
-        <service>TestXmlService</service>
-        <scope>TestScope</scope>
-        <constructor>
-            <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-            <classResolver class="samsonframework\container\AnnotationResolver">
-                <classResolver class="samsonframework\\container\\AnnotationClassResolver">
-                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-                </classResolver>545
-                <propertyResolver class="samsonframework\\container\\AnnotationPropertyResolver">
-                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-                </propertyResolver>
-                <methodResolver class="samsonframework\\container\\AnnotationMethodResolver">
-                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-                </methodResolver>
-            </classResolver>
-            <generator class="samsonphp\generator\Generator"></generator>
-        </constructor>
-    </container>
-    <car_service class=""></car_service>
-</dependency>
-XML;
-
-        $xmlConfig = <<<XML
-    <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-    <service class="samsonframework\localfilemanager\LocalFileManager"></service>
-    <service class="samsonframework\container\ContainerBuilder" name="container">
-        <arguments>
-            <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-            <classResolver class="samsonframework\container\\resolver\AnnotationResolver"></classResolver>
-            <generator class="samsonphp\generator\Generator"></generator>
-        </arguments>
-    </service>
-    <service class="samsonframework\container\\resolver\AnnotationResolver">
-        <arguments>
-            <classResolver class="samsonframework\container\\resolver\AnnotationClassResolver"></classResolver>
-            <propertyResolver class="samsonframework\container\\resolver\AnnotationPropertyResolver"></propertyResolver>
-            <methodResolver class="samsonframework\container\\resolver\AnnotationMethodResolver"></methodResolver>
-        </arguments>
-    </service>
-    <service class="samsonframework\container\\resolver\AnnotationClassResolver">
-        <arguments>
-            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-        </arguments>
-    </service>
-    <service class="samsonframework\container\\resolver\AnnotationPropertyResolver">
-        <arguments>
-            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-        </arguments>
-    </service>
-    <service class="samsonframework\container\\resolver\AnnotationMethodResolver">
-        <arguments>
-            <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-        </arguments>
-    </service>
-    <service class="samsonphp\generator\Generator"></service>
-    <service class="Doctrine\Common\Annotations\AnnotationReader"></service>
-    <service class="samsonframework\container\\tests\classes\Leg" name="leg"></service>
-    
-    <service class="samsonframework\container\\tests\classes\CarController" scope="controller">
-        <properties>
-            <car class="samsonframework\container\\tests\classes\Car"></car>
-        </properties>
-        <methods>
-            <stopCarAction>
-                <arguments>
-                    <leg class="samsonframework\container\\tests\classes\Leg"></leg>
-                </arguments>
-            </stopCarAction>
-        </methods>
-    </service>
-    <service class="samsonframework\container\\tests\classes\Car">
-        <arguments>
-            <car class="samsonframework\container\\tests\classes\SlowDriver"></car>
-        </arguments>
-    </service>
-    <service class="samsonframework\container\\tests\classes\SlowDriver"></service>
+<instance class="samsonframework\localfilemanager\LocalFileManager"></instance>
+<service class="samsonframework\container\ContainerBuilder" name="container">
+<arguments>
+<fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+<classResolver class="samsonframework\container\resolver\AnnotationResolver"></classResolver>
+<generator class="samsonphp\generator\Generator"></generator>
+</arguments>
+</service>
 </dependencies>
 XML;
 
         new Injectable();
 
-        $xmlConfigurator = new XMLResolver(new ArrayClassResolver());
+        $xmlConfigurator = new XMLResolver(new CollectionClassResolver());
         $data = $xmlConfigurator->resolve($xmlConfig);
 
 

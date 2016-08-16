@@ -6,12 +6,12 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\annotation\AnnotationClassResolver;
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Route;
 use samsonframework\container\annotation\Scope;
 use samsonframework\container\ContainerBuilder;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\tests\classes as tests;
 
 class AnnotationClassResolverTest extends TestCase

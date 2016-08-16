@@ -3,10 +3,8 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:04
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\annotation;
 
-use samsonframework\container\annotation\MethodInterface;
-use samsonframework\container\annotation\ParameterInterface;
 use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;

@@ -5,11 +5,11 @@
  */
 namespace samsonframework\container\tests;
 
+use samsonframework\container\annotation\AnnotationClassResolver;
+use samsonframework\container\annotation\AnnotationMethodResolver;
+use samsonframework\container\annotation\AnnotationPropertyResolver;
+use samsonframework\container\annotation\AnnotationResolver;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\AnnotationClassResolver;
-use samsonframework\container\resolver\AnnotationMethodResolver;
-use samsonframework\container\resolver\AnnotationPropertyResolver;
-use samsonframework\container\resolver\AnnotationResolver;
 use samsonframework\container\tests\classes as tests;
 
 class AnnotationResolverTest extends TestCase

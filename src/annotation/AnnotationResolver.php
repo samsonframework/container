@@ -3,9 +3,10 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:32
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\annotation;
 
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\resolver\ResolverInterface;
 
 /**
  * Annotation resolver implementation.

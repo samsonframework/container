@@ -5,9 +5,8 @@
  * Date: 29.07.2016
  * Time: 21:38.
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\annotation;
 
-use samsonframework\container\annotation\ClassInterface;
 use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 

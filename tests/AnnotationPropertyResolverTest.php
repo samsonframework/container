@@ -6,9 +6,9 @@
 namespace samsonframework\container\tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use samsonframework\container\annotation\AnnotationPropertyResolver;
 use samsonframework\container\annotation\Inject;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\tests\classes as tests;
 
 class AnnotationPropertyResolverTest extends TestCase

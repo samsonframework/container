@@ -5,17 +5,16 @@
  * Date: 29.07.2016
  * Time: 21:38.
  */
-namespace samsonframework\container\resolver;
+namespace samsonframework\container\collection;
 
-use samsonframework\container\annotation\ClassInterface;
-use samsonframework\container\configurator\ClassConfiguratorInterface;
+use samsonframework\container\configurator\ConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Array class resolver class.
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-class ArrayClassResolver implements ArrayResolverInterface
+class CollectionClassResolver implements CollectionResolverInterface
 {
     /** Array key name for searching class cofiguration sections */
     const KEY_CLASS = 'dependencies';
@@ -30,7 +29,7 @@ class ArrayClassResolver implements ArrayResolverInterface
         // Gather all supported configuration keys
         $this->keys = [];
         foreach (get_declared_classes() as $className) {
-            if (in_array(ClassConfiguratorInterface::class, class_implements($className), true)) {
+            if (in_array(ConfiguratorInterface::class, class_implements($className), true)) {
                 $annotationName = substr($className, strrpos($className, '\\') + 1);
                 $this->keys[strtolower($annotationName)] = $className;
             }
@@ -42,7 +41,7 @@ class ArrayClassResolver implements ArrayResolverInterface
      */
     public function resolve(array $classDataArray, ClassMetadata $classMetadata)
     {
-        foreach ($classDataArray[self::KEY_CLASS] as $item => $configuration) {
+        foreach ($classDataArray as $item => $configuration) {
             // If we have class resolving key
             foreach ($this->keys as $key => $className) {
                 if (array_key_exists($key, $configuration)) {

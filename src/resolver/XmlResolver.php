@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\resolver;
 
+use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -15,15 +16,15 @@ use samsonframework\container\metadata\ClassMetadata;
  */
 class XMLResolver implements ResolverInterface
 {
-    /** @var ArrayClassResolver */
+    /** @var CollectionClassResolver */
     protected $classResolver;
 
     /**
      * AnnotationResolver constructor.
      *
-     * @param ArrayClassResolver $classResolver
+     * @param CollectionClassResolver $classResolver
      */
-    public function __construct(ArrayClassResolver $classResolver)
+    public function __construct(CollectionClassResolver $classResolver)
     {
         $this->classResolver = $classResolver;
         //$this->propertyResolver = $propertyResolver;
