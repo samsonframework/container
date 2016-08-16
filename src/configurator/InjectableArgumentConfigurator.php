@@ -49,7 +49,7 @@ class InjectableArgumentConfigurator extends InjectableAbstractConfigurator impl
     }
 
     /**
-     * Check method argument existance.
+     * Check method argument existence.
      *
      * @param string         $argument
      * @param MethodMetadata $methodMetadata

@@ -23,9 +23,6 @@ abstract class InjectableAbstractConfigurator
      *
      * @param string $argumentName Injected argument name
      * @param string $argumentType Injected argument type hint
-     *
-     * @internal param array $valueOrValues
-     *
      */
     public function __construct(string $argumentName, string $argumentType)
     {
