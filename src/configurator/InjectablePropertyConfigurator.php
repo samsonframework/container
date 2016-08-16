@@ -23,7 +23,9 @@ class InjectablePropertyConfigurator implements PropertyConfiguratorInterface
      *
      * @return PropertyMetadata Annotation conversion to metadata
      *
-     * @throws \Exception
+     * @throws TypeHintDoesNotExists
+     * @throws ClassDoesNotExists
+     *
      */
     public function toPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
