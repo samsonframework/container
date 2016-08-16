@@ -13,15 +13,15 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-interface AnnotationResolverInterface
+interface ArrayResolverInterface
 {
     /**
      * Resolve class annotations.
      *
-     * @param \ReflectionClass $classReflection
-     * @param ClassMetadata    $classMetadata
+     * @param array         $classDataArray
+     * @param ClassMetadata $classMetadata
      *
      * @return AbstractMetadata
      */
-    public function resolve(\ReflectionClass $classReflection, ClassMetadata $classMetadata);
+    public function resolve(array $classDataArray, ClassMetadata $classMetadata);
 }

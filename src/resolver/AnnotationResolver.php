@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:32
@@ -10,7 +10,7 @@ use samsonframework\container\metadata\ClassMetadata;
 /**
  * Annotation resolver implementation.
  *
- * @package samsonframework\container\resolver
+ * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class AnnotationResolver implements ResolverInterface
 {
@@ -40,7 +40,7 @@ class AnnotationResolver implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function resolve($classData, $identifier = null)
+    public function resolve($classData, string $identifier = null) : ClassMetadata
     {
         /** @var \ReflectionClass $classData */
 

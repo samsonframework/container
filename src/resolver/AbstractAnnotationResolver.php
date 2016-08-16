@@ -7,6 +7,10 @@ namespace samsonframework\container\resolver;
 
 use Doctrine\Common\Annotations\Reader;
 
+/**
+ * Abstract annotation resolver.
+ * @author Vitaly Iegorov <egorov@samsonos.com>
+ */
 abstract class AbstractAnnotationResolver
 {
     /** @var Reader */

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -9,6 +9,11 @@ namespace samsonframework\container\resolver;
 
 use samsonframework\container\metadata\ClassMetadata;
 
+/**
+ * Class resolving interface.
+ *
+ * @author Vitaly Iegorov <egorov@samsonos.com>
+ */
 interface ResolverInterface
 {
     /**
@@ -19,5 +24,5 @@ interface ResolverInterface
      *
      * @return ClassMetadata Class metadata
      */
-    public function resolve($classData, $identifier = null);
+    public function resolve($classData, string $identifier = null) : ClassMetadata;
 }

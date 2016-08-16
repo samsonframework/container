@@ -19,10 +19,10 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
     /**
      * {@inheritDoc}
      */
-    public function resolve(\ReflectionClass $classData, ClassMetadata $classMetadata)
+    public function resolve(\ReflectionClass $classReflection, ClassMetadata $classMetadata)
     {
         /** @var \ReflectionMethod $method */
-        foreach ($classData->getMethods() as $method) {
+        foreach ($classReflection->getMethods() as $method) {
             $this->resolveMethodAnnotations($method, $classMetadata);
         }
 

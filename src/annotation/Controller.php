@@ -7,23 +7,17 @@
  */
 namespace samsonframework\container\annotation;
 
-use samsonframework\container\ContainerBuilder;
-use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\configurator\ControllerConfigurator;
 
 /**
- * Controller annotation class.
+ * Controller configurator annotation class.
+ * @see    \samsonframework\container\configurator\ControllerConfigurator
  *
- * This annotation adds class to Controller container scope.
- * @see samsonframework\container\Container::SCOPE_CONTROLLER
+ * @author Vitaly Egorov <egorov@samsonos.com>
  *
  * @Annotation
  */
-class Controller implements ClassInterface
+class Controller extends ControllerConfigurator
 {
-    /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $classMetadata)
-    {
-        // Add controller scope to metadata collection
-        $classMetadata->scopes[] = ContainerBuilder::SCOPE_CONTROLLER;
-    }
+
 }

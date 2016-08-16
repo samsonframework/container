@@ -1,15 +1,14 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
- * on 14.08.16 at 16:04
+ * on 07.08.16 at 14:55
  */
 namespace samsonframework\container\configurator;
 
 /**
- * Dependency inject container configuration interface.
+ * Configurator interface.
  *
  * @author Vitaly Iegorov <egorov@samsonos.com>
- * @author Ruslan Molodyko  <molodyko@samsonos.com>
  */
 interface ConfiguratorInterface
 {

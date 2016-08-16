@@ -20,10 +20,10 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
     /**
      * {@inheritDoc}
      */
-    public function resolve(\ReflectionClass $classData, ClassMetadata $classMetadata)
+    public function resolve(\ReflectionClass $classReflection, ClassMetadata $classMetadata)
     {
         /** @var \ReflectionProperty $property */
-        foreach ($classData->getProperties() as $property) {
+        foreach ($classReflection->getProperties() as $property) {
             $this->resolveClassPropertyAnnotations($property, $classMetadata);
         }
 

@@ -8,11 +8,13 @@
 namespace samsonframework\container;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use samsonframework\container\configurator\XMLConfigurator;
+use samsonframework\container\annotation\Injectable;
 use samsonframework\container\resolver\AnnotationClassResolver;
 use samsonframework\container\resolver\AnnotationMethodResolver;
 use samsonframework\container\resolver\AnnotationPropertyResolver;
 use samsonframework\container\resolver\AnnotationResolver;
+use samsonframework\container\resolver\ArrayClassResolver;
+use samsonframework\container\resolver\XMLResolver;
 use samsonframework\container\tests\TestCase;
 use samsonframework\localfilemanager\LocalFileManager;
 use samsonphp\generator\Generator;
@@ -25,26 +27,32 @@ class ContainerConfigurationTest extends TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <dependency>
     <container class="samsonframework\container\ContainerBuilder">
-        <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-        <classResolver class="samsonframework\container\AnnotationResolver">
-            <classResolver class="samsonframework\\container\\AnnotationClassResolver">
-                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+        <controller></controller>
+        <service>TestXmlService</service>
+        <scope>TestScope</scope>
+        <constructor>
+            <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+            <classResolver class="samsonframework\container\AnnotationResolver">
+                <classResolver class="samsonframework\\container\\AnnotationClassResolver">
+                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+                </classResolver>545
+                <propertyResolver class="samsonframework\\container\\AnnotationPropertyResolver">
+                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+                </propertyResolver>
+                <methodResolver class="samsonframework\\container\\AnnotationMethodResolver">
+                    <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
+                </methodResolver>
             </classResolver>
-            <propertyResolver class="samsonframework\\container\\AnnotationPropertyResolver">
-                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-            </propertyResolver>
-            <methodResolver class="samsonframework\\container\\AnnotationMethodResolver">
-                <reader class="Doctrine\Common\Annotations\AnnotationReader"></reader>
-            </methodResolver>
-        </classResolver>
-        <generator class="samsonphp\generator\Generator"></generator>
+            <generator class="samsonphp\generator\Generator"></generator>
+        </constructor>
     </container>
     <car_service class=""></car_service>
 </dependency>
 XML;
 
-        $xmlConfigurator = new XMLConfigurator();
-        $data = $xmlConfigurator->configure($xmlConfig);
+        new Injectable();
+        $xmlConfigurator = new XMLResolver(new ArrayClassResolver());
+        $data = $xmlConfigurator->resolve($xmlConfig);
 
 
         //$xmlResolver = new XMLResolver();
@@ -59,11 +67,8 @@ XML;
             new AnnotationMethodResolver($reader)
         );
 
-        new Injectable();
 
         $metadata = $resolver->resolve(new \ReflectionClass(ContainerBuilder::class));
-
-
 
         $container = new ContainerBuilder(new LocalFileManager(), $resolver, new Generator());
 

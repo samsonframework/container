@@ -18,17 +18,17 @@ class AnnotationClassResolver extends AbstractAnnotationResolver implements Anno
     /**
      * {@inheritDoc}
      */
-    public function resolve(\ReflectionClass $classData, ClassMetadata $classMetadata)
+    public function resolve(\ReflectionClass $classReflection, ClassMetadata $classMetadata)
     {
-        /** @var \ReflectionClass $classData */
+        /** @var \ReflectionClass $classReflection */
 
         // Create and fill class metadata base fields
-        $classMetadata->className = $classData->name;
-        $classMetadata->nameSpace = $classData->getNamespaceName();
-        $classMetadata->identifier = $classData->name;
+        $classMetadata->className = $classReflection->name;
+        $classMetadata->nameSpace = $classReflection->getNamespaceName();
+        $classMetadata->identifier = $classReflection->name;
         $classMetadata->name = $classMetadata->identifier;
 
-        $this->resolveClassAnnotations($classData, $classMetadata);
+        $this->resolveClassAnnotations($classReflection, $classMetadata);
 
         return $classMetadata;
     }
