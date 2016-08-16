@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -25,7 +25,7 @@ class ScopeConfigurator implements ClassConfiguratorInterface
     /**
      * ScopeConfigurator constructor.
      *
-     * @param string $scopeName
+     * @param string $scopeName Class scope name
      */
     public function __construct(string $scopeName)
     {

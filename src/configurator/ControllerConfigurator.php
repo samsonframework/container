@@ -8,7 +8,6 @@
 namespace samsonframework\container\configurator;
 
 use samsonframework\container\ContainerBuilder;
-use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Controller class configurator.
@@ -18,12 +17,14 @@ use samsonframework\container\metadata\ClassMetadata;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class ControllerConfigurator implements ClassConfiguratorInterface
+class ControllerConfigurator extends ScopeConfigurator
 {
-    /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $classMetadata)
+    /**
+     * ControllerConfigurator constructor.
+     */
+    public function __construct()
     {
-        // Add controller scope to metadata collection
-        $classMetadata->scopes[] = ContainerBuilder::SCOPE_CONTROLLER;
+        // Add to controller scope
+        parent::__construct(ContainerBuilder::SCOPE_CONTROLLER);
     }
 }
