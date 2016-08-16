@@ -8,25 +8,27 @@ declare(strict_types = 1);
 namespace samsonframework\container\annotation;
 
 /**
- *  Annotation with value.
+ *  Annotation with value trait.
  */
-class AnnotationWithValue implements AnnotationInterface
+trait AnnotationValueTrait
 {
     /**
-     * Scope constructor.
+     * Parse annotation value.
      *
      * @param array $valueOrValues Class collection
      *
+     * @return array Parsed annotation key=>value collection
+     *
      * @throws \InvalidArgumentException Thrown when neither string nor string[] is passed
      */
-    public function __construct(array $valueOrValues)
+    public function parseAnnotationValue(array $valueOrValues) : array
     {
         if ($this->checkValuePresence($valueOrValues)) {
             // Convert empty values to null
             $value = $valueOrValues['value'] ?? null;
 
             // Always store array
-            $this->collection = is_array($value) ? $value : [$value];
+            return is_array($value) ? $value : [$value];
         } else {
             throw new \InvalidArgumentException('Only string or array is allowed');
         }

@@ -7,21 +7,16 @@
  */
 namespace samsonframework\container\annotation;
 
-use samsonframework\container\ContainerBuilder;
-use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\configurator\ServiceConfigurator;
 
 /**
- * Service annotation class.
- *
- * This annotation adds class to Service container scope.
- * @see samsonframework\container\Container::SCOPE_SERVICE
+ * Service configurator annotation class.
  *
  * @Annotation
  */
-class Service extends AnnotationWithValue implements ClassInterface
+class Service extends ServiceConfigurator
 {
-    /** @var string Service unique name */
-    protected $name;
+    use AnnotationValueTrait;
 
     /**
      * Service constructor.
@@ -32,16 +27,7 @@ class Service extends AnnotationWithValue implements ClassInterface
      */
     public function __construct($valueOrValues)
     {
-        parent::__construct($valueOrValues);
-
-        // Get first argument
-        $this->name = array_shift($this->collection);
-    }
-
-    /** {@inheritdoc} */
-    public function toClassMetadata(ClassMetadata $classMetadata)
-    {
-        $classMetadata->name = $this->name;
-        $classMetadata->scopes[] = ContainerBuilder::SCOPE_SERVICES;
+        // Parse annotation value and pass to configurator
+        parent::__construct($this->parseAnnotationValue($valueOrValues));
     }
 }
