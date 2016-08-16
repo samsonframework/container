@@ -9,6 +9,7 @@ namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
 use samsonframework\container\collection\CollectionClassResolver;
+use samsonframework\container\collection\Scope;
 use samsonframework\container\resolver\XMLResolver;
 use samsonframework\container\tests\TestCase;
 
@@ -19,7 +20,7 @@ class ContainerConfigurationTest extends TestCase
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-<instance class="samsonframework\localfilemanager\LocalFileManager"></instance>
+<instance class="samsonframework\localfilemanager\LocalFileManager" scope="myTestScope"></instance>
 <service class="samsonframework\container\ContainerBuilder" name="container">
 <arguments>
 <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
@@ -32,7 +33,10 @@ XML;
 
         new Injectable();
 
-        $xmlConfigurator = new XMLResolver(new CollectionClassResolver());
+        $xmlConfigurator = new XMLResolver(new CollectionClassResolver([
+            Scope::class,
+            //Service::class,
+        ]));
         $data = $xmlConfigurator->resolve($xmlConfig);
 
 
