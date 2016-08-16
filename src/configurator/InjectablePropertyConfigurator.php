@@ -16,9 +16,6 @@ use samsonframework\container\metadata\PropertyMetadata;
  */
 class InjectablePropertyConfigurator implements PropertyConfiguratorInterface
 {
-    const EXCEPTION_NO_TYPE_HINT = 'Cannot configure property %s injection - type hint not specified';
-
-    const EXCEPTION_NO_TYPE_HINT = 'Cannot configure property %s injection - type hint not specified';
     /**
      * Convert to class property metadata.
      *
