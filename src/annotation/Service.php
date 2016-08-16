@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -11,6 +11,9 @@ use samsonframework\container\configurator\ServiceConfigurator;
 
 /**
  * Service configurator annotation class.
+ * @see    \samsonframework\container\configurator\ServiceConfigurator
+ *
+ * @author Vitaly Egorov <egorov@samsonos.com>
  *
  * @Annotation
  */
