@@ -17,7 +17,7 @@ use samsonframework\container\configurator\ControllerConfigurator;
  *
  * @Annotation
  */
-class Controller extends ControllerConfigurator
+class Controller extends ControllerConfigurator implements AnnotationConfiguratorInterface
 {
 
 }

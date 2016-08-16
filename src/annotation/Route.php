@@ -17,7 +17,7 @@ use samsonframework\container\metadata\MethodMetadata;
  *
  * @Annotation
  */
-class Route extends AnnotationWithValue implements ClassConfiguratorInterface, MethodConfiguratorInterface
+class Route extends AnnotationWithValue implements ClassConfiguratorInterface, MethodConfiguratorInterface, AnnotationConfiguratorInterface
 {
     /** @var string Route path */
     protected $path;

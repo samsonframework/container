@@ -14,7 +14,7 @@ use samsonframework\container\configurator\InjectableArgumentConfigurator;
  *
  * @Annotation
  */
-class InjectArgument extends InjectableArgumentConfigurator
+class InjectArgument extends InjectableArgumentConfigurator implements AnnotationConfiguratorInterface
 {
     /**
      * InjectArgument constructor.

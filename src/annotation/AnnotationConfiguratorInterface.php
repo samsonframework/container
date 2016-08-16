@@ -6,11 +6,13 @@
 namespace samsonframework\container\annotation;
 
 /**
- * Annotation interface.
+ * Annotation configurator interface.
+ *
+ * Interface for differentiation of collection configurator implementation.
  *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-interface AnnotationInterface
+interface AnnotationConfiguratorInterface
 {
 
 }

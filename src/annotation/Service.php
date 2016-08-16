@@ -17,7 +17,7 @@ use samsonframework\container\configurator\ServiceConfigurator;
  *
  * @Annotation
  */
-class Service extends ServiceConfigurator
+class Service extends ServiceConfigurator implements AnnotationConfiguratorInterface
 {
     use AnnotationValueTrait;
 

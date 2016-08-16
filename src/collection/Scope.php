@@ -5,22 +5,18 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-namespace samsonframework\container\annotation;
+namespace samsonframework\container\collection;
 
 use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
- * Scope annotation configurator class.
+ * Scope collection configurator class.
  * @see    \samsonframework\container\configurator\ScopeConfigurator
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
- *
- * @Annotation
  */
-class Scope extends ScopeConfigurator implements AnnotationConfiguratorInterface
+class Scope extends ScopeConfigurator implements CollectionConfiguratorInterface
 {
-    use AnnotationValueTrait;
-
     /**
      * Scope annotation configurator constructor.
      *

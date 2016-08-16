@@ -7,7 +7,6 @@
  */
 namespace samsonframework\container\collection;
 
-use samsonframework\container\configurator\ConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -29,7 +28,7 @@ class CollectionClassResolver implements CollectionResolverInterface
         // Gather all supported configuration keys
         $this->keys = [];
         foreach (get_declared_classes() as $className) {
-            if (in_array(ConfiguratorInterface::class, class_implements($className), true)) {
+            if (in_array(CollectionConfiguratorInterface::class, class_implements($className), true)) {
                 $annotationName = substr($className, strrpos($className, '\\') + 1);
                 $this->keys[strtolower($annotationName)] = $className;
             }

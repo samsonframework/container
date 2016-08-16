@@ -10,7 +10,7 @@ namespace samsonframework\container\annotation;
 /**
  *  Annotation with value.
  */
-class AnnotationWithValue implements AnnotationInterface
+class AnnotationWithValue implements AnnotationConfiguratorInterface
 {
     /** @var string[] Collection of class collection */
     protected $collection = [];

@@ -17,7 +17,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @Annotation
  */
-class Inject implements PropertyConfiguratorInterface
+class Inject implements PropertyConfiguratorInterface, AnnotationConfiguratorInterface
 {
     use AnnotationValueTrait;
 
