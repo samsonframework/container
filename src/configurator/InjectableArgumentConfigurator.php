@@ -32,7 +32,7 @@ class InjectableArgumentConfigurator extends InjectableAbstractConfigurator impl
         }
 
         // Check for type input
-        if ($this->argumentType === null) {
+        if ($this->argumentType === null || $this->argumentType === '') {
             throw new \InvalidArgumentException(
                 '@InjectArgument argument "'
                 . $methodMetadata->classMetadata->className . '::'

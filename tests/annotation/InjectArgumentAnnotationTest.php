@@ -46,9 +46,10 @@ class InjectArgumentAnnotationTest extends TestCase
 
     public function testAnnotationWithoutArgumentType()
     {
+        new InjectArgument(['field' => 'type']);
         $this->expectException(\InvalidArgumentException::class);
         $argumentName = 'argumentName';
-        $inject = new InjectArgument([$argumentName => null]);
+        $inject = new InjectArgument([$argumentName => '']);
         $methodMetadata = new MethodMetadata(new ClassMetadata());
         $methodMetadata->parametersMetadata[$argumentName] = new ParameterMetadata($methodMetadata->classMetadata, $methodMetadata);
         $inject->toMethodMetadata($methodMetadata);
