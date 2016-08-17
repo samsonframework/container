@@ -9,8 +9,10 @@ namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
 use samsonframework\container\collection\CollectionClassResolver;
+use samsonframework\container\collection\CollectionPropertyResolver;
+use samsonframework\container\collection\Instance;
 use samsonframework\container\collection\Scope;
-use samsonframework\container\resolver\XMLResolver;
+use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\TestCase;
 
 class ContainerConfigurationTest extends TestCase
@@ -20,7 +22,11 @@ class ContainerConfigurationTest extends TestCase
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-<instance class="samsonframework\localfilemanager\LocalFileManager" scope="myTestScope"></instance>
+<instance class="samsonframework\container\\tests\classes\Car" scope="myTestScope">
+    <properties>
+        <driver class="samsonframework\container\\tests\classes\FastDriver"></driver>
+    </properties>
+</instance>
 <service class="samsonframework\container\ContainerBuilder" name="container">
 <arguments>
 <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
@@ -33,14 +39,16 @@ XML;
 
         new Injectable();
 
-        $xmlConfigurator = new XMLResolver(new CollectionClassResolver([
+        $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,
-            //Service::class,
+            Instance::class
+        ]), new CollectionPropertyResolver([
+            Instance::class
         ]));
-        $data = $xmlConfigurator->resolve($xmlConfig);
 
+        // TODO Not compatible with ContainerBuilder
+        $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);
 
-//
 //        $reader = new AnnotationReader();
 //
 //        $resolver = new AnnotationResolver(
