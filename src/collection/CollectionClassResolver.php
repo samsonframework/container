@@ -11,7 +11,8 @@ use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
- * Array class resolver class.
+ * Collection class resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class CollectionClassResolver extends AbstractCollectionResolver implements CollectionResolverInterface
@@ -27,7 +28,7 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
         // Iterate collection
         if (array_key_exists('@attributes', $classDataArray)) {
             // Iterate collection attribute configurators
-            foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
+            foreach ($this->configurators as $key => $collectionConfigurator) {
                 // If this is supported collection configurator
                 if (array_key_exists($key, $classDataArray['@attributes'])) {
                     /** @var ClassConfiguratorInterface $configurator Create instance */
@@ -39,10 +40,5 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
         }
 
         return $classMetadata;
-    }
-
-    public function resolveArrayKeys()
-    {
-
     }
 }

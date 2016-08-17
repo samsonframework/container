@@ -10,8 +10,9 @@ namespace samsonframework\container;
 use samsonframework\container\annotation\Injectable;
 use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
-use samsonframework\container\collection\Instance;
-use samsonframework\container\collection\Scope;
+use samsonframework\container\collection\configurator\ClassName;
+use samsonframework\container\collection\configurator\Scope;
+use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\TestCase;
 
@@ -22,16 +23,16 @@ class ContainerConfigurationTest extends TestCase
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-<instance class="samsonframework\container\\tests\classes\Car" scope="myTestScope">
+<instance classname="samsonframework\container\\tests\classes\Car" scope="myTestScope">
     <properties>
-        <driver class="samsonframework\container\\tests\classes\FastDriver"></driver>
+        <driver classname="samsonframework\container\\tests\classes\FastDriver"></driver>
     </properties>
 </instance>
-<service class="samsonframework\container\ContainerBuilder" name="container">
+<service classname="samsonframework\container\ContainerBuilder" name="container">
 <arguments>
-<fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-<classResolver class="samsonframework\container\resolver\AnnotationResolver"></classResolver>
-<generator class="samsonphp\generator\Generator"></generator>
+<fileManager classname="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+<classResolver classname="samsonframework\container\resolver\AnnotationResolver"></classResolver>
+<generator classname="samsonphp\generator\Generator"></generator>
 </arguments>
 </service>
 </dependencies>
@@ -41,13 +42,15 @@ XML;
 
         $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,
-            Instance::class
+            ClassName::class
         ]), new CollectionPropertyResolver([
-            Instance::class
+            ClassName::class
         ]));
 
         // TODO Not compatible with ContainerBuilder
         $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);
+
+        $listMetadata[] = new ClassMetadata();
 
 //        $reader = new AnnotationReader();
 //

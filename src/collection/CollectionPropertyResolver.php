@@ -13,8 +13,10 @@ use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
- * Array property resolver class.
+ * Collection property resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
+ * @author Ruslan Molodyko <molodyko@samsonos.com>
  */
 class CollectionPropertyResolver extends AbstractCollectionResolver implements CollectionResolverInterface
 {
@@ -48,7 +50,7 @@ class CollectionPropertyResolver extends AbstractCollectionResolver implements C
                 // Iterate collection
                 if (array_key_exists('@attributes', $propertyDataArray)) {
                     // Iterate collection attribute configurators
-                    foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
+                    foreach ($this->configurators as $key => $collectionConfigurator) {
                         // If this is supported collection configurator
                         if (array_key_exists($key, $propertyDataArray['@attributes'])) {
                             /** @var PropertyConfiguratorInterface $configurator Create instance */
@@ -58,6 +60,7 @@ class CollectionPropertyResolver extends AbstractCollectionResolver implements C
                         }
                     }
                 }
+
                 // Save property metadata
                 $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
             }

@@ -5,8 +5,10 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-namespace samsonframework\container\collection;
+namespace samsonframework\container\collection\configurator;
 
+use samsonframework\container\collection\CollectionConfiguratorTrait;
+use samsonframework\container\collection\CollectionKeyConfiguratorInterface;
 use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
@@ -17,16 +19,5 @@ use samsonframework\container\configurator\ScopeConfigurator;
  */
 class Service extends ScopeConfigurator implements CollectionKeyConfiguratorInterface
 {
-    /**
-     * Service collection configurator constructor.
-     *
-     * @param string|array $valueOrValues Service unique name
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct($valueOrValues)
-    {
-        // Pass to scope configurator
-        parent::__construct($valueOrValues);
-    }
+    use CollectionConfiguratorTrait;
 }

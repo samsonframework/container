@@ -7,55 +7,36 @@
  */
 namespace samsonframework\container\collection;
 
-use samsonframework\container\configurator\ClassConfiguratorInterface;
-use samsonframework\container\configurator\PropertyConfiguratorInterface;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\PropertyMetadata;
-
 /**
  * Abstract configurator resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 abstract class AbstractCollectionResolver
 {
     /** @var array Collection of collection configurators */
-    protected $collectionConfigurators = [];
+    protected $configurators = [];
 
     /**
-     * ArrayPropertyResolver constructor.
+     * AbstractCollectionResolver constructor.
      *
-     * @param array $collectionConfigurators
+     * @param array $configurators Collection configurators class names
      *
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException If passed configurator class does not
+     * implement CollectionAttributeConfiguratorInterface
      */
-    public function __construct(array $collectionConfigurators)
+    public function __construct(array $configurators)
     {
-        /** @var string $collectionConfigurator */
-        foreach ($collectionConfigurators as $collectionConfigurator) {
+        /** @var string $configurator */
+        foreach ($configurators as $configurator) {
             // Autoload and check if passed collection configurator
-            if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
-                $this->collectionConfigurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
+            if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($configurator), true)) {
+                $this->configurators[$configurator::getKey($configurator)] = $configurator;
             } else {
-                throw new \InvalidArgumentException($collectionConfigurator . ' is not valid collection configurator or does not exists');
+                throw new \InvalidArgumentException(
+                    $configurator . ' is not valid collection configurator or does not exists'
+                );
             }
         }
-    }
-
-    /**
-     * Get collection configurator collection key name for resolving.
-     *
-     * @param string $className Full collection configurator class name with namespace
-     *
-     * @return string Collection configurator collection key name
-     */
-    public function getKey($className) : string
-    {
-        $reflection = new \ReflectionClass($className);
-        if ($key = $reflection->getConstant('CONFIGURATOR_KEY')) {
-            return $key;
-        }
-
-        // Get collection configurator key as its lowered class name
-        return strtolower(substr($className, strrpos($className, '\\') + 1));
     }
 }
