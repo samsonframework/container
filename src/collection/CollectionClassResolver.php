@@ -14,65 +14,26 @@ use samsonframework\container\metadata\ClassMetadata;
  * Array class resolver class.
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-class CollectionClassResolver implements CollectionResolverInterface
+class CollectionClassResolver extends AbstractCollectionResolver implements CollectionResolverInterface
 {
     /** Collection class key */
     const KEY = 'instance';
-
-    /** @var array Collection of collection configurators */
-    protected $collectionConfigurators = [];
-
-    /**
-     * ArrayClassResolver constructor.
-     *
-     * @param string[] $collectionConfigurators
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $collectionConfigurators)
-    {
-        /** @var string $collectionConfigurator */
-        foreach ($collectionConfigurators as $collectionConfigurator) {
-            // Autoload and check if passed collection configurator
-            if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
-                $this->collectionConfigurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
-            } else {
-                throw new \InvalidArgumentException($collectionConfigurator . ' is not valid collection configurator or does not exists');
-            }
-        }
-    }
-
-    /**
-     * Get collection configurator collection key name for resolving.
-     *
-     * @param string $className Full collection configurator class name with namespace
-     *
-     * @return string Collection configurator collection key name
-     */
-    public function getKey($className) : string
-    {
-        // Get collection configurator key as its lowered class name
-        return strtolower(substr($className, strrpos($className, '\\') + 1));
-    }
 
     /**
      * {@inheritDoc}
      */
     public function resolve(array $classDataArray, ClassMetadata $classMetadata)
     {
-        // Iterate only supported collection key
-        if (array_key_exists(self::KEY, $classDataArray)) {
-            // Iterate collection
-            if (array_key_exists('@attributes', $classDataArray[self::KEY])) {
-                // Iterate collection attribute configurators
-                foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
-                    // If this is supported collection configurator
-                    if (array_key_exists($key, $classDataArray[self::KEY]['@attributes'])) {
-                        /** @var ClassConfiguratorInterface $configurator Create instance */
-                        $configurator = new $collectionConfigurator($classDataArray[self::KEY]['@attributes'][$key]);
-                        // Fill in class metadata
-                        $configurator->toClassMetadata($classMetadata);
-                    }
+        // Iterate collection
+        if (array_key_exists('@attributes', $classDataArray)) {
+            // Iterate collection attribute configurators
+            foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
+                // If this is supported collection configurator
+                if (array_key_exists($key, $classDataArray['@attributes'])) {
+                    /** @var ClassConfiguratorInterface $configurator Create instance */
+                    $configurator = new $collectionConfigurator($classDataArray['@attributes'][$key]);
+                    // Fill in class metadata
+                    $configurator->toClassMetadata($classMetadata);
                 }
             }
         }
