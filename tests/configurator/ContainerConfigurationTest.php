@@ -15,6 +15,9 @@ use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\collection\Instance;
 use samsonframework\container\collection\Scope;
 use samsonframework\container\resolver\XmlResolver;
+use samsonframework\container\tests\classes\Car;
+use samsonframework\container\tests\classes\FastDriver;
+use samsonframework\container\tests\classes\Leg;
 use samsonframework\container\tests\TestCase;
 
 class ContainerConfigurationTest extends TestCase
@@ -62,6 +65,15 @@ XML;
         // TODO Not compatible with ContainerBuilder
         $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);
 
+        static::assertEquals(FastDriver::class, $listMetadata[0]->className);
+        static::assertArrayHasKey('stopCar', $listMetadata[0]->methodsMetadata);
+        static::assertTrue($listMetadata[0]->methodsMetadata['stopCar']->isPublic);
+        static::assertArrayHasKey('leg', $listMetadata[0]->methodsMetadata['stopCar']->dependencies);
+        static::assertEquals(Leg::class, $listMetadata[0]->methodsMetadata['stopCar']->dependencies['leg']);
+        static::assertEquals(Car::class, $listMetadata[1]->className);
+        static::assertTrue(in_array('myTestScope', $listMetadata[1]->scopes, true));
+        static::assertArrayHasKey('driver', $listMetadata[1]->propertiesMetadata);
+        static::assertEquals(FastDriver::class, $listMetadata[1]->propertiesMetadata['driver']->dependency);
 //        $reader = new AnnotationReader();
 //
 //        $resolver = new AnnotationResolver(

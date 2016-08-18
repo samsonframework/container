@@ -71,10 +71,7 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
                         $parameterMetadata->typeHint = (string)$parameter->getType();
 
                         // If config has such parameter
-                        if (
-                            array_key_exists(CollectionParameterResolver::KEY, $methodDataArray) &&
-                            array_key_exists($parameter->name, $methodDataArray[CollectionParameterResolver::KEY])
-                        ) {
+                        if (array_key_exists($parameter->name, $methodDataArray[CollectionParameterResolver::KEY])) {
                             $parameterDataArray = $methodDataArray[CollectionParameterResolver::KEY][$parameter->name];
                             // Resolve parameter
                             $this->parameterResolver->resolve($parameterDataArray, $parameterMetadata);
@@ -82,6 +79,7 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
 
                         // Store parameter metadata
                         $methodMetadata->parametersMetadata[$parameterMetadata->name] = $parameterMetadata;
+                        $methodMetadata->dependencies[$parameterMetadata->name] = $parameterMetadata->dependency;
                     }
                 }
 

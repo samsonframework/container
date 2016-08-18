@@ -48,7 +48,8 @@ class XmlResolver implements ResolverInterface
      * Resolve xml config
      *
      * @param string $xmlConfig
-     * @return array
+     *
+     * @return ClassMetadata[]
      */
     public function resolveConfig($xmlConfig) : array
     {
@@ -65,24 +66,6 @@ class XmlResolver implements ResolverInterface
             }
         }
         return $listClassMetadata;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve($classArrayData, string $identifier = null) : ClassMetadata
-    {
-        // Create and fill class metadata base fields
-        $classMetadata = new ClassMetadata();
-
-        // Resolve class definition annotations
-        $this->classResolver->resolve($classArrayData, $classMetadata);
-        // Resolve class properties annotations
-        $this->propertyResolver->resolve($classArrayData, $classMetadata);
-        // Resolve class methods annotations
-        $this->methodResolver->resolve($classArrayData, $classMetadata);
-
-        return $classMetadata;
     }
 
     /**
@@ -107,5 +90,23 @@ class XmlResolver implements ResolverInterface
         }
 
         return $out;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($classArrayData, string $identifier = null) : ClassMetadata
+    {
+        // Create and fill class metadata base fields
+        $classMetadata = new ClassMetadata();
+
+        // Resolve class definition annotations
+        $this->classResolver->resolve($classArrayData, $classMetadata);
+        // Resolve class properties annotations
+        $this->propertyResolver->resolve($classArrayData, $classMetadata);
+        // Resolve class methods annotations
+        $this->methodResolver->resolve($classArrayData, $classMetadata);
+
+        return $classMetadata;
     }
 }
