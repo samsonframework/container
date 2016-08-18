@@ -21,6 +21,9 @@ use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\Leg;
 use samsonframework\container\tests\TestCase;
+use samsonframework\container\XMLContainerBuilder;
+use samsonframework\localfilemanager\LocalFileManager;
+use samsonphp\generator\Generator;
 
 class ContainerConfigurationTest extends TestCase
 {
@@ -83,28 +86,40 @@ XML;
         ])));
 
         // TODO Not compatible with ContainerBuilder
-        $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);
+        $container = new XMLContainerBuilder($xmlConfig, new LocalFileManager(), $xmlConfigurator, new Generator());
+        file_put_contents(__DIR__ . '/Container.php', $container->build());
 
-        static::assertEquals(FastDriver::class, $listMetadata[0]->className);
-        static::assertEquals('MyDriver', $listMetadata[0]->name);
-        static::assertArrayHasKey('stopCar', $listMetadata[0]->methodsMetadata);
-        static::assertTrue($listMetadata[0]->methodsMetadata['stopCar']->isPublic);
-        static::assertArrayHasKey('leg', $listMetadata[0]->methodsMetadata['stopCar']->dependencies);
-        static::assertEquals(Leg::class, $listMetadata[0]->methodsMetadata['stopCar']->dependencies['leg']);
-        static::assertEquals(Car::class, $listMetadata[1]->className);
-        static::assertTrue(in_array('myTestScope', $listMetadata[1]->scopes, true));
-        static::assertArrayHasKey('driver', $listMetadata[1]->propertiesMetadata);
-        static::assertEquals(FastDriver::class, $listMetadata[1]->propertiesMetadata['driver']->dependency);
+        $listMetadata = $this->getProperty('classMetadata', $container);
+
+        $fastDriverMetadata = array_shift($listMetadata);
+        $carMetadata = array_shift($listMetadata);
+        $carServiceMetadata = array_shift($listMetadata);
+        $roadMetadata = array_shift($listMetadata);
+
+        static::assertEquals(FastDriver::class, $fastDriverMetadata->className);
+        static::assertEquals('MyDriver', $fastDriverMetadata->name);
+        static::assertArrayHasKey('stopCar', $fastDriverMetadata->methodsMetadata);
+        static::assertTrue($fastDriverMetadata->methodsMetadata['stopCar']->isPublic);
+        static::assertArrayHasKey('leg', $fastDriverMetadata->methodsMetadata['stopCar']->dependencies);
+        static::assertEquals(Leg::class, $fastDriverMetadata->methodsMetadata['stopCar']->dependencies['leg']);
 
         // Injecting constructor dependency
-        static::assertTrue(in_array(Leg::class, $listMetadata[0]->methodsMetadata['__construct']->dependencies, true));
+        static::assertTrue(in_array(Leg::class, $fastDriverMetadata->methodsMetadata['__construct']->dependencies, true));
+
+        static::assertEquals(Car::class, $carMetadata->className);
+        static::assertTrue(in_array('myTestScope', $carMetadata->scopes, true));
+        static::assertArrayHasKey('driver', $carMetadata->propertiesMetadata);
+        static::assertEquals(FastDriver::class, $carMetadata->propertiesMetadata['driver']->dependency);
+
 
         // Service method attribute for adding to services scope in class
-        static::assertTrue(in_array(ContainerBuilder::SCOPE_SERVICES, $listMetadata[2]->scopes, true));
+        static::assertTrue(in_array(ContainerBuilder::SCOPE_SERVICES, $carServiceMetadata->scopes, true));
         // Service method attribute for adding name in class
-        static::assertEquals('carservice', $listMetadata[2]->name);
+        static::assertEquals('carservice', $carServiceMetadata->name);
 
         // Service method attribute for injecting as constructor dependency
-        static::assertTrue(in_array('carService', $listMetadata[3]->methodsMetadata['__construct']->dependencies, true));
+        static::assertTrue(in_array('carService', $roadMetadata->methodsMetadata['__construct']->dependencies, true));
+
+
     }
 }
