@@ -65,7 +65,7 @@ class ContainerConfigurationTest extends TestCase
     <methods>
         <__construct>
             <arguments>
-                <carService service="carService"></carService>
+                <carService service="carservice"></carService>
             </arguments>
         </__construct>
     </methods>
@@ -118,7 +118,7 @@ XML;
         static::assertEquals('carservice', $carServiceMetadata->name);
 
         // Service method attribute for injecting as constructor dependency
-        static::assertTrue(in_array('carService', $roadMetadata->methodsMetadata['__construct']->dependencies, true));
+        static::assertTrue(in_array('carservice', $roadMetadata->methodsMetadata['__construct']->dependencies, true));
 
 
     }
