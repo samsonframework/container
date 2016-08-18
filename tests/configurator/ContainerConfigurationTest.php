@@ -9,6 +9,8 @@ namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
 use samsonframework\container\collection\CollectionClassResolver;
+use samsonframework\container\collection\CollectionMethodResolver;
+use samsonframework\container\collection\CollectionParameterResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\collection\Instance;
 use samsonframework\container\collection\Scope;
@@ -22,6 +24,15 @@ class ContainerConfigurationTest extends TestCase
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
+<instance class="samsonframework\container\\tests\classes\FastDriver">
+    <methods>
+        <stopCar>
+            <arguments>
+                <leg class="samsonframework\container\\tests\classes\Leg"></leg>
+            </arguments>
+        </stopCar>
+    </methods>
+</instance>
 <instance class="samsonframework\container\\tests\classes\Car" scope="myTestScope">
     <properties>
         <driver class="samsonframework\container\\tests\classes\FastDriver"></driver>
@@ -44,7 +55,9 @@ XML;
             Instance::class
         ]), new CollectionPropertyResolver([
             Instance::class
-        ]));
+        ]), new CollectionMethodResolver([], new CollectionParameterResolver([
+            Instance::class
+        ])));
 
         // TODO Not compatible with ContainerBuilder
         $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);

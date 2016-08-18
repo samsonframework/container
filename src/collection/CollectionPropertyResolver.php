@@ -13,12 +13,13 @@ use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
- * Array property resolver class.
+ * Collection property resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class CollectionPropertyResolver extends AbstractCollectionResolver implements CollectionResolverInterface
 {
-    /** Collection class key */
+    /** Collection property key */
     const KEY = 'properties';
 
     /**

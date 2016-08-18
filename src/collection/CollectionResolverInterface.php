@@ -16,7 +16,7 @@ use samsonframework\container\metadata\ClassMetadata;
 interface CollectionResolverInterface
 {
     /**
-     * Resolve class annotations.
+     * Resolve collection.
      *
      * @param array         $classDataArray
      * @param ClassMetadata $classMetadata

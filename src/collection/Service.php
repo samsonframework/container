@@ -11,6 +11,7 @@ use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
  * Service collection configurator class.
+ *
  * @see    \samsonframework\container\configurator\ServiceConfigurator
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
