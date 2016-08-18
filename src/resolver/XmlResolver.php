@@ -5,9 +5,8 @@
  */
 namespace samsonframework\container\resolver;
 
-use samsonframework\container\collection\CollectionAttributeResolver;
 use samsonframework\container\collection\CollectionClassResolver;
-use samsonframework\container\collection\CollectionKeyResolver;
+use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\metadata\ClassMetadata;
 
@@ -19,19 +18,30 @@ use samsonframework\container\metadata\ClassMetadata;
  */
 class XmlResolver implements ResolverInterface
 {
-    /** @var CollectionKeyResolver */
-    protected $keyResolver;
+    /** @var CollectionClassResolver */
+    protected $classResolver;
+
+    /** @var CollectionPropertyResolver */
+    protected $propertyResolver;
+
+    /** @var CollectionMethodResolver */
+    protected $methodResolver;
 
     /**
      * AnnotationResolver constructor.
      *
-     * @param CollectionKeyResolver       $keyResolver
-     * @param CollectionAttributeResolver $attributeResolver
+     * @param CollectionClassResolver $classResolver
+     * @param CollectionPropertyResolver $propertyResolver
+     * @param CollectionMethodResolver $methodResolver
      */
-    public function __construct(CollectionKeyResolver $keyResolver)
-    {
-        $this->keyResolver = $keyResolver;
-        //$this->methodResolver = $methodResolver;
+    public function __construct(
+        CollectionClassResolver $classResolver,
+        CollectionPropertyResolver $propertyResolver,
+        CollectionMethodResolver $methodResolver
+    ) {
+        $this->classResolver = $classResolver;
+        $this->propertyResolver = $propertyResolver;
+        $this->methodResolver = $methodResolver;
     }
 
     /**
@@ -42,12 +52,37 @@ class XmlResolver implements ResolverInterface
      */
     public function resolveConfig($xmlConfig) : array
     {
+        $listClassMetadata = [];
         // Convert xml to array
         $arrayData = $this->xml2array(new \SimpleXMLElement($xmlConfig));
-
         // Iterate config and resolve single instance
+        foreach ($arrayData as $key => $classesArrayData) {
+            if ($key === CollectionClassResolver::KEY) {
+                foreach ($classesArrayData as $classArrayData) {
+                    // Store metadata
+                    $listClassMetadata[] = $this->resolve($classArrayData);
+                }
+            }
+        }
+        return $listClassMetadata;
+    }
 
-        return $this->resolveNode($arrayData);
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($classArrayData, string $identifier = null) : ClassMetadata
+    {
+        // Create and fill class metadata base fields
+        $classMetadata = new ClassMetadata();
+
+        // Resolve class definition annotations
+        $this->classResolver->resolve($classArrayData, $classMetadata);
+        // Resolve class properties annotations
+        $this->propertyResolver->resolve($classArrayData, $classMetadata);
+        // Resolve class methods annotations
+        $this->methodResolver->resolve($classArrayData, $classMetadata);
+
+        return $classMetadata;
     }
 
     /**
@@ -72,33 +107,5 @@ class XmlResolver implements ResolverInterface
         }
 
         return $out;
-    }
-
-    protected function resolveNode(array $nodeData, ClassMetadata $classMetadata = null, array &$listClassMetadata = [])
-    {
-
-        foreach ($nodeData as $key => $classArrayData) {
-            if (is_array($classArrayData)) {
-                if (null !== ($classMetadata = $this->keyResolver->resolveKey($key, $classArrayData, $classMetadata))) {
-                    $listClassMetadata[] = $classMetadata;
-                }
-                $this->resolveNode($nodeData[$key], $classMetadata, $listClassMetadata);
-            }
-        }
-
-        return $listClassMetadata;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve($classArrayData, string $identifier = null) : ClassMetadata
-    {
-        // Resolve class properties annotations
-
-        // Resolve class methods annotations
-        //$this->methodResolver->resolve($classData, $classMetadata);
-
-        return $classMetadata;
     }
 }

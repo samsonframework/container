@@ -5,27 +5,34 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-namespace samsonframework\container\collection\configurator;
+namespace samsonframework\container\collection;
 
-use samsonframework\container\collection\CollectionAttributeConfiguratorInterface;
 use samsonframework\container\configurator\ClassConfiguratorInterface;
+use samsonframework\container\configurator\ParameterConfiguratorInterface;
 use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\ParameterMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
- * ClassName collection attribute configurator class.
+ * Class collection configurator class.
  *
- * This attribute can be used for property and for class configuration.
+ * @see    \samsonframework\container\configurator\ScopeConfigurator
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
- * @author Ruslan Molodyko <molodyko@samsonos.com>
+ *
+ * *Resolve class attribute, "Class" - name more better but it reserved in php
  */
-class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInterface, CollectionAttributeConfiguratorInterface
+class Instance implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, CollectionAttributeConfiguratorInterface
 {
-    use CollectionConfiguratorTrait;
+    /**
+     * @var string Configurator key
+     */
+    const CONFIGURATOR_KEY = 'class';
 
-    /** @var string Dependency class name */
+    /**
+     * @var string Dependency class name
+     */
     protected $className;
 
     /**
@@ -48,5 +55,11 @@ class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInter
     public function toPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
         $propertyMetadata->dependency = $this->className;
+    }
+
+    /* {@inheritDoc} */
+    public function toParameterMetadata(ParameterMetadata $parameterMetadata)
+    {
+        $parameterMetadata->dependency = $this->className;
     }
 }
