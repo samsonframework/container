@@ -21,9 +21,8 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  *
- * *Resolve class attribute, "Class" - name more better but it reserved in php
  */
-class Instance implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, CollectionAttributeConfiguratorInterface
+class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, CollectionAttributeConfiguratorInterface
 {
     /**
      * @var string Configurator key

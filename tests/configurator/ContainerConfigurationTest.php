@@ -8,11 +8,11 @@
 namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
+use samsonframework\container\collection\ClassName;
 use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionParameterResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
-use samsonframework\container\collection\Instance;
 use samsonframework\container\collection\Scope;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\classes\Car;
@@ -55,11 +55,11 @@ XML;
 
         $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,
-            Instance::class
+            ClassName::class
         ]), new CollectionPropertyResolver([
-            Instance::class
+            ClassName::class
         ]), new CollectionMethodResolver([], new CollectionParameterResolver([
-            Instance::class
+            ClassName::class
         ])));
 
         // TODO Not compatible with ContainerBuilder

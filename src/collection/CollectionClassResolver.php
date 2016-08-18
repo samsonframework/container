@@ -23,10 +23,10 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
     /**
      * {@inheritDoc}
      */
-    public function resolve(array $classDataArray, ClassMetadata $classMetadata)
+    public function resolve(array $configurationArray, ClassMetadata $classMetadata)
     {
         // Iterate collection
-        foreach ($this->getAttributeConfigurator($classDataArray) as $configurator) {
+        foreach ($this->getAttributeConfigurator($configurationArray) as $configurator) {
             /** @var ClassConfiguratorInterface $configurator Parse class metadata */
             $configurator->toClassMetadata($classMetadata);
         }

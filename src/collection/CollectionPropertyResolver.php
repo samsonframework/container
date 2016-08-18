@@ -25,13 +25,13 @@ class CollectionPropertyResolver extends AbstractCollectionResolver implements C
     /**
      * {@inheritDoc}
      */
-    public function resolve(array $classDataArray, ClassMetadata $classMetadata)
+    public function resolve(array $configurationArray, ClassMetadata $classMetadata)
     {
         // Iterate collection
-        if (array_key_exists(self::KEY, $classDataArray)) {
+        if (array_key_exists(self::KEY, $configurationArray)) {
             $reflectionClass = new \ReflectionClass($classMetadata->className);
             // Iterate configured properties
-            foreach ($classDataArray[self::KEY] as $propertyName => $propertyDataArray) {
+            foreach ($configurationArray[self::KEY] as $propertyName => $propertyDataArray) {
                 $propertyReflection = $reflectionClass->getProperty($propertyName);
 
                 // Create method metadata instance

@@ -18,10 +18,10 @@ interface CollectionResolverInterface
     /**
      * Resolve collection.
      *
-     * @param array         $classDataArray
+     * @param array         $configurationArray
      * @param ClassMetadata $classMetadata
      *
      * @return AbstractMetadata
      */
-    public function resolve(array $classDataArray, ClassMetadata $classMetadata);
+    public function resolve(array $configurationArray, ClassMetadata $classMetadata);
 }
