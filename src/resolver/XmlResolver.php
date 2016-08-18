@@ -74,12 +74,15 @@ class XmlResolver implements ResolverInterface
         return $out;
     }
 
-    protected function resolveNode(array $nodeData, array &$listClassMetadata = [])
+    protected function resolveNode(array $nodeData, ClassMetadata $classMetadata = null, array &$listClassMetadata = [])
     {
+
         foreach ($nodeData as $key => $classArrayData) {
-            $listClassMetadata[] = $this->keyResolver->resolveKey($key, $classArrayData);
             if (is_array($classArrayData)) {
-                $this->resolveNode($classArrayData[$key], $listClassMetadata);
+                if (null !== ($classMetadata = $this->keyResolver->resolveKey($key, $classArrayData, $classMetadata))) {
+                    $listClassMetadata[] = $classMetadata;
+                }
+                $this->resolveNode($nodeData[$key], $classMetadata, $listClassMetadata);
             }
         }
 

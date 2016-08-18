@@ -40,8 +40,6 @@ class CollectionKeyResolver extends AbstractCollectionResolver
      */
     public function resolveKey(string $key, array $data, ClassMetadata $classMetadata = null)
     {
-        $metadata = null;
-
         // If this is supported collection key configurator
         if (array_key_exists($key, $this->configurators)) {
             // Create configurator and retrieve metadata
@@ -59,6 +57,6 @@ class CollectionKeyResolver extends AbstractCollectionResolver
             }
         }
 
-        return $metadata;
+        return $classMetadata;
     }
 }

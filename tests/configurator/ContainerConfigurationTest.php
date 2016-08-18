@@ -14,6 +14,7 @@ use samsonframework\container\collection\CollectionKeyResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\collection\configurator\ClassName;
 use samsonframework\container\collection\configurator\Instance;
+use samsonframework\container\collection\configurator\Properties;
 use samsonframework\container\collection\configurator\Scope;
 use samsonframework\container\collection\configurator\Service;
 use samsonframework\container\metadata\ClassMetadata;
@@ -46,7 +47,8 @@ XML;
 
         $xmlConfigurator = new XmlResolver(new CollectionKeyResolver([
             Service::class,
-            Instance::class
+            Instance::class,
+            Properties::class,
         ], new CollectionAttributeResolver([
             ClassName::class,
             Scope::class
