@@ -15,7 +15,7 @@ use samsonframework\container\metadata\ParameterMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
 
 /**
- * Class collection configurator class.
+ * Class name attribute configurator class.
  *
  * @see    \samsonframework\container\configurator\ScopeConfigurator
  *

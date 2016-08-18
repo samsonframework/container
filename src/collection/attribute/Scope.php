@@ -10,7 +10,7 @@ namespace samsonframework\container\collection\attribute;
 use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
- * Scope collection configurator class.
+ * Scope attribute configurator class.
  *
  * @see    \samsonframework\container\configurator\ScopeConfigurator
  *

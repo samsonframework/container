@@ -11,7 +11,7 @@ use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
- * Scope collection configurator class.
+ * Name attribute configurator class.
  *
  * @see    \samsonframework\container\configurator\ScopeConfigurator
  *
