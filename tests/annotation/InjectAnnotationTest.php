@@ -55,7 +55,7 @@ class InjectAnnotationTest extends TestCase
 //
 //        $inject = new Inject(['value' => '']);
 //        $classMetadata = new ClassMetadata();
-//        $classMetadata->className = Car::class;
+//        $classMetadata->name = Car::class;
 //        $propertyMetadata = new PropertyMetadata($classMetadata);
 //        $propertyMetadata->name = 'driver';
 //        $propertyMetadata->typeHint = DriverInterface::class;

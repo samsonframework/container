@@ -13,6 +13,7 @@ use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionParameterResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
+use samsonframework\container\collection\Name;
 use samsonframework\container\collection\Scope;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\classes\Car;
@@ -27,7 +28,7 @@ class ContainerConfigurationTest extends TestCase
         $xmlConfig = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-<instance class="samsonframework\container\\tests\classes\FastDriver">
+<instance class="samsonframework\container\\tests\classes\FastDriver" name="MyDriver">
     <methods>
         <stopCar>
             <arguments>
@@ -55,6 +56,7 @@ XML;
 
         $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,
+            Name::class,
             ClassName::class
         ]), new CollectionPropertyResolver([
             ClassName::class
@@ -66,6 +68,7 @@ XML;
         $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);
 
         static::assertEquals(FastDriver::class, $listMetadata[0]->className);
+        static::assertEquals('MyDriver', $listMetadata[0]->name);
         static::assertArrayHasKey('stopCar', $listMetadata[0]->methodsMetadata);
         static::assertTrue($listMetadata[0]->methodsMetadata['stopCar']->isPublic);
         static::assertArrayHasKey('leg', $listMetadata[0]->methodsMetadata['stopCar']->dependencies);
