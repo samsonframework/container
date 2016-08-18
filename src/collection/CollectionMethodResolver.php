@@ -50,18 +50,18 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
         if (array_key_exists(self::KEY, $classDataArray)) {
             $reflectionClass = new \ReflectionClass($classMetadata->className);
             // Iterate configured methods
+            $methodMetadata = new MethodMetadata($classMetadata);
             foreach ($classDataArray[self::KEY] as $methodName => $methodDataArray) {
                 $methodReflection = $reflectionClass->getMethod($methodName);
 
                 // Create method metadata instance
-                $methodMetadata = new MethodMetadata($classMetadata);
+                $methodMetadata = clone $methodMetadata;
                 $methodMetadata->name = $methodReflection->name;
                 $methodMetadata->modifiers = $methodReflection->getModifiers();
                 $methodMetadata->isPublic = $methodReflection->isPublic();
 
                 // Check if methods inject any instances
                 if (array_key_exists(CollectionParameterResolver::KEY, $methodDataArray)) {
-
                     /** @var \ReflectionParameter $parameter */
                     $parameterMetadata = new ParameterMetadata($methodMetadata->classMetadata, $methodMetadata);
                     // Iterate and create properties metadata form each parameter in method
@@ -83,21 +83,13 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
                     }
                 }
 
-                // Iterate collection and resolve method configurator
-                if (array_key_exists('@attributes', $methodDataArray)) {
-                    // Iterate collection attribute configurators
-                    foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
-                        // If this is supported collection configurator
-                        if (array_key_exists($key, $methodDataArray['@attributes'])) {
-                            /** @var MethodConfiguratorInterface $configurator Create instance */
-                            $configurator = new $collectionConfigurator($methodDataArray['@attributes'][$key]);
-                            // Fill in class metadata
-                            $configurator->toMethodMetadata($methodDataArray);
-                        }
-                    }
+                // Process attributes
+                foreach ($this->getAttributeConfigurator($methodDataArray) as $configurator) {
+                    /** @var MethodConfiguratorInterface $configurator Parse method metadata */
+                    $configurator->toMethodMetadata($methodMetadata);
                 }
 
-                // Save method metadata
+                // Save method metadata to class metadata
                 $classMetadata->methodsMetadata[$methodMetadata->name] = $methodMetadata;
             }
         }

@@ -42,11 +42,11 @@ class ContainerConfigurationTest extends TestCase
     </properties>
 </instance>
 <service class="samsonframework\container\ContainerBuilder" name="container">
-<arguments>
-<fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-<classResolver class="samsonframework\container\resolver\AnnotationResolver"></classResolver>
-<generator class="samsonphp\generator\Generator"></generator>
-</arguments>
+    <arguments>
+        <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
+        <classResolver class="samsonframework\container\resolver\AnnotationResolver"></classResolver>
+        <generator class="samsonphp\generator\Generator"></generator>
+    </arguments>
 </service>
 </dependencies>
 XML;
@@ -74,47 +74,5 @@ XML;
         static::assertTrue(in_array('myTestScope', $listMetadata[1]->scopes, true));
         static::assertArrayHasKey('driver', $listMetadata[1]->propertiesMetadata);
         static::assertEquals(FastDriver::class, $listMetadata[1]->propertiesMetadata['driver']->dependency);
-//        $reader = new AnnotationReader();
-//
-//        $resolver = new AnnotationResolver(
-//            new AnnotationClassResolver($reader),
-//            new AnnotationPropertyResolver($reader),
-//            new AnnotationMethodResolver($reader)
-//        );
-
-
-//        $metadata = $resolver->resolve(new \ReflectionClass(ContainerBuilder::class));
-//
-//        $container = new ContainerBuilder(new LocalFileManager(), $resolver, new Generator());
-//
-//        $containerClass = $container->loadFromPaths([realpath(__DIR__ . '/../classes/')]);
-//
-//        $configData = [];
-//
-//        foreach ($this->getProperty('classMetadata', $container) as $className => $classMetadata) {
-//            $serviceName = $classMetadata->name;
-//            if (array_key_exists($serviceName, $configData)) {
-//                foreach ($configData[$serviceName] as $propertyName => $dependency) {
-//                    if (array_key_exists($propertyName, $classMetadata->propertiesMetadata)) {
-//                        $classMetadata->propertiesMetadata[$propertyName]->dependency = ltrim($dependency, '\\');
-//                    }
-//                }
-//            }
-//        }
-//
-//        $containerClass = $containerClass->build('Container', 'DI');
-//
-//        $path = __DIR__ . '/Container2.php';
-//        file_put_contents($path, $containerClass);
-
-//        if (!class_exists(Container::class, false)) {
-//            require_once __DIR__ . 'ContainerConfiguration.php/' . $className;
-//        }
-
-        //return new \DI\Container($generator);
-
-        //$container = $containerConfig->configure(null, $configData);
-
-        //static::assertInstanceOf(Logger::class, $container->getReader()->logger);
     }
 }

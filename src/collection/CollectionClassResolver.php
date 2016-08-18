@@ -26,18 +26,9 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
     public function resolve(array $classDataArray, ClassMetadata $classMetadata)
     {
         // Iterate collection
-        // TODO Move this code into abstract class because this code are identical for three classes only with different configurator method name
-        if (array_key_exists('@attributes', $classDataArray)) {
-            // Iterate collection attribute configurators
-            foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
-                // If this is supported collection configurator
-                if (array_key_exists($key, $classDataArray['@attributes'])) {
-                    /** @var ClassConfiguratorInterface $configurator Create instance */
-                    $configurator = new $collectionConfigurator($classDataArray['@attributes'][$key]);
-                    // Fill in class metadata
-                    $configurator->toClassMetadata($classMetadata);
-                }
-            }
+        foreach ($this->getAttributeConfigurator($classDataArray) as $configurator) {
+            /** @var ClassConfiguratorInterface $configurator Parse class metadata */
+            $configurator->toClassMetadata($classMetadata);
         }
 
         return $classMetadata;

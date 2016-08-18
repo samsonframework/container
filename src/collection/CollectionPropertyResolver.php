@@ -46,19 +46,12 @@ class CollectionPropertyResolver extends AbstractCollectionResolver implements C
                     list(, $propertyMetadata->typeHint) = $matches;
                 }
 
-                // Iterate collection
-                if (array_key_exists('@attributes', $propertyDataArray)) {
-                    // Iterate collection attribute configurators
-                    foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
-                        // If this is supported collection configurator
-                        if (array_key_exists($key, $propertyDataArray['@attributes'])) {
-                            /** @var PropertyConfiguratorInterface $configurator Create instance */
-                            $configurator = new $collectionConfigurator($propertyDataArray['@attributes'][$key]);
-                            // Fill in class metadata
-                            $configurator->toPropertyMetadata($propertyMetadata);
-                        }
-                    }
+                // Process attributes
+                foreach ($this->getAttributeConfigurator($propertyDataArray) as $configurator) {
+                    /** @var PropertyConfiguratorInterface $configurator Parse property metadata */
+                    $configurator->toPropertyMetadata($propertyMetadata);
                 }
+
                 // Save property metadata
                 $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
             }

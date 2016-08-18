@@ -15,7 +15,7 @@ namespace samsonframework\container\collection;
 abstract class AbstractCollectionResolver
 {
     /** @var array Collection of collection configurators */
-    protected $collectionConfigurators = [];
+    protected $configurators = [];
 
     /**
      * ArrayPropertyResolver constructor.
@@ -30,7 +30,7 @@ abstract class AbstractCollectionResolver
         foreach ($collectionConfigurators as $collectionConfigurator) {
             // Autoload and check if passed collection configurator
             if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
-                $this->collectionConfigurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
+                $this->configurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
             } else {
                 throw new \InvalidArgumentException($collectionConfigurator . ' is not valid collection configurator or does not exists');
             }
@@ -53,5 +53,31 @@ abstract class AbstractCollectionResolver
 
         // Get collection configurator key as its lowered class name
         return strtolower(substr($className, strrpos($className, '\\') + 1));
+    }
+
+    /**
+     * Try to find attribute configurators.
+     *
+     * @param array $arrayData Configuration data array
+     *
+     * @return CollectionAttributeConfiguratorInterface[] Found attribute configurator instances collection
+     */
+    public function getAttributeConfigurator(array $arrayData) : array
+    {
+        $configurators = [];
+
+        // If we have @attributes section
+        if (array_key_exists('@attributes', $arrayData)) {
+            // Iterate collection attribute configurators
+            foreach ($this->configurators as $key => $configurator) {
+                // If this is supported collection configurator
+                if (array_key_exists($key, $arrayData['@attributes'])) {
+                    // Store new attribute configurator instance
+                    $configurators[$key] = new $configurator($arrayData['@attributes'][$key]);
+                }
+            }
+        }
+
+        return $configurators;
     }
 }

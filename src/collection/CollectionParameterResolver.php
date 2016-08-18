@@ -25,17 +25,9 @@ class CollectionParameterResolver extends AbstractCollectionResolver implements 
     public function resolve(array $parameterDataArray, ParameterMetadata $parameterMetadata)
     {
         // Iterate collection
-        if (array_key_exists('@attributes', $parameterDataArray)) {
-            // Iterate collection attribute configurators
-            foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
-                // If this is supported collection configurator
-                if (array_key_exists($key, $parameterDataArray['@attributes'])) {
-                    /** @var ParameterConfiguratorInterface $configurator Create instance */
-                    $configurator = new $collectionConfigurator($parameterDataArray['@attributes'][$key]);
-                    // Fill in class metadata
-                    $configurator->toParameterMetadata($parameterMetadata);
-                }
-            }
+        foreach ($this->getAttributeConfigurator($parameterDataArray) as $configurator) {
+            /** @var ParameterConfiguratorInterface $configurator Parse parameter metadata */
+            $configurator->toParameterMetadata($parameterMetadata);
         }
 
         return $parameterMetadata;
