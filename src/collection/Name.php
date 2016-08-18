@@ -19,22 +19,22 @@ use samsonframework\container\metadata\ClassMetadata;
  */
 class Name implements ClassConfiguratorInterface, CollectionAttributeConfiguratorInterface
 {
-    /**
-     * @var string Dependency class name
-     */
+    /** @var string Dependency name */
     protected $name;
 
     /**
-     * Class name collection configurator constructor.
+     * Dependency name collection configurator constructor.
      *
-     * @param string $name Class name
+     * @param string $name Dependency name
      */
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /* {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function toClassMetadata(ClassMetadata $classMetadata)
     {
         $classMetadata->name = $this->name;
