@@ -5,7 +5,7 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-namespace samsonframework\container\collection;
+namespace samsonframework\container\collection\attribute;
 
 use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\configurator\ParameterConfiguratorInterface;
@@ -22,7 +22,7 @@ use samsonframework\container\metadata\PropertyMetadata;
  * @author Vitaly Egorov <egorov@samsonos.com>
  *
  */
-class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, CollectionAttributeConfiguratorInterface
+class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, AttributeConfiguratorInterface
 {
     /** @var string Configurator key */
     const KEY = 'class';

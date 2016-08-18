@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 16.08.16 at 19:02
  */
-namespace samsonframework\container\collection;
+namespace samsonframework\container\collection\attribute;
 
 /**
  * Collection attribute configurator interface.
@@ -12,7 +12,7 @@ namespace samsonframework\container\collection;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-interface CollectionAttributeConfiguratorInterface
+interface AttributeConfiguratorInterface
 {
 
 }

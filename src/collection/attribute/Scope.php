@@ -5,7 +5,7 @@
  * Date: 27.07.2016
  * Time: 1:55.
  */
-namespace samsonframework\container\collection;
+namespace samsonframework\container\collection\attribute;
 
 use samsonframework\container\configurator\ScopeConfigurator;
 
@@ -16,7 +16,7 @@ use samsonframework\container\configurator\ScopeConfigurator;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class Scope extends ScopeConfigurator implements CollectionAttributeConfiguratorInterface
+class Scope extends ScopeConfigurator implements AttributeConfiguratorInterface
 {
     /** @var string Configurator key */
     const KEY = 'scope';

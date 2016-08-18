@@ -8,13 +8,13 @@
 namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
-use samsonframework\container\collection\ClassName;
+use samsonframework\container\collection\attribute\ClassName;
+use samsonframework\container\collection\attribute\Name;
+use samsonframework\container\collection\attribute\Scope;
 use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionParameterResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
-use samsonframework\container\collection\Name;
-use samsonframework\container\collection\Scope;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;

@@ -7,6 +7,8 @@
  */
 namespace samsonframework\container\collection;
 
+use samsonframework\container\collection\attribute\AttributeConfiguratorInterface;
+
 /**
  * Abstract configurator resolver class.
  *
@@ -29,7 +31,7 @@ abstract class AbstractCollectionResolver
         /** @var string $collectionConfigurator */
         foreach ($collectionConfigurators as $collectionConfigurator) {
             // Autoload and check if passed collection configurator
-            if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
+            if (in_array(AttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
                 $this->configurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
             } else {
                 throw new \InvalidArgumentException($collectionConfigurator . ' is not valid collection configurator or does not exists');
@@ -54,7 +56,7 @@ abstract class AbstractCollectionResolver
      *
      * @param array $arrayData Configuration data array
      *
-     * @return CollectionAttributeConfiguratorInterface[] Found attribute configurator instances collection
+     * @return AttributeConfiguratorInterface[] Found attribute configurator instances collection
      */
     public function getAttributeConfigurator(array $arrayData) : array
     {
