@@ -38,7 +38,7 @@ abstract class AbstractCollectionResolver
     }
 
     /**
-     * Get collection configurator collection key name for resolving.
+     * Get collection attribute configurator configuration key for resolving.
      *
      * @param string $className Full collection configurator class name with namespace
      *
@@ -46,13 +46,7 @@ abstract class AbstractCollectionResolver
      */
     public function getKey($className) : string
     {
-        $reflection = new \ReflectionClass($className);
-        if ($key = $reflection->getConstant('CONFIGURATOR_KEY')) {
-            return $key;
-        }
-
-        // Get collection configurator key as its lowered class name
-        return strtolower(substr($className, strrpos($className, '\\') + 1));
+        return $className::KEY;
     }
 
     /**

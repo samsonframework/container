@@ -18,5 +18,6 @@ use samsonframework\container\configurator\ScopeConfigurator;
  */
 class Scope extends ScopeConfigurator implements CollectionAttributeConfiguratorInterface
 {
-
+    /** @var string Configurator key */
+    const KEY = 'scope';
 }

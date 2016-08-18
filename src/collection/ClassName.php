@@ -24,10 +24,8 @@ use samsonframework\container\metadata\PropertyMetadata;
  */
 class ClassName implements ClassConfiguratorInterface, PropertyConfiguratorInterface, ParameterConfiguratorInterface, CollectionAttributeConfiguratorInterface
 {
-    /**
-     * @var string Configurator key
-     */
-    const CONFIGURATOR_KEY = 'class';
+    /** @var string Configurator key */
+    const KEY = 'class';
 
     /**
      * @var string Dependency class name

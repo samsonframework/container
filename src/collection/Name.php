@@ -19,6 +19,9 @@ use samsonframework\container\metadata\ClassMetadata;
  */
 class Name implements ClassConfiguratorInterface, CollectionAttributeConfiguratorInterface
 {
+    /** @var string Configurator key */
+    const KEY = 'name';
+
     /** @var string Dependency name */
     protected $name;
 
