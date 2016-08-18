@@ -26,8 +26,7 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
         foreach ($classReflection->getMethods() as $method) {
             $this->resolveMethodAnnotations(
                 $method,
-                $this->resolveMethodMetadata($method, $classMetadata),
-                $classMetadata
+                $this->resolveMethodMetadata($method, $classMetadata)
             );
         }
 
@@ -38,9 +37,9 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
      * Resolve class method annotations.
      *
      * @param \ReflectionMethod $method
-     * @param ClassMetadata     $classMetadata
+     * @param MethodMetadata    $methodMetadata
      */
-    protected function resolveMethodAnnotations(\ReflectionMethod $method, MethodMetadata $methodMetadata, ClassMetadata $classMetadata)
+    protected function resolveMethodAnnotations(\ReflectionMethod $method, MethodMetadata $methodMetadata)
     {
         /** @var MethodConfiguratorInterface $annotation */
         foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
@@ -48,7 +47,5 @@ class AnnotationMethodResolver extends AbstractAnnotationResolver implements Ann
                 $annotation->toMethodMetadata($methodMetadata);
             }
         }
-
-        $classMetadata->methodsMetadata[$methodMetadata->name] = $methodMetadata;
     }
 }

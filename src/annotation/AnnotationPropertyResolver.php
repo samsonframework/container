@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 07.08.16 at 13:04
@@ -8,14 +8,14 @@ namespace samsonframework\container\annotation;
 use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
+use samsonframework\container\resolver\PropertyResolverTrait;
 
 /**
  * Class properties annotation resolver.
  */
 class AnnotationPropertyResolver extends AbstractAnnotationResolver implements AnnotationResolverInterface
 {
-    /** Property typeHint hint pattern */
-    const P_PROPERTY_TYPE_HINT = '/@var\s+(?<class>[^\s]+)/';
+    use PropertyResolverTrait;
 
     /**
      * {@inheritDoc}
@@ -24,7 +24,10 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
     {
         /** @var \ReflectionProperty $property */
         foreach ($classReflection->getProperties() as $property) {
-            $this->resolveClassPropertyAnnotations($property, $classMetadata);
+            $this->resolveClassPropertyAnnotations(
+                $property,
+                $this->resolvePropertyMetadata($property, $classMetadata)
+            );
         }
 
         return $classMetadata;
@@ -34,28 +37,15 @@ class AnnotationPropertyResolver extends AbstractAnnotationResolver implements A
      * Resolve class property annotations.
      *
      * @param \ReflectionProperty $property
-     * @param ClassMetadata       $classMetadata
+     * @param PropertyMetadata    $propertyMetadata
      */
-    protected function resolveClassPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    protected function resolveClassPropertyAnnotations(\ReflectionProperty $property, PropertyMetadata $propertyMetadata)
     {
-        // Create method metadata instance
-        $propertyMetadata = new PropertyMetadata($classMetadata);
-        $propertyMetadata->name = $property->getName();
-        $propertyMetadata->modifiers = $property->getModifiers();
-        $propertyMetadata->isPublic = $property->isPublic();
-
-        // Parse property type hint if present
-        if (preg_match(self::P_PROPERTY_TYPE_HINT, $property->getDocComment(), $matches)) {
-            list(, $propertyMetadata->typeHint) = $matches;
-        }
-
-        /** @var PropertyInterface $annotation Read class annotations */
+        /** @var PropertyConfiguratorInterface $annotation Read class annotations */
         foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
             if ($annotation instanceof PropertyConfiguratorInterface) {
                 $annotation->toPropertyMetadata($propertyMetadata);
             }
         }
-
-        $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
     }
 }

@@ -7,10 +7,9 @@
  */
 namespace samsonframework\container\collection;
 
-use samsonframework\container\annotation\AnnotationPropertyResolver;
 use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\PropertyMetadata;
+use samsonframework\container\resolver\PropertyResolverTrait;
 
 /**
  * Collection property resolver class.
@@ -19,6 +18,8 @@ use samsonframework\container\metadata\PropertyMetadata;
  */
 class CollectionPropertyResolver extends AbstractCollectionResolver implements CollectionResolverInterface
 {
+    use PropertyResolverTrait;
+
     /** Collection property key */
     const KEY = 'properties';
 
@@ -30,30 +31,19 @@ class CollectionPropertyResolver extends AbstractCollectionResolver implements C
         // Iterate collection
         if (array_key_exists(self::KEY, $configurationArray)) {
             $reflectionClass = new \ReflectionClass($classMetadata->className);
+
             // Iterate configured properties
             foreach ($configurationArray[self::KEY] as $propertyName => $propertyDataArray) {
-                $propertyReflection = $reflectionClass->getProperty($propertyName);
-
-                // Create method metadata instance
-                // TODO This code are identical with AnnotationPropertyResolver
-                $propertyMetadata = new PropertyMetadata($classMetadata);
-                $propertyMetadata->name = $propertyReflection->getName();
-                $propertyMetadata->modifiers = $propertyReflection->getModifiers();
-                $propertyMetadata->isPublic = $propertyReflection->isPublic();
-
-                // Parse property type hint if present
-                if (preg_match(AnnotationPropertyResolver::P_PROPERTY_TYPE_HINT, $propertyReflection->getDocComment(), $matches)) {
-                    list(, $propertyMetadata->typeHint) = $matches;
-                }
+                $propertyMetadata = $this->resolvePropertyMetadata(
+                    $reflectionClass->getProperty($propertyName),
+                    $classMetadata
+                );
 
                 // Process attributes
                 foreach ($this->getAttributeConfigurator($propertyDataArray) as $configurator) {
                     /** @var PropertyConfiguratorInterface $configurator Parse property metadata */
                     $configurator->toPropertyMetadata($propertyMetadata);
                 }
-
-                // Save property metadata
-                $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
             }
         }
 
