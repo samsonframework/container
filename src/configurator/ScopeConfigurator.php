@@ -25,11 +25,11 @@ class ScopeConfigurator implements ClassConfiguratorInterface
     /**
      * ScopeConfigurator constructor.
      *
-     * @param string $scopeName Class scope name
+     * @param string $scopeData Class scope name
      */
-    public function __construct(string $scopeName)
+    public function __construct(string $scopeData)
     {
-        $this->scopeName = $scopeName;
+        $this->scopeName = $scopeData;
     }
 
     /** {@inheritdoc} */

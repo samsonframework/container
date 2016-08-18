@@ -8,7 +8,6 @@
 namespace samsonframework\container\collection\configurator;
 
 use samsonframework\container\collection\CollectionAttributeConfiguratorInterface;
-use samsonframework\container\collection\CollectionConfiguratorTrait;
 use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\configurator\PropertyConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;

@@ -8,10 +8,14 @@
 namespace samsonframework\container;
 
 use samsonframework\container\annotation\Injectable;
+use samsonframework\container\collection\CollectionAttributeResolver;
 use samsonframework\container\collection\CollectionClassResolver;
+use samsonframework\container\collection\CollectionKeyResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\collection\configurator\ClassName;
+use samsonframework\container\collection\configurator\Instance;
 use samsonframework\container\collection\configurator\Scope;
+use samsonframework\container\collection\configurator\Service;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\TestCase;
@@ -31,7 +35,7 @@ class ContainerConfigurationTest extends TestCase
 <service classname="samsonframework\container\ContainerBuilder" name="container">
 <arguments>
 <fileManager classname="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-<classResolver classname="samsonframework\container\resolver\AnnotationResolver"></classResolver>
+<keyResolver classname="samsonframework\container\resolver\AnnotationResolver"></keyResolver>
 <generator classname="samsonphp\generator\Generator"></generator>
 </arguments>
 </service>
@@ -40,12 +44,13 @@ XML;
 
         new Injectable();
 
-        $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
-            Scope::class,
-            ClassName::class
-        ]), new CollectionPropertyResolver([
-            ClassName::class
-        ]));
+        $xmlConfigurator = new XmlResolver(new CollectionKeyResolver([
+            Service::class,
+            Instance::class
+        ], new CollectionAttributeResolver([
+            ClassName::class,
+            Scope::class
+        ])));
 
         // TODO Not compatible with ContainerBuilder
         $listMetadata = $xmlConfigurator->resolveConfig($xmlConfig);

@@ -7,9 +7,9 @@
  */
 namespace samsonframework\container\collection\configurator;
 
-use samsonframework\container\collection\CollectionConfiguratorTrait;
 use samsonframework\container\collection\CollectionKeyConfiguratorInterface;
-use samsonframework\container\configurator\ScopeConfigurator;
+use samsonframework\container\configurator\ServiceConfigurator;
+use samsonframework\container\metadata\ClassMetadata;
 
 /**
  * Service collection configurator class.
@@ -17,7 +17,29 @@ use samsonframework\container\configurator\ScopeConfigurator;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class Service extends ScopeConfigurator implements CollectionKeyConfiguratorInterface
+class Service extends ServiceConfigurator implements CollectionKeyConfiguratorInterface
 {
     use CollectionConfiguratorTrait;
+
+    public function __construct(array $scopeData)
+    {
+        // Check for name attribute
+        if (array_key_exists('@attributes', $scopeData) && array_key_exists('name', $scopeData['@attributes'])) {
+            parent::__construct($scopeData['@attributes']['name']);
+        } else {
+            throw new \InvalidArgumentException('Cannot configure service without name attribute');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($data)
+    {
+        $classMetadata = new ClassMetadata();
+        $classMetadata->name = $this->serviceName;
+        $classMetadata->scopes[] = $this->scopeName;
+
+        return $classMetadata;
+    }
 }

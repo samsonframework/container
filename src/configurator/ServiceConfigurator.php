@@ -26,11 +26,11 @@ class ServiceConfigurator extends ScopeConfigurator
     /**
      * ServiceConfigurator constructor.
      *
-     * @param string $serviceName Class service name
+     * @param string $serviceData Class service name
      */
-    public function __construct(string $serviceName)
+    public function __construct(string $serviceData)
     {
-        $this->serviceName = $serviceName;
+        $this->serviceName = $serviceData;
 
         // Add to service scopes
         parent::__construct(ContainerBuilder::SCOPE_SERVICES);
