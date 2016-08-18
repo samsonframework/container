@@ -7,6 +7,11 @@ namespace samsonframework\container\tests\classes;
 
 class FastDriver implements DriverInterface
 {
+    public function __construct()
+    {
+
+    }
+
     /**
      * @param Leg $leg
      */

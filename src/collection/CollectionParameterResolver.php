@@ -12,6 +12,7 @@ use samsonframework\container\metadata\ParameterMetadata;
 
 /**
  * Collection parameter resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class CollectionParameterResolver extends AbstractCollectionResolver implements CollectionParameterResolverInterface

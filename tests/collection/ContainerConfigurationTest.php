@@ -5,9 +5,8 @@
  * Date: 14.08.16
  * Time: 12:10
  */
-namespace samsonframework\container;
+namespace samsonframework\container\tests\collection;
 
-use samsonframework\container\annotation\Injectable;
 use samsonframework\container\collection\attribute\ClassName;
 use samsonframework\container\collection\attribute\Name;
 use samsonframework\container\collection\attribute\Scope;
@@ -29,6 +28,9 @@ class ContainerConfigurationTest extends TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
 <instance class="samsonframework\container\\tests\classes\FastDriver" name="MyDriver">
+    <argumets>
+        
+    </argumets>
     <methods>
         <stopCar>
             <arguments>
@@ -51,8 +53,6 @@ class ContainerConfigurationTest extends TestCase
 </service>
 </dependencies>
 XML;
-
-        new Injectable();
 
         $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,

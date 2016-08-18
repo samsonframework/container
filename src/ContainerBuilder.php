@@ -202,7 +202,7 @@ class ContainerBuilder
             }
             // Store inner dependencies
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
-                $containerDependencies[$className] = array_values($classMetadata->methodsMetadata['__construct']->dependencies);
+                $containerDependencies[$className] = array_values($classMetadata->methodsMetadata['__construct']->dependencies ?? []);
             }
         }
 
@@ -440,7 +440,7 @@ class ContainerBuilder
         // Process constructor dependencies
         $argumentsCount = 0;
         if (array_key_exists('__construct', $methodsMetaData)) {
-            $constructorArguments = $methodsMetaData['__construct']->dependencies;
+            $constructorArguments = $methodsMetaData['__construct']->dependencies ?? [];
             $argumentsCount = count($constructorArguments);
             $i = 0;
 
