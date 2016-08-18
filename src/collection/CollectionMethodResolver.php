@@ -9,6 +9,7 @@ namespace samsonframework\container\collection;
 
 use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
+use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\resolver\MethodResolverTrait;
 
 /**
@@ -53,35 +54,47 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
 
             // Iterate configured methods
             foreach ($configurationArray[self::KEY] as $methodName => $methodDataArray) {
-                $methodMetadata = $this->resolveMethodMetadata(
-                    $reflectionClass->getMethod($methodName),
-                    $classMetadata
+                $this->resolveMethod(
+                    $this->resolveMethodMetadata(
+                        $reflectionClass->getMethod($methodName),
+                        $classMetadata
+                    ),
+                    $methodDataArray
                 );
-
-                // Check if methods inject any instances
-                if (array_key_exists(CollectionParameterResolver::KEY, $methodDataArray)) {
-                    foreach ($methodMetadata->parametersMetadata as $parameterMetadata) {
-                        // If config has parameter
-                        if (array_key_exists($parameterMetadata->name, $methodDataArray[CollectionParameterResolver::KEY])) {
-                            $this->parameterResolver->resolve(
-                                $methodDataArray[CollectionParameterResolver::KEY][$parameterMetadata->name],
-                                $parameterMetadata
-                            );
-
-                            // Store method dependencies
-                            $methodMetadata->dependencies[$parameterMetadata->name] = $parameterMetadata->dependency;
-                        }
-                    }
-                }
-
-                // Process attributes
-                foreach ($this->getAttributeConfigurator($methodDataArray) as $configurator) {
-                    /** @var MethodConfiguratorInterface $configurator Parse method metadata */
-                    $configurator->toMethodMetadata($methodMetadata);
-                }
             }
         }
 
         return $classMetadata;
+    }
+
+    /**
+     * Resolve method configuration.
+     *
+     * @param MethodMetadata $methodMetadata
+     * @param array          $methodDataArray
+     */
+    protected function resolveMethod(MethodMetadata $methodMetadata, array $methodDataArray)
+    {
+        // Check if methods inject any instances
+        if (array_key_exists(CollectionParameterResolver::KEY, $methodDataArray)) {
+            foreach ($methodMetadata->parametersMetadata as $parameterMetadata) {
+                // If config has parameter
+                if (array_key_exists($parameterMetadata->name, $methodDataArray[CollectionParameterResolver::KEY])) {
+                    $this->parameterResolver->resolve(
+                        $methodDataArray[CollectionParameterResolver::KEY][$parameterMetadata->name],
+                        $parameterMetadata
+                    );
+
+                    // Store method dependencies
+                    $methodMetadata->dependencies[$parameterMetadata->name] = $parameterMetadata->dependency;
+                }
+            }
+        }
+
+        // Process attributes
+        foreach ($this->getAttributeConfigurator($methodDataArray) as $configurator) {
+            /** @var MethodConfiguratorInterface $configurator Parse method metadata */
+            $configurator->toMethodMetadata($methodMetadata);
+        }
     }
 }

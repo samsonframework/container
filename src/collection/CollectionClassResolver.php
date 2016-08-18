@@ -25,6 +25,8 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
      */
     public function resolve(array $configurationArray, ClassMetadata $classMetadata)
     {
+
+
         // Iterate collection
         foreach ($this->getAttributeConfigurator($configurationArray) as $configurator) {
             /** @var ClassConfiguratorInterface $configurator Parse class metadata */
