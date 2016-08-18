@@ -5,11 +5,22 @@
  */
 namespace samsonframework\container\tests\classes;
 
+use samsonframework\container\annotation\InjectArgument;
+
 class FastDriver implements DriverInterface
 {
-    public function __construct()
-    {
+    /** @var Leg */
+    protected $leg;
 
+    /**
+     * FastDriver constructor.
+     *
+     * @param Leg $leg
+     * @InjectArgument(leg="Leg")
+     */
+    public function __construct(Leg $leg)
+    {
+        $this->leg = $leg;
     }
 
     /**

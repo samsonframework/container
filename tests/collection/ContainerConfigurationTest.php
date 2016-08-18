@@ -10,10 +10,12 @@ namespace samsonframework\container\tests\collection;
 use samsonframework\container\collection\attribute\ClassName;
 use samsonframework\container\collection\attribute\Name;
 use samsonframework\container\collection\attribute\Scope;
+use samsonframework\container\collection\attribute\Service;
 use samsonframework\container\collection\CollectionClassResolver;
 use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionParameterResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
+use samsonframework\container\ContainerBuilder;
 use samsonframework\container\resolver\XmlResolver;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;
@@ -28,10 +30,12 @@ class ContainerConfigurationTest extends TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
 <instance class="samsonframework\container\\tests\classes\FastDriver" name="MyDriver">
-    <argumets>
-        
-    </argumets>
     <methods>
+        <__construct>
+            <arguments>
+                <leg class="samsonframework\container\\tests\classes\Leg"></leg>
+            </arguments>
+        </__construct>
         <stopCar>
             <arguments>
                 <leg class="samsonframework\container\\tests\classes\Leg"></leg>
@@ -44,24 +48,38 @@ class ContainerConfigurationTest extends TestCase
         <driver class="samsonframework\container\\tests\classes\FastDriver"></driver>
     </properties>
 </instance>
-<service class="samsonframework\container\ContainerBuilder" name="container">
-    <arguments>
-        <fileManager class="samsonframework\localfilemanager\LocalFileManager"></fileManager>
-        <classResolver class="samsonframework\container\resolver\AnnotationResolver"></classResolver>
-        <generator class="samsonphp\generator\Generator"></generator>
-    </arguments>
-</service>
+<instance class="samsonframework\container\\tests\classes\CarService" service="carservice">
+    <methods>
+        <__construct>
+            <arguments>
+                <car class="samsonframework\container\\tests\classes\Car"></car>
+                <driver class="samsonframework\container\\tests\classes\FastDriver"></driver>
+            </arguments>
+        </__construct>
+    </methods>
+</instance>
+<instance class="samsonframework\container\\tests\classes\Road">
+    <methods>
+        <__construct>
+            <arguments>
+                <carService service="carService"></carService>
+            </arguments>
+        </__construct>
+    </methods>
+</instance>
 </dependencies>
 XML;
 
         $xmlConfigurator = new XmlResolver(new CollectionClassResolver([
             Scope::class,
             Name::class,
-            ClassName::class
+            ClassName::class,
+            Service::class
         ]), new CollectionPropertyResolver([
             ClassName::class
         ]), new CollectionMethodResolver([], new CollectionParameterResolver([
-            ClassName::class
+            ClassName::class,
+            Service::class
         ])));
 
         // TODO Not compatible with ContainerBuilder
@@ -77,5 +95,16 @@ XML;
         static::assertTrue(in_array('myTestScope', $listMetadata[1]->scopes, true));
         static::assertArrayHasKey('driver', $listMetadata[1]->propertiesMetadata);
         static::assertEquals(FastDriver::class, $listMetadata[1]->propertiesMetadata['driver']->dependency);
+
+        // Injecting constructor dependency
+        static::assertTrue(in_array(Leg::class, $listMetadata[0]->methodsMetadata['__construct']->dependencies, true));
+
+        // Service method attribute for adding to services scope in class
+        static::assertTrue(in_array(ContainerBuilder::SCOPE_SERVICES, $listMetadata[2]->scopes, true));
+        // Service method attribute for adding name in class
+        static::assertEquals('carservice', $listMetadata[2]->name);
+
+        // Service method attribute for injecting as constructor dependency
+        static::assertTrue(in_array('carService', $listMetadata[3]->methodsMetadata['__construct']->dependencies, true));
     }
 }
