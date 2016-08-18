@@ -6,9 +6,9 @@
 namespace samsonframework\container\resolver;
 
 use samsonframework\container\collection\CollectionClassResolver;
+use samsonframework\container\collection\CollectionMethodResolver;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\PropertyMetadata;
 
 /**
  * XML dependency injection container configuration.
@@ -21,20 +21,27 @@ class XmlResolver implements ResolverInterface
     /** @var CollectionClassResolver */
     protected $classResolver;
 
-    /** @var CollectionClassResolver */
+    /** @var CollectionPropertyResolver */
     protected $propertyResolver;
+
+    /** @var CollectionMethodResolver */
+    protected $methodResolver;
 
     /**
      * AnnotationResolver constructor.
      *
      * @param CollectionClassResolver $classResolver
      * @param CollectionPropertyResolver $propertyResolver
+     * @param CollectionMethodResolver $methodResolver
      */
-    public function __construct(CollectionClassResolver $classResolver, CollectionPropertyResolver $propertyResolver)
-    {
+    public function __construct(
+        CollectionClassResolver $classResolver,
+        CollectionPropertyResolver $propertyResolver,
+        CollectionMethodResolver $methodResolver
+    ) {
         $this->classResolver = $classResolver;
         $this->propertyResolver = $propertyResolver;
-        //$this->methodResolver = $methodResolver;
+        $this->methodResolver = $methodResolver;
     }
 
     /**
@@ -49,10 +56,12 @@ class XmlResolver implements ResolverInterface
         // Convert xml to array
         $arrayData = $this->xml2array(new \SimpleXMLElement($xmlConfig));
         // Iterate config and resolve single instance
-        foreach ($arrayData as $key => $classArrayData) {
+        foreach ($arrayData as $key => $classesArrayData) {
             if ($key === CollectionClassResolver::KEY) {
-                // Store metadata
-                $listClassMetadata[] = $this->resolve($classArrayData);
+                foreach ($classesArrayData as $classArrayData) {
+                    // Store metadata
+                    $listClassMetadata[] = $this->resolve($classArrayData);
+                }
             }
         }
         return $listClassMetadata;
@@ -71,7 +80,7 @@ class XmlResolver implements ResolverInterface
         // Resolve class properties annotations
         $this->propertyResolver->resolve($classArrayData, $classMetadata);
         // Resolve class methods annotations
-        //$this->methodResolver->resolve($classData, $classMetadata);
+        $this->methodResolver->resolve($classArrayData, $classMetadata);
 
         return $classMetadata;
     }

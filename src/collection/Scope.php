@@ -11,6 +11,7 @@ use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
  * Scope collection configurator class.
+ *
  * @see    \samsonframework\container\configurator\ScopeConfigurator
  *
  * @author Vitaly Egorov <egorov@samsonos.com>

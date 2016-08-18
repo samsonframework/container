@@ -14,6 +14,7 @@ use samsonframework\container\metadata\PropertyMetadata;
 
 /**
  * Abstract configurator resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 abstract class AbstractCollectionResolver

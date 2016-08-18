@@ -11,7 +11,8 @@ use samsonframework\container\configurator\ClassConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
- * Array class resolver class.
+ * Collection class resolver class.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class CollectionClassResolver extends AbstractCollectionResolver implements CollectionResolverInterface
@@ -25,6 +26,7 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
     public function resolve(array $classDataArray, ClassMetadata $classMetadata)
     {
         // Iterate collection
+        // TODO Move this code into abstract class because this code are identical for three classes only with different configurator method name
         if (array_key_exists('@attributes', $classDataArray)) {
             // Iterate collection attribute configurators
             foreach ($this->collectionConfigurators as $key => $collectionConfigurator) {
@@ -39,10 +41,5 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
         }
 
         return $classMetadata;
-    }
-
-    public function resolveArrayKeys()
-    {
-
     }
 }
