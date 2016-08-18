@@ -47,7 +47,11 @@ class BuilderTest extends TestCase
         //eval($this->builder->build('Container2', 'DI'));
         $container = new \DI\Container2();
 
+        // Dependencies
         static::assertInstanceOf(FastDriver::class, $container->getFastdriver());
         static::assertInstanceOf(Leg::class, $this->getProperty('leg', $container->getFastdriver()));
+
+        // Scope
+        //static::assertTrue($this->getProperty('testscope', $container) !== null);
     }
 }
