@@ -1,50 +1,22 @@
-<?php declare(strict_types = 1);
+<?php
 /**
- * Created by PhpStorm.
- * User: root
- * Date: 29.07.2016
- * Time: 21:38.
+ * Created by Vitaly Iegorov <egorov@samsonos.com>.
+ * on 18.08.16 at 11:25
  */
-namespace samsonframework\container\collection;
+namespace samsonframework\container\resolver;
 
-use samsonframework\container\configurator\MethodConfiguratorInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\ParameterMetadata;
 
 /**
- * Collection method resolver class.
+ * Class method resolving trait.
+ *
  * @author Vitaly Iegorov <egorov@samsonos.com>
  */
-class CollectionMethodResolver extends AbstractCollectionResolver implements CollectionResolverInterface
+trait MethodResolverTrait
 {
-    /** Collection method key */
-    const KEY = 'methods';
-
-    /**
-     * @var  CollectionParameterResolver Parameter resolver
-     */
-    protected $parameterResolver;
-
-    /**
-     * CollectionMethodResolver constructor.
-     *
-     * @param array $collectionConfigurators
-     * @param CollectionParameterResolver $parameterResolver
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $collectionConfigurators, CollectionParameterResolver $parameterResolver)
-    {
-        parent::__construct($collectionConfigurators);
-
-        $this->parameterResolver = $parameterResolver;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function resolve(array $classDataArray, ClassMetadata $classMetadata)
+    public function collectionResolve(array $classDataArray, ClassMetadata $classMetadata)
     {
         // Iterate collection
         if (array_key_exists(self::KEY, $classDataArray)) {
@@ -96,5 +68,34 @@ class CollectionMethodResolver extends AbstractCollectionResolver implements Col
         }
 
         return $classMetadata;
+    }
+
+    /**
+     * Resolve class method annotations.
+     *
+     * @param \ReflectionMethod $method
+     * @param ClassMetadata     $classMetadata
+     */
+    protected function resolveMethodMetadata(\ReflectionMethod $method, ClassMetadata $classMetadata) : MethodMetadata
+    {
+        // Create method metadata instance
+        $methodMetadata = new MethodMetadata($classMetadata);
+        $methodMetadata->name = $method->name;
+        $methodMetadata->modifiers = $method->getModifiers();
+        $methodMetadata->isPublic = $method->isPublic();
+
+        /** @var \ReflectionParameter $parameter */
+        $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
+        foreach ($method->getParameters() as $parameter) {
+            $parameterMetadata = clone $parameterMetadata;
+            $parameterMetadata->name = $parameter->name;
+            $parameterMetadata->typeHint = (string)$parameter->getType();
+
+            // Store parameters metadata in method metadata
+            $methodMetadata->parametersMetadata[$parameterMetadata->name] = $parameterMetadata;
+        }
+
+        // Store method metadata in class metadata
+        return $classMetadata->methodsMetadata[$methodMetadata->name] = $methodMetadata;
     }
 }
