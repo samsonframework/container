@@ -4,3 +4,4 @@ cache/*
 build/logs*
 composer.lock
 composer.phar
+tests/Container.php
