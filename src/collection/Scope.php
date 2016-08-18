@@ -10,16 +10,16 @@ namespace samsonframework\container\collection;
 use samsonframework\container\configurator\ScopeConfigurator;
 
 /**
- * Service collection configurator class.
+ * Scope collection configurator class.
  *
- * @see    \samsonframework\container\configurator\ServiceConfigurator
+ * @see    \samsonframework\container\configurator\ScopeConfigurator
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class Service extends ScopeConfigurator implements CollectionKeyConfiguratorInterface
+class Scope extends ScopeConfigurator implements CollectionAttributeConfiguratorInterface
 {
     /**
-     * Service collection configurator constructor.
+     * Scope collection configurator constructor.
      *
      * @param string|array $valueOrValues Service unique name
      *

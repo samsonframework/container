@@ -7,8 +7,6 @@
  */
 namespace samsonframework\container\collection;
 
-use samsonframework\container\collection\configurator\CollectionConfiguratorTrait;
-
 /**
  * Abstract configurator resolver class.
  *
@@ -16,39 +14,44 @@ use samsonframework\container\collection\configurator\CollectionConfiguratorTrai
  */
 abstract class AbstractCollectionResolver
 {
-    /** @var array Collection of attribute configurators attribute => class names */
-    protected $configurators = [];
+    /** @var array Collection of collection configurators */
+    protected $collectionConfigurators = [];
 
     /**
-     * Validate passed configurator classes that they implement specific interface and
-     * use CollectionConfiguratorTrait.
+     * ArrayPropertyResolver constructor.
      *
-     * After them in collection by keys retrieved from CollectionConfiguratorTrait::getKey().
-     *
-     * @param array  $configurators Collection of configurator classes
-     * @param string $interface     Implemented interface filter
-     *
-     * @return array Collection of marker => collection configurator class name
+     * @param array $collectionConfigurators
      *
      * @throws \InvalidArgumentException
      */
-    public function getConfiguratorsByInterface(array $configurators, string $interface) : array
+    public function __construct(array $collectionConfigurators)
     {
-        $result = [];
-        /** @var string $configurator */
-        foreach ($configurators as $configurator) {
-            // Autoload and check if passed class implements needed interface
-            if (in_array($interface, class_implements($configurator), true)
-                && in_array(CollectionConfiguratorTrait::class, class_uses($configurator), true)
-            ) {
-                $result[$configurator::getMarker($configurator)] = $configurator;
+        /** @var string $collectionConfigurator */
+        foreach ($collectionConfigurators as $collectionConfigurator) {
+            // Autoload and check if passed collection configurator
+            if (in_array(CollectionAttributeConfiguratorInterface::class, class_implements($collectionConfigurator), true)) {
+                $this->collectionConfigurators[$this->getKey($collectionConfigurator)] = $collectionConfigurator;
             } else {
-                throw new \InvalidArgumentException(
-                    $configurator . ' is not valid collection configurator or does not exists'
-                );
+                throw new \InvalidArgumentException($collectionConfigurator . ' is not valid collection configurator or does not exists');
             }
         }
+    }
 
-        return $result;
+    /**
+     * Get collection configurator collection key name for resolving.
+     *
+     * @param string $className Full collection configurator class name with namespace
+     *
+     * @return string Collection configurator collection key name
+     */
+    public function getKey($className) : string
+    {
+        $reflection = new \ReflectionClass($className);
+        if ($key = $reflection->getConstant('CONFIGURATOR_KEY')) {
+            return $key;
+        }
+
+        // Get collection configurator key as its lowered class name
+        return strtolower(substr($className, strrpos($className, '\\') + 1));
     }
 }

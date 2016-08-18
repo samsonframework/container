@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 16.08.16 at 19:02
  */
-namespace samsonframework\container\collection\configurator;
+namespace samsonframework\container\collection;
 
 /**
  * Collection configurator interface.
