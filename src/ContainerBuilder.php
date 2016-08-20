@@ -75,13 +75,9 @@ class ContainerBuilder extends Builder
         foreach ($classes as $className) {
             // Resolve class metadata
             $this->classesMetadata[$className] = $this->classResolver->resolve(new \ReflectionClass($className));
-            // Store by metadata name as alias
-            $this->classAliases[$this->classesMetadata[$className]->name] = $className;
-            // Store class in defined scopes
-            foreach ($this->classesMetadata[$className]->scopes as $scope) {
-                $this->scopes[$scope][] = $className;
-            }
         }
+
+        $this->processClassMetadata($this->classesMetadata);
 
         return $this;
     }

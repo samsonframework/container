@@ -77,10 +77,10 @@ class Builder
         // Read all classes in given file
         foreach ($classesMetadata as $classMetadata) {
             // Store by metadata name as alias
-            $this->classAliases[$classesMetadata[$classMetadata->className]->name] = $classMetadata->className;
+            $this->classAliases[$classMetadata->name] = $classMetadata->className;
 
             // Store class in defined scopes
-            foreach ($classesMetadata[$classMetadata->className]->scopes as $scope) {
+            foreach ($classMetadata->scopes as $scope) {
                 $this->scopes[$scope][] = $classMetadata->className;
             }
         }
