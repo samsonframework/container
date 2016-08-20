@@ -115,7 +115,7 @@ XML;
 
 
         // Service method attribute for adding to services scope in class
-        static::assertTrue(in_array(ContainerBuilder::SCOPE_SERVICES, $carServiceMetadata->scopes, true));
+        static::assertTrue(in_array(Builder::SCOPE_SERVICES, $carServiceMetadata->scopes, true));
         // Service method attribute for adding name in class
         static::assertEquals('carservice', $carServiceMetadata->name);
 

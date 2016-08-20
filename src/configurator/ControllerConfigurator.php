@@ -7,7 +7,7 @@
  */
 namespace samsonframework\container\configurator;
 
-use samsonframework\container\ContainerBuilder;
+use samsonframework\container\Builder;
 
 /**
  * Controller class configurator.
@@ -25,6 +25,6 @@ class ControllerConfigurator extends ScopeConfigurator
     public function __construct()
     {
         // Add to controller scope
-        parent::__construct(ContainerBuilder::SCOPE_CONTROLLER);
+        parent::__construct(Builder::SCOPE_CONTROLLER);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -7,7 +7,7 @@
  */
 namespace samsonframework\container\configurator;
 
-use samsonframework\container\ContainerBuilder;
+use samsonframework\container\Builder;
 use samsonframework\container\metadata\ClassMetadata;
 
 /**
@@ -33,7 +33,7 @@ class ServiceConfigurator extends ScopeConfigurator
         $this->serviceName = $serviceData;
 
         // Add to service scopes
-        parent::__construct(ContainerBuilder::SCOPE_SERVICES);
+        parent::__construct(Builder::SCOPE_SERVICES);
     }
 
     /** {@inheritdoc} */

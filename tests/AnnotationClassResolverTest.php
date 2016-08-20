@@ -10,7 +10,7 @@ use samsonframework\container\annotation\AnnotationClassResolver;
 use samsonframework\container\annotation\Controller;
 use samsonframework\container\annotation\Route;
 use samsonframework\container\annotation\Scope;
-use samsonframework\container\ContainerBuilder;
+use samsonframework\container\Builder;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\tests\classes as tests;
 
@@ -43,6 +43,6 @@ class AnnotationClassResolverTest extends TestCase
         $classMetadata = $this->resolver->resolve($reflectionClass, $this->classMetadata);
 
         static::assertEquals(true, in_array('cars', $classMetadata->scopes, true));
-        static::assertEquals(true, in_array(ContainerBuilder::SCOPE_CONTROLLER, $classMetadata->scopes, true));
+        static::assertEquals(true, in_array(Builder::SCOPE_CONTROLLER, $classMetadata->scopes, true));
     }
 }
