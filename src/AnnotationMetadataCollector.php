@@ -16,13 +16,12 @@ class AnnotationMetadataCollector extends AbstractMetadataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect($classes) : array
+    public function collect($classes, array $classesMetadata = []) : array
     {
         /** @var array $classes */
-        $classesMetadata = [];
 
         foreach ($classes as $className) {
-            $classesMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className));
+            $classesMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className), $classesMetadata[$className] ?? null);
         }
 
         return $classesMetadata;

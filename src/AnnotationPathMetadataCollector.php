@@ -35,17 +35,16 @@ class AnnotationPathMetadataCollector extends AbstractMetadataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect($paths) : array
+    public function collect($paths, array $classesMetadata = []) : array
     {
         /** @var array $paths */
-        $classesMetadata = [];
 
         // Iterate all paths and get files
         foreach ($this->fileManager->scan($paths, ['php']) as $phpFile) {
             require_once($phpFile);
             // Read all classes in given file
             foreach ($this->getDefinedClasses(file_get_contents($phpFile)) as $className) {
-                $classesMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className));
+                $classesMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className), $classesMetadata[$className] ?? null);
             }
         }
 

@@ -30,7 +30,9 @@ abstract class AbstractMetadataCollector
      *
      * @param mixed $source Input source for collecting class metadata
      *
-     * @return ClassMetadata[] Collected class metadata collection
+     * @param array $classesMetadata
+     *
+     * @return array|metadata\ClassMetadata[] Collected class metadata collection
      */
-    abstract public function collect($source) : array;
+    abstract public function collect($source, array $classesMetadata = []) : array;
 }

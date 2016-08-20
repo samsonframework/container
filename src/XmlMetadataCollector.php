@@ -18,16 +18,17 @@ class XmlMetadataCollector extends AbstractMetadataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect($xmlConfig) : array
+    public function collect($xmlConfig, array $classesMetadata = []) : array
     {
-        $classesMetadata = [];
-
         // Iterate config and resolve single instance
         foreach ($this->xml2array(new \SimpleXMLElement($xmlConfig)) as $key => $classesArrayData) {
             if ($key === CollectionClassResolver::KEY) {
+                // If we have only one instance we need to add array
                 /** @var array $classesArrayData */
-                foreach ($classesArrayData as $classArrayData) {
-                    $classesMetadata[] = $this->resolver->resolve($classArrayData);
+                foreach (!array_key_exists(0, $classesArrayData) ? [$classesArrayData] : $classesArrayData as $classArrayData) {
+                    $classMetadata = $this->resolver->resolve($classArrayData);
+                    // TODO: This is only work aroud right now
+                    $classesMetadata[$classMetadata->className] = $this->resolver->resolve($classArrayData, $classesMetadata[$classMetadata->className] ?? null);
                 }
             }
         }
