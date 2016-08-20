@@ -41,7 +41,7 @@ class AnnotationPathMetadataCollectorTest extends TestCase
         new Service(['value' => 'test']);
 
         /** @var ClassMetadata[] $classesMetadata */
-        $classesMetadata = $this->annotationCollector->collect([realpath(__DIR__ . '/../classes')]);
+        $classesMetadata = $this->annotationCollector->collect([dirname(__DIR__, 1) . '/classes']);
 
         static::assertEquals(CarController::class, $classesMetadata[CarController::class]->className);
         static::assertTrue(in_array(Builder::SCOPE_CONTROLLER, $classesMetadata[CarController::class]->scopes, true));
