@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 08.08.16 at 18:15
  */
 namespace samsonframework\container\tests\classes;
-
-use samsonframework\container\annotation\Service;
 
 /**
  * Class Leg

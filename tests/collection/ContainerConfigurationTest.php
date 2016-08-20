@@ -45,6 +45,9 @@ class ContainerConfigurationTest extends TestCase
             </arguments>
         </stopCar>
     </methods>
+    <properties>
+        <car class="samsonframework\container\\tests\classes\Car"></car>
+    </properties>
 </instance>
 <instance class="samsonframework\container\\tests\classes\Car" scope="myTestScope">
     <properties>
