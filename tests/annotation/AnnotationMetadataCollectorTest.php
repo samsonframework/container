@@ -39,7 +39,7 @@ class AnnotationMetadataCollectorTest extends TestCase
         /** @var ClassMetadata[] $classesMetadata */
         $classesMetadata = $this->annotationCollector->collect([CarController::class]);
 
-        static::assertEquals(CarController::class, $classesMetadata[0]->className);
-        static::assertTrue(in_array(Builder::SCOPE_CONTROLLER, $classesMetadata[0]->scopes, true));
+        static::assertEquals(CarController::class, $classesMetadata[CarController::class]->className);
+        static::assertTrue(in_array(Builder::SCOPE_CONTROLLER, $classesMetadata[CarController::class]->scopes, true));
     }
 }

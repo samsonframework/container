@@ -45,7 +45,7 @@ class AnnotationPathMetadataCollector extends AbstractMetadataCollector
             require_once($phpFile);
             // Read all classes in given file
             foreach ($this->getDefinedClasses(file_get_contents($phpFile)) as $className) {
-                $classesMetadata[] = $this->resolver->resolve(new \ReflectionClass($className));
+                $classesMetadata[$className] = $this->resolver->resolve(new \ReflectionClass($className));
             }
         }
 
