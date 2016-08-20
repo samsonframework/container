@@ -20,8 +20,7 @@
     "php": "^7.0",
     "samsonphp/generator": "*",
     "samsonframework/base": "*",
-    "samsonframework/di": "*",
-    "container-interop/container-interop": "^1.1"
+    "samsonframework/di": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "5.*"
