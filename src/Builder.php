@@ -102,7 +102,8 @@ class Builder
 
         $containerDependencies = [];
         $containerAliases = [];
-        foreach ($this->classesMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $classMetadata) {
+            $className = $classMetadata->className;
             if ($classMetadata->alias !== null) {
                 $containerAliases[$className] = $classMetadata->alias;
             }
@@ -127,7 +128,8 @@ class Builder
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
             ->endClassFunction();
 
-        foreach ($this->classesMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $classMetadata) {
+            $className = $classMetadata->className;
             $dependencyName = $classMetadata->name ?? $className;
 
             // Generate camel case getter method
@@ -178,7 +180,8 @@ class Builder
     public function generateConditions($inputVariable = '$alias', $started = false)
     {
         // Iterate all container dependencies
-        foreach ($this->classesMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $classMetadata) {
+            $className = $classMetadata->className;
             // Generate condition statement to define if this class is needed
             $conditionFunc = !$started ? 'defIfCondition' : 'defElseIfCondition';
 
