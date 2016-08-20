@@ -9,20 +9,31 @@ use samsonframework\container\annotation\InjectArgument;
 
 class FastDriver implements DriverInterface
 {
-    /** @var Car */
-    public $car;
     /** @var Leg */
     protected $leg;
+    /**
+     * @var array
+     */
+    private $array;
+    /**
+     * @var string
+     */
+    private $string;
 
     /**
      * FastDriver constructor.
      *
-     * @param Leg $leg
-     * @InjectArgument(leg="Leg")
+     * @param Leg    $leg
+     * @param array  $array
+     * @param string $string
+     *
+     * @internal param $
      */
-    public function __construct(Leg $leg)
+    public function __construct(Leg $leg, array $array, string $string)
     {
         $this->leg = $leg;
+        $this->array = $array;
+        $this->string = $string;
     }
 
     /**
@@ -30,6 +41,14 @@ class FastDriver implements DriverInterface
      */
     public function stopCar(Leg $leg)
     {
-        $leg->pressPedal();
+
+    }
+
+    /**
+     * @param Leg $leg
+     */
+    protected function stopHiddenCar(Leg $leg)
+    {
+
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 06.08.16 at 11:13
@@ -19,5 +19,5 @@ class DriverService
      * @var CarService
      * @Inject("car_service")
      */
-    protected $car;
+    public $car;
 }

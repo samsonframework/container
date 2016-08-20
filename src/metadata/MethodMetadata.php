@@ -14,22 +14,22 @@ namespace samsonframework\container\metadata;
 class MethodMetadata extends AbstractMetadata
 {
     /** @var int Method modifiers */
-    public $modifiers;
+    public $modifiers = 0;
 
     /** @var ClassMetadata */
     public $classMetadata;
 
     /** @var bool Flag that method is public */
-    public $isPublic;
+    public $isPublic = false;
 
     /** @var ParameterMetadata[] */
     public $parametersMetadata = [];
 
     /** @var array ArgumentName => ArgumentType */
-    public $dependencies;
+    public $dependencies = [];
 
     /** @var string[string] Class routes collection */
-    public $routes;
+    public $routes = [];
 
     /**
      * MethodMetadata constructor.

@@ -382,14 +382,16 @@ class Builder
     protected function buildResolverArgument($argument, $textFunction = 'newLine')
     {
         // This is a dependency which invokes resolving function
-        if (array_key_exists($argument, $this->classesMetadata)) {
-            // Call container logic for this dependency
-            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
-        } elseif (array_key_exists($argument, $this->classAliases)) {
-            // Call container logic for this dependency
-            $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
-        } elseif (is_string($argument)) { // String variable
-            $this->generator->$textFunction()->stringValue($argument);
+        if (is_string($argument)) {
+            if (array_key_exists($argument, $this->classesMetadata)) {
+                // Call container logic for this dependency
+                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+            } elseif (array_key_exists($argument, $this->classAliases)) {
+                // Call container logic for this dependency
+                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+            } else { // String variable
+                $this->generator->$textFunction()->stringValue($argument);
+            }
         } elseif (is_array($argument)) { // Dependency value is array
             $this->generator->$textFunction()->arrayValue($argument);
         }
@@ -406,9 +408,6 @@ class Builder
      */
     protected function buildReflectionClass(string $className, array $propertiesMetadata, array $methodsMetadata, string $reflectionVariable)
     {
-        /** @var bool $reflectionClassCreated Flag showing that reflection class already created in current scope */
-        $reflectionClassCreated = false;
-
         /**
          * Iterate all properties and create internal scope reflection class instance if
          * at least one property in not public
@@ -420,9 +419,7 @@ class Builder
                     ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
                     ->newLine();
 
-                $reflectionClassCreated = true;
-
-                break;
+                return true;
             }
         }
 
@@ -430,18 +427,18 @@ class Builder
          * Iterate all properties and create internal scope reflection class instance if
          * at least one property in not public
          */
-        if (!$reflectionClassCreated) {
-            foreach ($methodsMetadata as $methodMetadata) {
-                if (!$methodMetadata->isPublic) {
-                    $this->generator
-                        ->comment('Create reflection class for injecting private/protected properties and methods')
-                        ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
-                        ->newLine();
+        foreach ($methodsMetadata as $methodMetadata) {
+            if (!$methodMetadata->isPublic) {
+                $this->generator
+                    ->comment('Create reflection class for injecting private/protected properties and methods')
+                    ->newLine($reflectionVariable . ' = new \ReflectionClass(\'' . $className . '\');')
+                    ->newLine();
 
-                    break;
-                }
+                return true;
             }
         }
+
+        return false;
     }
 
     /**

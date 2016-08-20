@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: root
@@ -13,19 +13,19 @@ namespace samsonframework\container\metadata;
 class PropertyMetadata
 {
     /** @var string Property name */
-    public $name;
+    public $name = '';
 
     /** @var int Property modifiers */
-    public $modifiers;
+    public $modifiers = 0;
 
     /** @var bool Flag that property is public */
-    public $isPublic;
+    public $isPublic = false;
 
     /** @var string Property typeHint from typeHint hint */
-    public $typeHint;
+    public $typeHint = '';
 
     /** @var string Property real typeHint */
-    public $dependency;
+    public $dependency = '';
 
     /** @var ClassMetadata */
     public $classMetadata;

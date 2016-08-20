@@ -8,7 +8,8 @@ namespace samsonframework\container\tests\collection;
 use samsonframework\container\collection\attribute\ClassName;
 use samsonframework\container\collection\CollectionPropertyResolver;
 use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\tests\classes\FastDriver;
+use samsonframework\container\tests\classes\Leg;
+use samsonframework\container\tests\classes\Shoes;
 use samsonframework\container\tests\TestCase;
 
 /**
@@ -20,16 +21,16 @@ class CollectionPropertyResolverTest extends TestCase
 {
     public function testResolve()
     {
-        $propertyName = 'car';
+        $propertyName = 'shoes';
         $classMetadata = new ClassMetadata();
-        $classMetadata->className = FastDriver::class;
+        $classMetadata->className = Leg::class;
 
         $resolver = new CollectionPropertyResolver([$this->createMock(ClassName::class)]);
 
         $classMetadata = $resolver->resolve([
             CollectionPropertyResolver::KEY => [
                 $propertyName => [
-                    '@attributes' => [ClassName::KEY => FastDriver::class]
+                    '@attributes' => [ClassName::KEY => Shoes::class]
                 ]
             ]
         ], $classMetadata);

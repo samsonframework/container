@@ -11,8 +11,14 @@ namespace samsonframework\container\tests\classes;
  */
 class Leg
 {
-    public function pressPedal()
-    {
+    /** @var Shoes */
+    public $shoes;
 
+    /**
+     * @param Shoes $shoes
+     */
+    public function pressPedal(Shoes $shoes)
+    {
+        $this->shoes = $shoes;
     }
 }
