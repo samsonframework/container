@@ -41,12 +41,12 @@ class AnnotationResolver implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function resolve($classData, string $identifier = null) : ClassMetadata
+    public function resolve($classData, ClassMetadata $classMetadata = null) : ClassMetadata
     {
         /** @var \ReflectionClass $classData */
 
-        // Create and fill class metadata base fields
-        $classMetadata = new ClassMetadata();
+        // Get or create and fill class metadata
+        $classMetadata = $classMetadata ?? new ClassMetadata();
 
         // Resolve class definition annotations
         $this->classResolver->resolve($classData, $classMetadata);

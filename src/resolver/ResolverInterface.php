@@ -17,12 +17,12 @@ use samsonframework\container\metadata\ClassMetadata;
 interface ResolverInterface
 {
     /**
-     * Convert class reflection to internal metadata class.
+     * Convert class data to internal class metadata.
      *
-     * @param mixed  $classData Class information representative
-     * @param string $identifier Unique class container identifier
+     * @param mixed         $classData     Class information representative
+     * @param ClassMetadata $classMetadata Previously existent metadata
      *
      * @return ClassMetadata Class metadata
      */
-    public function resolve($classData, string $identifier = null) : ClassMetadata;
+    public function resolve($classData, ClassMetadata $classMetadata = null) : ClassMetadata;
 }
