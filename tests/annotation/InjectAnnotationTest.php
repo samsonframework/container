@@ -54,9 +54,9 @@ class InjectAnnotationTest extends TestCase
 //        $this->expectException(\InvalidArgumentException::class);
 //
 //        $inject = new Inject(['value' => '']);
-//        $classMetadata = new ClassMetadata();
-//        $classMetadata->name = Car::class;
-//        $propertyMetadata = new PropertyMetadata($classMetadata);
+//        $classesMetadata = new ClassMetadata();
+//        $classesMetadata->name = Car::class;
+//        $propertyMetadata = new PropertyMetadata($classesMetadata);
 //        $propertyMetadata->name = 'driver';
 //        $propertyMetadata->typeHint = DriverInterface::class;
 //
@@ -116,9 +116,9 @@ class InjectAnnotationTest extends TestCase
 //    public function testPropertyServiceNameValue()
 //    {
 //        $inject = new Inject(['value' => 'car_service']);
-//        $classMetadata = new ClassMetadata();
-//        $classMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
-//        $propertyMetadata = new PropertyMetadata($classMetadata);
+//        $classesMetadata = new ClassMetadata();
+//        $classesMetadata->nameSpace = (new \ReflectionClass(Car::class))->getNamespaceName();
+//        $propertyMetadata = new PropertyMetadata($classesMetadata);
 //        $propertyMetadata->typeHint = 'Car';
 //        $inject->toPropertyMetadata($propertyMetadata);
 //

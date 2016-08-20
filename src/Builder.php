@@ -39,7 +39,7 @@ class Builder
     ];
 
     /** @var ClassMetadata[] Collection of classes metadata */
-    protected $classMetadata = [];
+    protected $classesMetadata = [];
 
     /** @var array Collection of dependencies aliases */
     protected $classAliases = [];
@@ -62,7 +62,28 @@ class Builder
     public function __construct(Generator $generator, array $classMetadata)
     {
         $this->generator = $generator;
-        $this->classMetadata = $classMetadata;
+        $this->classesMetadata = $classMetadata;
+
+        $this->processClassMetadata($this->classesMetadata);
+    }
+
+    /**
+     * Read class metadata and fill internal collections.
+     *
+     * @param ClassMetadata[] $classesMetadata
+     */
+    public function processClassMetadata(array $classesMetadata)
+    {
+        // Read all classes in given file
+        foreach ($classesMetadata as $classMetadata) {
+            // Store by metadata name as alias
+            $this->classAliases[$classesMetadata[$classMetadata->className]->name] = $classMetadata->className;
+
+            // Store class in defined scopes
+            foreach ($classesMetadata[$classMetadata->className]->scopes as $scope) {
+                $this->scopes[$scope][] = $classMetadata->className;
+            }
+        }
     }
 
     /**
@@ -81,7 +102,7 @@ class Builder
 
         $containerDependencies = [];
         $containerAliases = [];
-        foreach ($this->classMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $className => $classMetadata) {
             if ($classMetadata->alias !== null) {
                 $containerAliases[$className] = $classMetadata->alias;
             }
@@ -106,7 +127,7 @@ class Builder
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
             ->endClassFunction();
 
-        foreach ($this->classMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $className => $classMetadata) {
             $dependencyName = $classMetadata->name ?? $className;
 
             // Generate camel case getter method
@@ -157,7 +178,7 @@ class Builder
     public function generateConditions($inputVariable = '$alias', $started = false)
     {
         // Iterate all container dependencies
-        foreach ($this->classMetadata as $className => $classMetadata) {
+        foreach ($this->classesMetadata as $className => $classMetadata) {
             // Generate condition statement to define if this class is needed
             $conditionFunc = !$started ? 'defIfCondition' : 'defElseIfCondition';
 
@@ -358,7 +379,7 @@ class Builder
     protected function buildResolverArgument($argument, $textFunction = 'newLine')
     {
         // This is a dependency which invokes resolving function
-        if (array_key_exists($argument, $this->classMetadata)) {
+        if (array_key_exists($argument, $this->classesMetadata)) {
             // Call container logic for this dependency
             $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
         } elseif (array_key_exists($argument, $this->classAliases)) {

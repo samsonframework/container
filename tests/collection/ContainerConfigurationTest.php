@@ -88,7 +88,7 @@ XML;
         $container = new XMLContainerBuilder($xmlConfig, $xmlConfigurator, new Generator());
         file_put_contents(__DIR__ . '/Container.php', $container->build());
 
-        $listMetadata = $this->getProperty('classMetadata', $container);
+        $listMetadata = $this->getProperty('classesMetadata', $container);
 
         $fastDriverMetadata = array_shift($listMetadata);
         $carMetadata = array_shift($listMetadata);

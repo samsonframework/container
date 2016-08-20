@@ -40,7 +40,7 @@ class ContainerBuilder extends Builder
         $this->fileManger = $fileManager;
         $this->classResolver = $classResolver;
 
-        parent::__construct($generator, $this->classMetadata);
+        parent::__construct($generator, $this->classesMetadata);
     }
 
     /**
@@ -74,11 +74,11 @@ class ContainerBuilder extends Builder
         // Read all classes in given file
         foreach ($classes as $className) {
             // Resolve class metadata
-            $this->classMetadata[$className] = $this->classResolver->resolve(new \ReflectionClass($className));
+            $this->classesMetadata[$className] = $this->classResolver->resolve(new \ReflectionClass($className));
             // Store by metadata name as alias
-            $this->classAliases[$this->classMetadata[$className]->name] = $className;
+            $this->classAliases[$this->classesMetadata[$className]->name] = $className;
             // Store class in defined scopes
-            foreach ($this->classMetadata[$className]->scopes as $scope) {
+            foreach ($this->classesMetadata[$className]->scopes as $scope) {
                 $this->scopes[$scope][] = $className;
             }
         }

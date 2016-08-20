@@ -76,7 +76,7 @@ class MetadataBuilderTest extends TestCase
         );
         static::assertArrayHasKey(
             CarController::class,
-            $this->getProperty('classMetadata', $this->container)
+            $this->getProperty('classesMetadata', $this->container)
         );
     }
 
@@ -85,7 +85,7 @@ class MetadataBuilderTest extends TestCase
         $this->container->loadFromCode('class TestClass {} ');
         static::assertArrayHasKey(
             'TestClass',
-            $this->getProperty('classMetadata', $this->container)
+            $this->getProperty('classesMetadata', $this->container)
         );
     }
 

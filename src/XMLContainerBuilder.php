@@ -33,20 +33,12 @@ class XMLContainerBuilder extends Builder
                     // Store metadata
                     $classMetadata = $classResolver->resolve($classArrayData);
 
-                    // Store by metadata name as alias
-                    $this->classAliases[$classMetadata->name] = $classMetadata->className;
-
-                    // Store class in defined scopes
-                    foreach ($classMetadata->scopes as $scope) {
-                        $this->scopes[$scope][] = $classMetadata->className;
-                    }
-
-                    $this->classMetadata[$classMetadata->className] = $classMetadata;
+                    $this->classesMetadata[$classMetadata->className] = $classMetadata;
                 }
             }
         }
 
-        parent::__construct($generator, $this->classMetadata);
+        parent::__construct($generator, $this->classesMetadata);
     }
 
     /**
