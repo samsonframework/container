@@ -6,8 +6,7 @@
 namespace samsonframework\container;
 
 use samsonframework\container\collection\CollectionClassResolver;
-use samsonframework\container\resolver\ResolverInterface;
-use samsonframework\filemanager\FileManagerInterface;
+use samsonframework\container\resolver\XmlResolver;
 use samsonphp\generator\Generator;
 
 /**
@@ -15,7 +14,7 @@ use samsonphp\generator\Generator;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class XMLContainerBuilder extends ContainerBuilder
+class XMLContainerBuilder extends Builder
 {
     /**
      * Resolve xml config
@@ -23,10 +22,8 @@ class XMLContainerBuilder extends ContainerBuilder
      * @param string $xmlConfig
      *
      */
-    public function __construct($xmlConfig, FileManagerInterface $fileManager, ResolverInterface $classResolver, Generator $generator)
+    public function __construct(string $xmlConfig, XmlResolver $classResolver, Generator $generator)
     {
-        $this->classResolver = $classResolver;
-
         // Convert xml to array
         $arrayData = $this->xml2array(new \SimpleXMLElement($xmlConfig));
         // Iterate config and resolve single instance
@@ -34,7 +31,7 @@ class XMLContainerBuilder extends ContainerBuilder
             if ($key === CollectionClassResolver::KEY) {
                 foreach ($classesArrayData as $classArrayData) {
                     // Store metadata
-                    $classMetadata = $this->classResolver->resolve($classArrayData);
+                    $classMetadata = $classResolver->resolve($classArrayData);
 
                     // Store by metadata name as alias
                     $this->classAliases[$classMetadata->name] = $classMetadata->className;
@@ -49,7 +46,7 @@ class XMLContainerBuilder extends ContainerBuilder
             }
         }
 
-        parent::__construct($fileManager, $classResolver, $generator);
+        parent::__construct($generator, $this->classMetadata);
     }
 
     /**

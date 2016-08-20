@@ -22,7 +22,6 @@ use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\Leg;
 use samsonframework\container\tests\TestCase;
 use samsonframework\container\XMLContainerBuilder;
-use samsonframework\localfilemanager\LocalFileManager;
 use samsonphp\generator\Generator;
 
 class ContainerConfigurationTest extends TestCase
@@ -86,7 +85,7 @@ XML;
         ])));
 
         // TODO Not compatible with ContainerBuilder
-        $container = new XMLContainerBuilder($xmlConfig, new LocalFileManager(), $xmlConfigurator, new Generator());
+        $container = new XMLContainerBuilder($xmlConfig, $xmlConfigurator, new Generator());
         file_put_contents(__DIR__ . '/Container.php', $container->build());
 
         $listMetadata = $this->getProperty('classMetadata', $container);
