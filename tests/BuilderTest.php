@@ -56,12 +56,14 @@ class BuilderTest extends TestCase
         $carMetadata->className = Car::class;
         $carMetadata->methodsMetadata['__construct'] = new MethodMetadata($fastDriverMetadata);
         $carMetadata->methodsMetadata['__construct']->dependencies['driver'] = FastDriver::class;
+        $carMetadata->methodsMetadata['__construct']->dependencies['driverService'] = 'driverService';
 
         $shoesMetadata = new ClassMetadata();
         $shoesMetadata->className = Shoes::class;
 
         $driverServiceMetadata = new ClassMetadata();
         $driverServiceMetadata->className = DriverService::class;
+        $driverServiceMetadata->name = 'driverService';
         $driverServiceMetadata->scopes[] = Builder::SCOPE_SERVICES;
         $driverServiceMetadata->propertiesMetadata['car'] = new PropertyMetadata($driverServiceMetadata);
         $driverServiceMetadata->propertiesMetadata['car']->dependency = Car::class;
