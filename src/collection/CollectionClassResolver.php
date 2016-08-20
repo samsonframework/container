@@ -13,7 +13,8 @@ use samsonframework\container\metadata\ClassMetadata;
 /**
  * Collection class resolver class.
  *
- * @author Vitaly Iegorov <egorov@samsonos.com>
+ * @author Vitaly Egorov <egorov@samsonos.com>
+ * @author Ruslan Molodyko <egorov@samsonos.com>
  */
 class CollectionClassResolver extends AbstractCollectionResolver implements CollectionResolverInterface
 {
@@ -25,8 +26,6 @@ class CollectionClassResolver extends AbstractCollectionResolver implements Coll
      */
     public function resolve(array $configurationArray, ClassMetadata $classMetadata)
     {
-
-
         // Iterate collection
         foreach ($this->getAttributeConfigurator($configurationArray) as $configurator) {
             /** @var ClassConfiguratorInterface $configurator Parse class metadata */

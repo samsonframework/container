@@ -116,7 +116,6 @@ XML;
         static::assertArrayHasKey('driver', $carMetadata->propertiesMetadata);
         static::assertEquals(FastDriver::class, $carMetadata->propertiesMetadata['driver']->dependency);
 
-
         // Service method attribute for adding to services scope in class
         static::assertTrue(in_array(Builder::SCOPE_SERVICES, $carServiceMetadata->scopes, true));
         // Service method attribute for adding name in class
@@ -124,7 +123,5 @@ XML;
 
         // Service method attribute for injecting as constructor dependency
         static::assertTrue(in_array('carservice', $roadMetadata->methodsMetadata['__construct']->dependencies, true));
-
-
     }
 }
