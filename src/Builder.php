@@ -85,8 +85,8 @@ class Builder
         $containerAliases = [];
         foreach ($classesMetadata as $classMetadata) {
             $className = $classMetadata->className;
-            if ($classMetadata->alias !== null) {
-                $containerAliases[$className] = $classMetadata->alias;
+            if ($classMetadata->name !== null) {
+                $containerAliases[] = $classMetadata->name;
             }
             // Store inner dependencies
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
@@ -122,7 +122,7 @@ class Builder
             $camelMethodName = 'get' . str_replace(' ', '', ucwords(ucfirst(str_replace(['\\', '_'], ' ', $dependencyName))));
 
             $this->generator
-                ->defClassFunction($camelMethodName, 'public', [], ['@return \\' . $className . ' Get ' . $dependencyName . ' instance'])
+                ->defClassFunction($camelMethodName, 'public', [], ['@return ' . '\\'.ltrim($className, '\\') . ' Get ' . $dependencyName . ' instance'])
                 ->newLine('return $this->' . $this->resolverFunction . '(\'' . $dependencyName . '\');')
                 ->endClassFunction();
         }
