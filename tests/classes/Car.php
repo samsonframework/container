@@ -29,14 +29,9 @@ class Car
      * Car constructor.
      *
      * @param DriverInterface $driver
-     *
-     * @param DriverService   $driverService
-     * @InjectArgument(driver="SlowDriver")
      */
-    public function __construct(DriverInterface $driver, DriverService $driverService)
+    public function __construct(DriverInterface $driver)
     {
-
         $this->driver = $driver;
-        $this->driverService = $driverService;
     }
 }

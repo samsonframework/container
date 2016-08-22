@@ -120,7 +120,7 @@ class Builder
             ->multiComment(['Application container'])
             ->defClass($containerClass, '\\' . Container::class)
             ->multiComment(['@var array Collection of service instances'])
-            ->defClassVar(self::DI_FUNCTION_SERVICES, 'protected static', [])
+            ->defClassVar(self::DI_FUNCTION_SERVICES, 'public static', [])
             ->defClassFunction('__construct')
             ->newLine('$this->dependencies = ')->arrayValue($containerDependencies)->text(';')
             ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
@@ -203,7 +203,7 @@ class Builder
 
             // Define class or service variable
             $staticContainerName = $isService
-                ? 'static::$' . self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
+                ? 'static::' . self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
                 : '$temp';
 
             if ($isService) {

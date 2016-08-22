@@ -56,7 +56,6 @@ class BuilderTest extends TestCase
         $carMetadata->className = Car::class;
         $carMetadata->methodsMetadata['__construct'] = new MethodMetadata($fastDriverMetadata);
         $carMetadata->methodsMetadata['__construct']->dependencies['driver'] = FastDriver::class;
-        $carMetadata->methodsMetadata['__construct']->dependencies['driverService'] = 'driverService';
 
         $shoesMetadata = new ClassMetadata();
         $shoesMetadata->className = Shoes::class;
@@ -94,5 +93,17 @@ class BuilderTest extends TestCase
 
         // Scope
         //static::assertTrue($this->getProperty('testscope', $container) !== null);
+    }
+
+    public function testServiceRetrieve()
+    {
+        $containerFile = __DIR__ . '/Container3.php';
+        file_put_contents($containerFile, $this->builder->build('Container3', 'DI'));
+        require $containerFile;
+
+        //eval($this->builder->build('Container2', 'DI'));
+        $container = new \DI\Container3();
+
+        static::assertEquals($container->getDriverService(), $container->getDriverService());
     }
 }
