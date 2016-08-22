@@ -18,7 +18,7 @@ use samsonphp\generator\Generator;
  *
  * @author Vitaly Egorov <egorov@samsonos.com>
  */
-class Builder
+class Builder implements ContainerBuilderInterface
 {
     /** Controller classes scope name */
     const SCOPE_CONTROLLER = 'controllers';
