@@ -21,6 +21,9 @@ class BuilderTest extends TestCase
     /** @var  Builder */
     protected $builder;
 
+    /** @var ClassMetadata[] */
+    protected $classesMetadata = [];
+
     public function setUp()
     {
         $generator = new Generator();
@@ -69,19 +72,21 @@ class BuilderTest extends TestCase
         $driverServiceMetadata->propertiesMetadata['car']->isPublic = true;
         $driverServiceMetadata->propertiesMetadata['car']->name = 'car';
 
-        $this->builder = new Builder($generator, [
+        $this->classesMetadata = [
             FastDriver::class => $fastDriverMetadata,
             Leg::class => $legMetadata,
             Car::class => $carMetadata,
             DriverService::class => $driverServiceMetadata,
             Shoes::class => $shoesMetadata
-        ]);
+        ];
+
+        $this->builder = new Builder($generator);
     }
 
     public function testBuild()
     {
         $containerFile = __DIR__ . '/Container2.php';
-        file_put_contents($containerFile, $this->builder->build('Container2', 'DI'));
+        file_put_contents($containerFile, $this->builder->build($this->classesMetadata, 'Container2', 'DI'));
         require $containerFile;
 
         //eval($this->builder->build('Container2', 'DI'));
@@ -98,7 +103,7 @@ class BuilderTest extends TestCase
     public function testServiceRetrieve()
     {
         $containerFile = __DIR__ . '/Container3.php';
-        file_put_contents($containerFile, $this->builder->build('Container3', 'DI'));
+        file_put_contents($containerFile, $this->builder->build($this->classesMetadata, 'Container3', 'DI'));
         require $containerFile;
 
         //eval($this->builder->build('Container2', 'DI'));

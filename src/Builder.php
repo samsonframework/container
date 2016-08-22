@@ -59,50 +59,31 @@ class Builder
      * @param Generator       $generator     PHP code generator
      * @param ClassMetadata[] $classMetadata Collection of classes metadata for container
      */
-    public function __construct(Generator $generator, array $classMetadata)
+    public function __construct(Generator $generator)
     {
         $this->generator = $generator;
-        $this->classesMetadata = $classMetadata;
-
-        $this->processClassMetadata($this->classesMetadata);
-    }
-
-    /**
-     * Read class metadata and fill internal collections.
-     *
-     * @param ClassMetadata[] $classesMetadata
-     */
-    public function processClassMetadata(array $classesMetadata)
-    {
-        // Read all classes in given file
-        foreach ($classesMetadata as $classMetadata) {
-            // Store by metadata name as alias
-            $this->classAliases[$classMetadata->name] = $classMetadata->className;
-
-            // Store class in defined scopes
-            foreach ($classMetadata->scopes as $scope) {
-                $this->scopes[$scope][] = $classMetadata->className;
-            }
-        }
     }
 
     /**
      * Build container class.
      *
+     * @param array       $classesMetadata
      * @param string|null $containerClass Container class name
      * @param string      $namespace      Name space
      *
      * @return string Generated Container class code
-     * @throws \InvalidArgumentException
      */
-    public function build($containerClass = 'Container', $namespace = '')
+    public function build(array $classesMetadata, $containerClass = 'Container', $namespace = '')
     {
+        $this->classesMetadata = $classesMetadata;
+        $this->processClassMetadata($classesMetadata);
+
         // Build dependency injection container function name
         $this->resolverFunction = uniqid(self::DI_FUNCTION_PREFIX);
 
         $containerDependencies = [];
         $containerAliases = [];
-        foreach ($this->classesMetadata as $classMetadata) {
+        foreach ($classesMetadata as $classMetadata) {
             $className = $classMetadata->className;
             if ($classMetadata->alias !== null) {
                 $containerAliases[$className] = $classMetadata->alias;
@@ -133,7 +114,7 @@ class Builder
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
             ->endClassFunction();
 
-        foreach ($this->classesMetadata as $classMetadata) {
+        foreach ($classesMetadata as $classMetadata) {
             $className = $classMetadata->className;
             $dependencyName = $classMetadata->name ?? $className;
 
@@ -152,6 +133,25 @@ class Builder
         return $this->generator
             ->endClass()
             ->flush();
+    }
+
+    /**
+     * Read class metadata and fill internal collections.
+     *
+     * @param ClassMetadata[] $classesMetadata
+     */
+    public function processClassMetadata(array $classesMetadata)
+    {
+        // Read all classes in given file
+        foreach ($classesMetadata as $classMetadata) {
+            // Store by metadata name as alias
+            $this->classAliases[$classMetadata->name] = $classMetadata->className;
+
+            // Store class in defined scopes
+            foreach ($classMetadata->scopes as $scope) {
+                $this->scopes[$scope][] = $classMetadata->className;
+            }
+        }
     }
 
     /**
