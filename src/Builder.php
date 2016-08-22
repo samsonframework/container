@@ -30,7 +30,7 @@ class Builder
     const DI_FUNCTION_PREFIX = 'container';
 
     /** Generated resolving function service static collection name */
-    const DI_FUNCTION_SERVICES = '$' . self::SCOPE_SERVICES;
+    const DI_FUNCTION_SERVICES = '$' . self::SCOPE_SERVICES . 'Instances';
 
     /** @var string[] Collection of available container scopes */
     protected $scopes = [
@@ -119,6 +119,8 @@ class Builder
             ->defNamespace($namespace)
             ->multiComment(['Application container'])
             ->defClass($containerClass, '\\' . Container::class)
+            ->multiComment(['@var array Collection of service instances'])
+            ->defClassVar(self::DI_FUNCTION_SERVICES, 'protected static', [])
             ->defClassFunction('__construct')
             ->newLine('$this->dependencies = ')->arrayValue($containerDependencies)->text(';')
             ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
@@ -161,7 +163,7 @@ class Builder
         $inputVariable = '$aliasOrClassName';
         $this->generator
             ->defClassFunction($functionName, 'protected', [$inputVariable], ['Dependency resolving function'])
-            ->defVar('static ' . self::DI_FUNCTION_SERVICES . ' = []')
+            //->defVar('static ' . self::DI_FUNCTION_SERVICES . ' = []')
             ->newLine();
 
         // Generate all container and delegate conditions
@@ -201,12 +203,12 @@ class Builder
 
             // Define class or service variable
             $staticContainerName = $isService
-                ? self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
+                ? 'static::$' . self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
                 : '$temp';
 
             if ($isService) {
                 // Check if dependency was instantiated
-                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', ' . self::DI_FUNCTION_SERVICES . ')');
+                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', static::' . self::DI_FUNCTION_SERVICES . ')');
             }
 
             if (count($classValidMethods) || count($classValidProperties)) {
