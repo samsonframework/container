@@ -104,7 +104,8 @@ class Builder implements ContainerBuilderInterface
             ->defClassFunction('__construct', 'public', [], ['Container constructor'])
             ->newLine('$this->dependencies = ')->arrayValue($containerDependencies)->text(';')
             ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
-            ->newLine('$this->' . self::SCOPE_SERVICES . ' = ')->arrayValue($this->scopes[self::SCOPE_SERVICES])->text(';')
+            ->newLine('$this->scopes = ')->arrayValue($this->scopes)->text(';')
+            ->newLine('$this->services = ')->arrayValue($this->scopes[self::SCOPE_SERVICES])->text(';')
             ->endClassFunction()
             ->defClassFunction('logic', 'protected', ['$dependency'], ['{@inheritdoc}'])
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
@@ -145,7 +146,7 @@ class Builder implements ContainerBuilderInterface
 
             // Store class in defined scopes
             foreach ($classMetadata->scopes as $scope) {
-                $this->scopes[$scope][] = $classMetadata->className;
+                $this->scopes[$scope][$classMetadata->name] = $classMetadata->className;
             }
         }
     }
@@ -207,7 +208,7 @@ class Builder implements ContainerBuilderInterface
 
             if ($isService) {
                 // Check if dependency was instantiated
-                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', $this->' . self::DI_FUNCTION_SERVICES . ')');
+                $this->generator->defIfCondition('!array_key_exists(\'' . $classMetadata->name . '\', $this->' . self::DI_FUNCTION_SERVICES . ')');
             }
 
             if (count($classValidMethods) || count($classValidProperties)) {
@@ -252,12 +253,15 @@ class Builder implements ContainerBuilderInterface
 
                 $this->generator->newLine()->newLine('return ' . $staticContainerName . ';');
             } else {
-                $this->generator->newLine('return ');
-                $this->buildResolvingClassDeclaration($className);
-                $this->buildConstructorDependencies($classMetadata->methodsMetadata);
-
                 if ($isService) {
+                    $this->generator->newLine($staticContainerName.' = ');
+                    $this->buildResolvingClassDeclaration($className);
+                    $this->buildConstructorDependencies($classMetadata->methodsMetadata);
                     $this->generator->endIfCondition()->newLine('return ' . $staticContainerName . ';');
+                } else {
+                    $this->generator->newLine('return ');
+                    $this->buildResolvingClassDeclaration($className);
+                    $this->buildConstructorDependencies($classMetadata->methodsMetadata);
                 }
 
             }
