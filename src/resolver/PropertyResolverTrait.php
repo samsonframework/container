@@ -30,7 +30,8 @@ trait PropertyResolverTrait
         $propertyMetadata->name = $property->getName();
         $propertyMetadata->modifiers = $property->getModifiers();
         $propertyMetadata->isPublic = $property->isPublic();
-        $propertyMetadata->typeHint = $this->getCommentTypeHint($property->getDocComment());
+        $propertyMetadata->typeHint = $this->getCommentTypeHint(
+            is_string($property->getDocComment()) ? $property->getDocComment() : '');
 
         // Store property metadata to class metadata
         return $classMetadata->propertiesMetadata[$propertyMetadata->name] = $propertyMetadata;
