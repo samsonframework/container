@@ -24,13 +24,13 @@ class Builder implements ContainerBuilderInterface
     const SCOPE_CONTROLLER = 'controllers';
 
     /** Service classes scope name */
-    const SCOPE_SERVICES = 'services';
+    const SCOPE_SERVICES = 'service';
 
     /** Generated resolving function name prefix */
     const DI_FUNCTION_PREFIX = 'container';
 
     /** Generated resolving function service static collection name */
-    const DI_FUNCTION_SERVICES = '$' . self::SCOPE_SERVICES . 'Instances';
+    const DI_FUNCTION_SERVICES = self::SCOPE_SERVICES . 'Instances';
 
     /** @var string[] Collection of available container scopes */
     protected $scopes = [
@@ -101,7 +101,6 @@ class Builder implements ContainerBuilderInterface
             ->multiComment(['Application container'])
             ->defClass($containerClass, '\\' . Container::class)
             ->multiComment(['@var array Collection of service instances'])
-            ->defClassVar(self::DI_FUNCTION_SERVICES, 'private static', [])
             ->defClassFunction('__construct', 'public', [], ['Container constructor'])
             ->newLine('$this->dependencies = ')->arrayValue($containerDependencies)->text(';')
             ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
@@ -203,12 +202,12 @@ class Builder implements ContainerBuilderInterface
 
             // Define class or service variable
             $staticContainerName = $isService
-                ? 'static::' . self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
+                ? '$this->' . self::DI_FUNCTION_SERVICES . '[\'' . $classMetadata->name . '\']'
                 : '$temp';
 
             if ($isService) {
                 // Check if dependency was instantiated
-                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', static::' . self::DI_FUNCTION_SERVICES . ')');
+                $this->generator->defIfCondition('!array_key_exists(\'' . $className . '\', $this->' . self::DI_FUNCTION_SERVICES . ')');
             }
 
             if (count($classValidMethods) || count($classValidProperties)) {
