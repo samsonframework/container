@@ -82,12 +82,8 @@ class Builder implements ContainerBuilderInterface
         $this->resolverFunction = uniqid(self::DI_FUNCTION_PREFIX);
 
         $containerDependencies = [];
-        $containerAliases = [];
         foreach ($classesMetadata as $classMetadata) {
             $className = $classMetadata->className;
-            if ($classMetadata->name !== null) {
-                $containerAliases[] = $classMetadata->name;
-            }
             // Store inner dependencies
             if (array_key_exists('__construct', $classMetadata->methodsMetadata)) {
                 $containerDependencies[$className] = array_values($classMetadata->methodsMetadata['__construct']->dependencies ?? []);
@@ -103,7 +99,7 @@ class Builder implements ContainerBuilderInterface
             ->multiComment(['@var array Collection of service instances'])
             ->defClassFunction('__construct', 'public', [], ['Container constructor'])
             ->newLine('$this->dependencies = ')->arrayValue($containerDependencies)->text(';')
-            ->newLine('$this->aliases = ')->arrayValue($containerAliases)->text(';')
+            ->newLine('$this->aliases = ')->arrayValue($this->classAliases)->text(';')
             ->newLine('$this->scopes = ')->arrayValue($this->scopes)->text(';')
             ->newLine('$this->services = ')->arrayValue($this->scopes[self::SCOPE_SERVICES])->text(';')
             ->endClassFunction()
