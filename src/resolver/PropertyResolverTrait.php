@@ -26,7 +26,7 @@ trait PropertyResolverTrait
     protected function resolvePropertyMetadata(\ReflectionProperty $property, ClassMetadata $classMetadata) : PropertyMetadata
     {
         // Create method metadata instance
-        $propertyMetadata = new PropertyMetadata($classMetadata);
+        $propertyMetadata = $classMetadata->methodsMetadata[$property->getName()] ?? new PropertyMetadata($classMetadata);
         $propertyMetadata->name = $property->getName();
         $propertyMetadata->modifiers = $property->getModifiers();
         $propertyMetadata->isPublic = $property->isPublic();

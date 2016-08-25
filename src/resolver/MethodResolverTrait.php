@@ -27,7 +27,7 @@ trait MethodResolverTrait
     protected function resolveMethodMetadata(\ReflectionMethod $method, ClassMetadata $classMetadata) : MethodMetadata
     {
         // Create method metadata instance
-        $methodMetadata = new MethodMetadata($classMetadata);
+        $methodMetadata = $classMetadata->methodsMetadata[$method->name] ?? new MethodMetadata($classMetadata);
         $methodMetadata->name = $method->name;
         $methodMetadata->modifiers = $method->getModifiers();
         $methodMetadata->isPublic = $method->isPublic();
@@ -35,7 +35,7 @@ trait MethodResolverTrait
         /** @var \ReflectionParameter $parameter */
         $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
         foreach ($method->getParameters() as $parameter) {
-            $parameterMetadata = clone $parameterMetadata;
+            $parameterMetadata = $methodMetadata->parametersMetadata[$parameterMetadata->name] ?? clone $parameterMetadata;
             $parameterMetadata->name = $parameter->name;
             $parameterMetadata->typeHint = (string)$parameter->getType();
 
