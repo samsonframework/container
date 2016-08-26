@@ -386,10 +386,7 @@ class Builder implements ContainerBuilderInterface
     {
         // This is a dependency which invokes resolving function
         if (is_string($argument)) {
-            if (array_key_exists($argument, $this->classesMetadata)) {
-                // Call container logic for this dependency
-                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
-            } elseif (array_key_exists($argument, $this->classAliases)) {
+            if (array_key_exists($argument, $this->classesMetadata) || array_key_exists($argument, $this->classAliases)) {
                 // Call container logic for this dependency
                 $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
             } elseif (class_exists($argument)) { // If this argument is existing class
