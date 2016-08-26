@@ -27,6 +27,9 @@ class PropertyMetadata
     /** @var string Property real typeHint */
     public $dependency = '';
 
+    /** @var string Property value */
+    public $value;
+
     /** @var ClassMetadata */
     public $classMetadata;
 

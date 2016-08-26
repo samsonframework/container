@@ -379,6 +379,8 @@ class Builder implements ContainerBuilderInterface
      * Build resolving function dependency argument.
      *
      * @param mixed $argument Dependency argument
+     *
+     * @throws \InvalidArgumentException On invalid argument type
      */
     protected function buildResolverArgument($argument, $textFunction = 'newLine')
     {
@@ -390,6 +392,10 @@ class Builder implements ContainerBuilderInterface
             } elseif (array_key_exists($argument, $this->classAliases)) {
                 // Call container logic for this dependency
                 $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+            } elseif (class_exists($argument)) { // If this argument is existing class
+                throw new \InvalidArgumentException($argument.' class metadata is not defined');
+            } elseif (interface_exists($argument)) { // If this argument is existing interface
+                throw new \InvalidArgumentException($argument.' - interface dependency not resolvable');
             } else { // String variable
                 $this->generator->$textFunction()->stringValue($argument);
             }
