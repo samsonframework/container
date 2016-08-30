@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container;
 
+use samsonframework\container\ContainerInterface;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 use samsonframework\container\metadata\PropertyMetadata;
@@ -44,6 +45,9 @@ class Builder implements ContainerBuilderInterface
     /** @var array Collection of dependencies aliases */
     protected $classAliases = [];
 
+    /** @var  ContainerInterface */
+    protected $parentContainer;
+
     /**
      * @var Generator
      * @Injectable
@@ -65,18 +69,12 @@ class Builder implements ContainerBuilderInterface
     }
 
     /**
-     * Build container class.
-     *
-     * @param array       $classesMetadata
-     * @param string|null $containerClass Container class name
-     * @param string      $namespace      Name space
-     *
-     * @return string Generated Container class code
+     * {@inheritdoc}
      */
-    public function build(array $classesMetadata, $containerClass = 'Container', $namespace = '')
+    public function build(array $classesMetadata, $containerClass = 'Container', $namespace = '', ContainerInterface $parentContainer = null)
     {
-        $this->classesMetadata = $classesMetadata;
-        $this->processClassMetadata($classesMetadata);
+        $this->classesMetadata = $this->processClassMetadata($classesMetadata);
+        $this->parentContainer = $parentContainer;
 
         // Build dependency injection container function name
         $this->resolverFunction = uniqid(self::DI_FUNCTION_PREFIX);
@@ -132,9 +130,12 @@ class Builder implements ContainerBuilderInterface
      * Read class metadata and fill internal collections.
      *
      * @param ClassMetadata[] $classesMetadata
+     * @return ClassMetadata[] Processed class metadata
      */
-    public function processClassMetadata(array $classesMetadata)
+    public function processClassMetadata(array $classesMetadata) : array
     {
+        $processedClassesMetadata = [];
+
         // Read all classes in given file
         foreach ($classesMetadata as $classMetadata) {
             // Store by metadata name as alias
@@ -144,7 +145,10 @@ class Builder implements ContainerBuilderInterface
             foreach ($classMetadata->scopes as $scope) {
                 $this->scopes[$scope][$classMetadata->name] = $classMetadata->className;
             }
+            $processedClassesMetadata[$classMetadata->name] = $classMetadata;
         }
+
+        return $processedClassesMetadata;
     }
 
     /**
@@ -386,12 +390,15 @@ class Builder implements ContainerBuilderInterface
     {
         // This is a dependency which invokes resolving function
         if (is_string($argument)) {
-            if (array_key_exists($argument, $this->classesMetadata)) {
+            if ($this->parentContainer !== null && $this->parentContainer->has($argument)) {
                 // Call container logic for this dependency
-                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+                $this->generator->$textFunction('$this->get(\'' . $argument . '\')');
+            } elseif (array_key_exists($argument, $this->classesMetadata)) {
+                // Call container logic for this dependency
+                $this->generator->$textFunction('$this->get(\'' . $argument . '\')');
             } elseif (array_key_exists($argument, $this->classAliases)) {
                 // Call container logic for this dependency
-                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $this->classAliases[$argument] . '\')');
+                $this->generator->$textFunction('$this->get(\'' . $this->classAliases[$argument] . '\')');
             } elseif (class_exists($argument)) { // If this argument is existing class
                 throw new \InvalidArgumentException($argument.' class metadata is not defined');
             } elseif (interface_exists($argument)) { // If this argument is existing interface
