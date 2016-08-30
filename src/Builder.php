@@ -134,6 +134,7 @@ class Builder implements ContainerBuilderInterface
      */
     public function processClassMetadata(array $classesMetadata) : array
     {
+        /** @var ClassMetadata[] $processedClassesMetadata */
         $processedClassesMetadata = [];
 
         // Read all classes in given file
@@ -147,6 +148,37 @@ class Builder implements ContainerBuilderInterface
             }
             $processedClassesMetadata[$classMetadata->name] = $classMetadata;
         }
+
+        $dependencies = [];
+        foreach ($processedClassesMetadata as $alias => $classMetadata) {
+            if (count($classMetadata->methodsMetadata)) {
+                foreach ($classMetadata->methodsMetadata as $methodMetadata) {
+                    foreach ($methodMetadata->dependencies as $dependency) {
+                        if (in_array($this->getArgumentType($dependency), [1, 2], true)) {
+                            $dependencies[] = $dependency;
+                        }
+                    }
+                }
+                $dependencies[] = $classMetadata->name;
+            }
+            if (count($classMetadata->propertiesMetadata)) {
+                foreach ($classMetadata->propertiesMetadata as $propertyMetadata) {
+                    $dependencies[] = $propertyMetadata->dependency;
+                }
+                $dependencies[] = $classMetadata->name;
+            }
+            if (count($classMetadata->scopes)) {
+                $dependencies[] = $classMetadata->name;
+            }
+        }
+        $dependencies = array_unique($dependencies);
+
+        foreach ($processedClassesMetadata as $alias => $classMetadata) {
+            if (!in_array($alias, $dependencies, true)) {
+                unset($processedClassesMetadata[$alias]);
+            }
+        }
+        $this->generator->flush();
 
         return $processedClassesMetadata;
     }
@@ -388,27 +420,51 @@ class Builder implements ContainerBuilderInterface
      */
     protected function buildResolverArgument($argument, $textFunction = 'newLine')
     {
+        switch ($this->getArgumentType($argument)) {
+            // Call container logic for this dependency
+            case 1:
+                return $this->generator->$textFunction('$this->get(\'' . $argument . '\')');
+            // Call container logic for this dependency by alias
+            case 2:
+                return $this->generator->$textFunction('$this->get(\'' . $this->classAliases[$argument] . '\')');
+            // String variable
+            case 3:
+                return $this->generator->$textFunction()->stringValue($argument);
+            // Dependency value is array
+            case 4:
+                return $this->generator->$textFunction()->arrayValue($argument);
+        }
+    }
+
+    /**
+     * Define argument type
+     *
+     * @param string $argument
+     * @return int
+     * @throws \InvalidArgumentException
+     */
+    protected function getArgumentType(string $argument) : int
+    {
         // This is a dependency which invokes resolving function
         if (is_string($argument)) {
             if ($this->parentContainer !== null && $this->parentContainer->has($argument)) {
-                // Call container logic for this dependency
-                $this->generator->$textFunction('$this->get(\'' . $argument . '\')');
+                return 1;
             } elseif (array_key_exists($argument, $this->classesMetadata)) {
-                // Call container logic for this dependency
-                $this->generator->$textFunction('$this->get(\'' . $argument . '\')');
+                return 1;
             } elseif (array_key_exists($argument, $this->classAliases)) {
-                // Call container logic for this dependency
-                $this->generator->$textFunction('$this->get(\'' . $this->classAliases[$argument] . '\')');
+                return 2;
             } elseif (class_exists($argument)) { // If this argument is existing class
                 throw new \InvalidArgumentException($argument.' class metadata is not defined');
             } elseif (interface_exists($argument)) { // If this argument is existing interface
                 throw new \InvalidArgumentException($argument.' - interface dependency not resolvable');
             } else { // String variable
-                $this->generator->$textFunction()->stringValue($argument);
+                return 3;
             }
         } elseif (is_array($argument)) { // Dependency value is array
-            $this->generator->$textFunction()->arrayValue($argument);
+            return 4;
         }
+
+        return 0;
     }
 
     /**
