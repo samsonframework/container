@@ -138,7 +138,7 @@ class Builder implements ContainerBuilderInterface
         // Read all classes in given file
         foreach ($classesMetadata as $classMetadata) {
             // Store by metadata name as alias
-            $this->classAliases[$classMetadata->name] = $classMetadata->className;
+            $this->classAliases[$classMetadata->className] = $classMetadata->name;
 
             // Store class in defined scopes
             foreach ($classMetadata->scopes as $scope) {
@@ -358,8 +358,8 @@ class Builder implements ContainerBuilderInterface
             $this->generator->tabs++;
 
             // Process constructor arguments
-            foreach ($constructorArguments as $argument => $dependency) {
-                $this->buildResolverArgument($dependency);
+            foreach ($constructorArguments as $argument => $parameterMetadata) {
+                $this->buildResolverArgument($parameterMetadata);
 
                 // Add comma if this is not last dependency
                 if (++$i < $argumentsCount) {
@@ -386,9 +386,12 @@ class Builder implements ContainerBuilderInterface
     {
         // This is a dependency which invokes resolving function
         if (is_string($argument)) {
-            if (array_key_exists($argument, $this->classesMetadata) || array_key_exists($argument, $this->classAliases)) {
+            if (array_key_exists($argument, $this->classesMetadata)) {
                 // Call container logic for this dependency
                 $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $argument . '\')');
+            } elseif (array_key_exists($argument, $this->classAliases)) {
+                // Call container logic for this dependency
+                $this->generator->$textFunction('$this->' . $this->resolverFunction . '(\'' . $this->classAliases[$argument] . '\')');
             } elseif (class_exists($argument)) { // If this argument is existing class
                 throw new \InvalidArgumentException($argument.' class metadata is not defined');
             } elseif (interface_exists($argument)) { // If this argument is existing interface
