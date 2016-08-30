@@ -6,6 +6,7 @@
 namespace samsonframework\container\configurator;
 
 use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\metadata\ParameterMetadata;
 
 /**
  * Method argument injection configurator.
