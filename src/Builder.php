@@ -439,11 +439,11 @@ class Builder implements ContainerBuilderInterface
     /**
      * Define argument type
      *
-     * @param string $argument
+     * @param mixed $argument
      * @return int
      * @throws \InvalidArgumentException
      */
-    protected function getArgumentType(string $argument) : int
+    protected function getArgumentType($argument) : int
     {
         // This is a dependency which invokes resolving function
         if (is_string($argument)) {

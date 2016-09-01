@@ -35,7 +35,7 @@ trait MethodResolverTrait
         /** @var \ReflectionParameter $parameter */
         $parameterMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
         foreach ($method->getParameters() as $parameter) {
-            $parameterMetadata = $methodMetadata->parametersMetadata[$parameterMetadata->name] ?? clone $parameterMetadata;
+            $parameterMetadata = $methodMetadata->parametersMetadata[$parameter->name] ?? clone $parameterMetadata;
             $parameterMetadata->name = $parameter->name;
             $parameterMetadata->typeHint = (string)$parameter->getType();
 
