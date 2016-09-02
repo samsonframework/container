@@ -105,7 +105,7 @@ class Builder implements ContainerBuilderInterface
             ->newLine('return $this->' . $this->resolverFunction . '($dependency);')
             ->endClassFunction();
 
-        foreach ($classesMetadata as $classMetadata) {
+        foreach ($this->classesMetadata as $classMetadata) {
             $className = $classMetadata->className;
             $dependencyName = $classMetadata->name ?? $className;
 
