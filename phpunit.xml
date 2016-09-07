@@ -12,7 +12,7 @@
 >
     <testsuites>
         <testsuite name="SamsonPHP Test Case">
-            <directory>./tests/</directory>
+            <directory>./tests/definition</directory>
         </testsuite>
     </testsuites>
 

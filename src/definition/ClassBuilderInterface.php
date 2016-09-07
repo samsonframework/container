@@ -46,7 +46,7 @@ interface ClassBuilderInterface
      * @return PropertyBuilderInterface
      * @throws PropertyDefinitionAlreadyExistsException
      */
-    public function defineProperty(string $propertyName) : PropertyBuilderInterface;
+    public function defineProperty(string $propertyName): PropertyBuilderInterface;
 
     /**
      * Return to parent definition

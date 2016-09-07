@@ -13,6 +13,7 @@ use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\ResourceReference;
 use samsonframework\container\definition\reference\ServiceReference;
+use samsonframework\container\exception\ParentDefinitionNotFoundException;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\DriverInterface;
@@ -29,7 +30,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     {
         $class = Car::class;
         $builder = (new DefinitionBuilder())
-            ->addDefinition(Car::class, 'car')->end();
+            ->addDefinition($class, 'car')->end();
 
         static::assertEquals($class, $this->getClassDefinition($builder, $class)->getClassName());
         static::assertEquals('car', $this->getClassDefinition($builder, $class)->getServiceName());
@@ -39,7 +40,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     {
         $class = Car::class;
         $builder = (new DefinitionBuilder())
-            ->addDefinition(Car::class, 'car')
+            ->addDefinition($class, 'car')
                 ->defineConstructor()
                     ->defineParameter('driver')
                         ->defineDependency(new ClassReference(FastDriver::class))
@@ -60,72 +61,58 @@ class DefinitionBuilderTest extends TestCaseDefinition
             $this->getParameterDefinition($builder, $class, $method, 'driver')->getDependency()
         );
     }
-//
-//    public function testMethod()
-//    {
-//        $builder = new ContainerBuilder();
-//        $class = CarController::class;
-//        $builder->addDefinition($class)
-//            ->defineMethod('setLeg', [
-//                'leg' => new ClassReference(Leg::class)
-//            ]);
-//
-//        /** @var MethodDefinition[] $collection */
-//        $collection = $this->getProperty('definitionCollection', $builder);
-//        $methods = $this->getProperty('methodsCollection', $collection[$class]);
-//        $arguments = $this->getProperty('arguments', $methods['setLeg']);
-//        static::assertCount(1, $arguments);
-//    }
-//
-//    public function testProperty()
-//    {
-//        $builder = new ContainerBuilder();
-//        $class = CarController::class;
-//        $builder->addDefinition($class)->defineProperty('leg', new ClassReference(Leg::class));
-//
-//        /** @var MethodDefinition[] $collection */
-//        $collection = $this->getProperty('definitionCollection', $builder);
-//        /** @var PropertyDefinition $property */
-//        $properties = $this->getProperty('propertiesCollection', $collection[$class]);
-//        $property = $this->getProperty('value', $properties['leg']);
-//        static::assertInstanceOf(ClassReference::class, $property);
-//    }
-//
-//    public function testMultipleInjection()
-//    {
-//        $builder = new ContainerBuilder();
-//        $class = WheelController::class;
-//        $builder->addDefinition($class)
-//            ->defineArguments([
-//                'fastDriver' => new ClassReference(DriverInterface::class),
-//                'slowDriver' => new ClassReference(SlowDriver::class),
-//                'car' => new ServiceReference('car'),
-//                'params' => new ResourceReference(['param1' => 'value']),
-//                'id' => new ResourceReference('wheel_id')
-//            ])
-//            ->defineProperty('car', new ServiceReference(Car::class))
-//            ->defineMethod('setLeg', [
-//                'leg' => new ClassReference(Leg::class)
-//            ]);
-//
-//        /** @var MethodDefinition[] $collection */
-//        $collection = $this->getProperty('definitionCollection', $builder);
-//        $methods = $this->getProperty('methodsCollection', $collection[$class]);
-//        $arguments = $this->getProperty('arguments', $methods['__construct']);
-//
-//        /** @var MethodDefinition[] $collection */
-//        $collection = $this->getProperty('definitionCollection', $builder);
-//        $methods = $this->getProperty('methodsCollection', $collection[$class]);
-//        $methodArguments = $this->getProperty('arguments', $methods['setLeg']);
-//
-//        /** @var MethodDefinition[] $collection */
-//        $collection = $this->getProperty('definitionCollection', $builder);
-//        /** @var PropertyDefinition $property */
-//        $properties = $this->getProperty('propertiesCollection', $collection[$class]);
-//        $property = $this->getProperty('value', $properties['car']);
-//
-//        static::assertCount(5, $arguments);
-//        static::assertCount(1, $methodArguments);
-//        static::assertInstanceOf(ServiceReference::class, $property);
-//    }
+
+    public function testMethod()
+    {
+        $class = CarController::class;
+        $method = 'setLeg';
+        $builder = (new DefinitionBuilder())
+            ->addDefinition($class)
+                ->defineMethod($method)
+                    ->defineParameter('leg')
+                        ->defineDependency(new ClassReference(Leg::class))
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        static::assertInstanceOf(MethodDefinition::class, $this->getMethodDefinition($builder, $class, $method));
+        static::assertInstanceOf(
+            ParameterDefinition::class,
+            $this->getParameterDefinition($builder, $class, $method, 'leg')
+        );
+        static::assertInstanceOf(
+            ClassReference::class,
+            $this->getParameterDefinition($builder, $class, $method, 'leg')->getDependency()
+        );
+    }
+
+    public function testProperty()
+    {
+        $class = CarController::class;
+        $property = 'car';
+        $builder = (new DefinitionBuilder())
+            ->addDefinition($class)
+                ->defineProperty($property)
+                    ->defineDependency(new ClassReference(Leg::class))
+                ->end()
+            ->end()
+        ;
+
+        $propertyDefinition = $this->getPropertyDefinition($builder, $class, $property);
+        static::assertInstanceOf(PropertyDefinition::class, $propertyDefinition);
+        static::assertInstanceOf(
+            ClassReference::class,
+            $propertyDefinition->getDependency()
+        );
+    }
+
+    public function testEndBuilder()
+    {
+        $class = CarController::class;
+        $builder = (new DefinitionBuilder())->addDefinition($class)->end();
+
+        $this->expectException(ParentDefinitionNotFoundException::class);
+        $builder->end();
+    }
 }

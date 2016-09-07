@@ -37,7 +37,9 @@ class DefinitionBuilder extends AbstractDefinition
         // Create new definition
         $classDefinition = new ClassDefinition($this);
         $classDefinition->setClassName($className);
-        $classDefinition->setServiceName($serviceName);
+        if ($serviceName) {
+            $classDefinition->setServiceName($serviceName);
+        }
 
         // Register definition
         $this->definitionCollection[$className] = $classDefinition;

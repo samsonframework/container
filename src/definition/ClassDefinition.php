@@ -162,7 +162,7 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
      */
     public function hasScope(string $id): bool
     {
-        return in_array($id, $this->scopes, true);
+        return array_key_exists($id, $this->scopes);
     }
 
     /**

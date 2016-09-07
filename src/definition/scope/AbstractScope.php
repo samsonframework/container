@@ -20,6 +20,6 @@ class AbstractScope
      */
     public static function getId(): string
     {
-        return str_replace('scope', '', strtolower(static::class));
+        return str_replace('scope', '', strtolower(preg_replace('/^.*\\\/', '', static::class)));
     }
 }
