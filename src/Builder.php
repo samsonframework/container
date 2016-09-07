@@ -50,7 +50,6 @@ class Builder implements ContainerBuilderInterface
 
     /**
      * @var Generator
-     * @Injectable
      */
     protected $generator;
 
@@ -393,15 +392,29 @@ class Builder implements ContainerBuilderInterface
             // Add indentation to move declaration arguments
             $this->generator->tabs++;
 
-            // Process constructor arguments
-            foreach ($constructorArguments as $argument => $parameterMetadata) {
-                $this->buildResolverArgument($parameterMetadata);
-
-                // Add comma if this is not last dependency
-                if (++$i < $argumentsCount) {
-                    $this->generator->text(',');
+            if ($methodsMetaData['__construct'] && isset($methodsMetaData['__construct']->classMetadata)) {
+                $className = $methodsMetaData['__construct']->classMetadata->className;
+                $parameters = (new \ReflectionMethod($className, '__construct'))->getParameters();
+                foreach ($parameters as $parameter) {
+                    if (isset($constructorArguments[$parameter->getName()])) {
+                        $this->buildResolverArgument($constructorArguments[$parameter->getName()]);
+                        // Add comma if this is not last dependency
+                        if (++$i < $argumentsCount) {
+                            $this->generator->text(',');
+                        }
+                    }
                 }
             }
+
+            // Process constructor arguments
+//            foreach ($constructorArguments as $argument => $parameterMetadata) {
+//                $this->buildResolverArgument($parameterMetadata);
+//
+//                // Add comma if this is not last dependency
+//                if (++$i < $argumentsCount) {
+//                    $this->generator->text(',');
+//                }
+//            }
 
             // Restore indentation
             $this->generator->tabs--;
