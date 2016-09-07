@@ -10,11 +10,11 @@ namespace samsonframework\container\definition;
 use samsonframework\container\exception\ClassDefinitionAlreadyExistsException;
 
 /**
- * Class ContainerBuilder
+ * Class DefinitionBuilder
  *
- * @package samsonframework\container\definition
+ * @author Ruslan Molodyko <molodyko@samsonos.com>
  */
-class ContainerBuilder
+class DefinitionBuilder extends AbstractDefinition
 {
     /** @var  ClassDefinition[] Definition collection */
     protected $definitionCollection = [];
@@ -24,22 +24,25 @@ class ContainerBuilder
      *
      * @param $className
      * @param string $serviceName
-     * @return ClassDefinition
+     * @return ClassBuilderInterface
      * @throws ClassDefinitionAlreadyExistsException
      */
-    public function addDefinition($className, string $serviceName = null) : ClassDefinition
+    public function addDefinition($className, string $serviceName = null): ClassBuilderInterface
     {
-        // Create new definition
-        $definition = new ClassDefinition($className, $serviceName);
-
         // Check if class already exists
         if (array_key_exists($className, $this->definitionCollection)) {
             throw new ClassDefinitionAlreadyExistsException();
         }
-        // Register definition
-        $this->definitionCollection[$className] = $definition;
 
-        return $definition;
+        // Create new definition
+        $classDefinition = new ClassDefinition($this);
+        $classDefinition->setClassName($className);
+        $classDefinition->setServiceName($serviceName);
+
+        // Register definition
+        $this->definitionCollection[$className] = $classDefinition;
+
+        return $classDefinition;
     }
 
     /**
@@ -47,7 +50,7 @@ class ContainerBuilder
      *
      * @return array
      */
-    public function toMetadataCollection() : array
+    public function toMetadataCollection(): array
     {
         $metadataCollection = [];
         foreach ($this->definitionCollection as $classDefinition) {

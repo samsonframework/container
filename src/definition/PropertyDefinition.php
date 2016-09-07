@@ -17,34 +17,20 @@ use samsonframework\container\metadata\PropertyMetadata;
  *
  * @package samsonframework\container\definition
  */
-class PropertyDefinition extends AbstractDefinition
+class PropertyDefinition extends AbstractPropertyDefinition implements PropertyBuilderInterface
 {
     /** @var string Property name */
     protected $propertyName;
-    /** @var ReferenceInterface */
-    protected $value;
-
-    /**
-     * PropertyDefinition constructor.
-     *
-     * @param AbstractDefinition $parentDefinition
-     * @param string $propertyName
-     */
-    public function __construct(AbstractDefinition $parentDefinition, string $propertyName)
-    {
-        $this->parentDefinition = $parentDefinition;
-        $this->propertyName = $propertyName;
-    }
 
     /**
      * Define argument
      *
-     * @param ReferenceInterface $value
+     * @param ReferenceInterface $dependency
      * @return PropertyDefinition
      */
-    public function defineValue(ReferenceInterface $value) : PropertyDefinition
+    public function defineDependency(ReferenceInterface $dependency): PropertyDefinition
     {
-        $this->value = $value;
+        $this->dependency = $dependency;
 
         return $this;
     }
@@ -56,7 +42,7 @@ class PropertyDefinition extends AbstractDefinition
      * @return PropertyMetadata
      * @throws ReferenceNotImplementsException
      */
-    public function toPropertyMetadata(ClassMetadata $classMetadata) : PropertyMetadata
+    public function toPropertyMetadata(ClassMetadata $classMetadata): PropertyMetadata
     {
         $propertyMetadata = new PropertyMetadata($classMetadata);
         $propertyMetadata->name = $this->getPropertyName();
@@ -74,10 +60,13 @@ class PropertyDefinition extends AbstractDefinition
     }
 
     /**
-     * @return ReferenceInterface
+     * @param string $propertyName
+     * @return AbstractPropertyDefinition
      */
-    public function getValue(): ReferenceInterface
+    public function setPropertyName(string $propertyName): AbstractPropertyDefinition
     {
-        return $this->value;
+        $this->propertyName = $propertyName;
+
+        return $this;
     }
 }

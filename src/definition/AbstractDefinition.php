@@ -11,6 +11,7 @@ use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ResourceReference;
 use samsonframework\container\definition\reference\ServiceReference;
+use samsonframework\container\exception\ParentDefinitionNotFoundException;
 use samsonframework\container\exception\ReferenceNotImplementsException;
 
 /**
@@ -24,11 +25,38 @@ abstract class AbstractDefinition
     protected $parentDefinition;
 
     /**
+     * AbstractDefinition constructor.
+     *
+     * @param AbstractDefinition $parentDefinition
+     */
+    public function __construct(AbstractDefinition $parentDefinition = null)
+    {
+        $this->parentDefinition = $parentDefinition;
+    }
+
+    /**
      * End definition and get control to parent
      *
      * @return AbstractDefinition
+     * @throws ParentDefinitionNotFoundException
      */
-    public function end() {
+    public function end(): AbstractDefinition
+    {
+        return $this->getParentDefinition();
+    }
+
+    /**
+     * Get parent definition
+     *
+     * @return AbstractDefinition
+     * @throws ParentDefinitionNotFoundException
+     */
+    public function getParentDefinition(): AbstractDefinition
+    {
+        if ($this->parentDefinition === null) {
+            throw new ParentDefinitionNotFoundException();
+        }
+
         return $this->parentDefinition;
     }
 
@@ -36,10 +64,10 @@ abstract class AbstractDefinition
      * Get correct value from reference
      *
      * @param ReferenceInterface $reference
-     * @return mixed|string
+     * @return string
      * @throws ReferenceNotImplementsException
      */
-    protected function resolveReference(ReferenceInterface $reference)
+    protected function resolveReferenceValue(ReferenceInterface $reference): string
     {
         if ($reference instanceof ClassReference) {
             return $reference->getClassName();

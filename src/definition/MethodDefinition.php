@@ -8,33 +8,46 @@
 namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\reference\ReferenceInterface;
+use samsonframework\container\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\exception\ReferenceNotImplementsException;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\metadata\ParameterMetadata;
 
 /**
  * Class MethodDefinition
  *
  * @package samsonframework\container\definition
  */
-class MethodDefinition extends AbstractDefinition
+class MethodDefinition extends AbstractDefinition implements MethodBuilderInterface
 {
     /** @var  string Method name */
     protected $methodName;
-    /** @var ReferenceInterface[] */
-    protected $arguments;
+    /** @var ParameterDefinition[] Collection of parameter collection */
+    protected $parametersCollection = [];
+    /** @var int Method modifiers */
+    public $modifiers = 0;
+    /** @var bool Flag that method is public */
+    public $isPublic = false;
 
     /**
-     * MethodDefinition constructor.
+     * Define arguments
      *
-     * @param AbstractDefinition $parentDefinition
-     * @param string $methodName
+     * @param string $parameterName
+     * @return ParameterBuilderInterface
+     * @throws ParameterDefinitionAlreadyExistsException
      */
-    public function __construct(AbstractDefinition $parentDefinition, string $methodName)
+    public function defineParameter($parameterName): ParameterBuilderInterface
     {
-        $this->parentDefinition = $parentDefinition;
-        $this->methodName = $methodName;
+        if (array_key_exists($parameterName, $this->parametersCollection)) {
+            throw new ParameterDefinitionAlreadyExistsException();
+        }
+
+        $parameter = new ParameterDefinition($this);
+        $parameter->setParameterName($parameterName);
+
+        $this->parametersCollection[$parameterName] = $parameter;
+
+        return $parameter;
     }
 
     /**
@@ -44,31 +57,12 @@ class MethodDefinition extends AbstractDefinition
      * @return MethodMetadata
      * @throws ReferenceNotImplementsException
      */
-    public function toMethodMetadata(ClassMetadata $classMetadata) : MethodMetadata
+    public function toMethodMetadata(ClassMetadata $classMetadata): MethodMetadata
     {
         $methodMetadata = new MethodMetadata($classMetadata);
         $methodMetadata->name = $this->getMethodName();
 
-        // Resolve arguments
-        foreach ($this->arguments as $parameterName => $argument) {
-            $methodMetadata->dependencies[$parameterName] = $this->resolveReference($argument);
-            $methodMetadata->parametersMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
-            $methodMetadata->parametersMetadata->name = $parameterName;
-        }
         return $methodMetadata;
-    }
-
-    /**
-     * Define arguments
-     *
-     * @param array $arguments
-     * @return MethodDefinition
-     */
-    public function defineArguments(array $arguments) : MethodDefinition
-    {
-        $this->arguments = $arguments;
-
-        return $this;
     }
 
     /**
@@ -80,12 +74,51 @@ class MethodDefinition extends AbstractDefinition
     }
 
     /**
-     * Get arguments
-     *
-     * @return reference\ReferenceInterface[]
+     * @return boolean
      */
-    public function getArguments(): array
+    public function getIsPublic(): bool
     {
-        return $this->arguments;
+        return $this->isPublic;
+    }
+
+    /**
+     * @param boolean $isPublic
+     * @return MethodDefinition
+     */
+    public function setIsPublic(bool $isPublic): MethodDefinition
+    {
+        $this->isPublic = $isPublic;
+
+        return $this;
+    }
+
+    /**
+     * @param string $methodName
+     * @return MethodDefinition
+     */
+    public function setMethodName(string $methodName): MethodDefinition
+    {
+        $this->methodName = $methodName;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModifiers(): int
+    {
+        return $this->modifiers;
+    }
+
+    /**
+     * @param int $modifiers
+     * @return MethodDefinition
+     */
+    public function setModifiers(int $modifiers): MethodDefinition
+    {
+        $this->modifiers = $modifiers;
+
+        return $this;
     }
 }

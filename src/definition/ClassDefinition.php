@@ -8,8 +8,11 @@
 namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\reference\ReferenceInterface;
+use samsonframework\container\definition\scope\AbstractScope;
 use samsonframework\container\exception\MethodDefinitionAlreadyExistsException;
 use samsonframework\container\exception\PropertyDefinitionAlreadyExistsException;
+use samsonframework\container\exception\ScopeAlreadyExistsException;
+use samsonframework\container\exception\ScopeNotFoundException;
 use samsonframework\container\metadata\ClassMetadata;
 use samsonframework\container\metadata\MethodMetadata;
 
@@ -18,98 +21,61 @@ use samsonframework\container\metadata\MethodMetadata;
  *
  * @package samsonframework\container\definition
  */
-class ClassDefinition extends AbstractDefinition
+class ClassDefinition extends AbstractDefinition implements ClassBuilderInterface
 {
-    /** @var string Class name */
+    /** @var string Class name with namespace */
     protected $className;
+    /** @var string Class name space */
+    protected $nameSpace;
     /** @var string Service name */
     protected $serviceName;
+    /** @var array Class container scopes */
+    protected $scopes = [];
+
     /** @var MethodDefinition[] Methods collection */
     protected $methodsCollection = [];
     /** @var PropertyDefinition[] Property collection */
     protected $propertiesCollection = [];
 
-    /**
-     * ClassDefinition constructor.
-     *
-     * @param string $className
-     * @param string $serviceName
-     */
-    public function __construct(string $className, string $serviceName = null)
-    {
-        $this->className = $className;
-        $this->serviceName = $serviceName;
-    }
-
-    /**
-     * Get class name
-     *
-     * @return string
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
-
-    /**
-     * Define class constructor arguments
-     *
-     * @param array $arguments
-     * @return ClassDefinition
-     * @throws MethodDefinitionAlreadyExistsException
-     */
-    public function defineArguments(array $arguments) : ClassDefinition
+    /** {@inheritdoc} */
+    public function defineConstructor(): MethodBuilderInterface
     {
         /** Add constructor method manually */
-        $this->defineMethod('__construct', $arguments);
-
-        return $this;
-    }
-
-    /**
-     * Define method
-     *
-     * @param string $methodName
-     * @param array $arguments
-     * @return ClassDefinition
-     * @throws MethodDefinitionAlreadyExistsException
-     */
-    public function defineMethod(string $methodName, array $arguments) : ClassDefinition
-    {
-        $methodDefinition = new MethodDefinition($this, $methodName);
-        $methodDefinition->defineArguments($arguments)->end();
-
-        if (array_key_exists($methodName, $this->methodsCollection)) {
-            throw new MethodDefinitionAlreadyExistsException();
-        }
-        $this->methodsCollection[$methodName] = $methodDefinition;
-
-        return $this;
-    }
-
-    /**
-     * Define property
-     *
-     * @param string $propertyName
-     * @param ReferenceInterface $value
-     * @return ClassDefinition
-     * @throws PropertyDefinitionAlreadyExistsException
-     */
-    public function defineProperty(string $propertyName, ReferenceInterface $value) : ClassDefinition
-    {
-        $propertyDefinition = new PropertyDefinition($this, $propertyName);
-        $propertyDefinition->defineValue($value)->end();
-
-        if (array_key_exists($propertyName, $this->propertiesCollection)) {
-            throw new PropertyDefinitionAlreadyExistsException();
-        }
-        $this->propertiesCollection[$propertyName] = $propertyDefinition;
-
-        return $this;
+        return $this->defineMethod('__construct');
     }
 
     /** {@inheritdoc} */
-    public function toMetadata() : ClassMetadata
+    public function defineMethod(string $methodName): MethodBuilderInterface
+    {
+        if (array_key_exists($methodName, $this->methodsCollection)) {
+            throw new MethodDefinitionAlreadyExistsException();
+        }
+
+        $methodDefinition = new MethodDefinition($this, $methodName);
+        $methodDefinition->setMethodName($methodName);
+
+        $this->methodsCollection[$methodName] = $methodDefinition;
+
+        return $methodDefinition;
+    }
+
+    /** {@inheritdoc} */
+    public function defineProperty(string $propertyName): PropertyBuilderInterface
+    {
+        if (array_key_exists($propertyName, $this->propertiesCollection)) {
+            throw new PropertyDefinitionAlreadyExistsException();
+        }
+
+        $propertyDefinition = new PropertyDefinition($this);
+        $propertyDefinition->setPropertyName($propertyName);
+
+        $this->propertiesCollection[$propertyName] = $propertyDefinition;
+
+        return $propertyDefinition;
+    }
+
+    /** {@inheritdoc} */
+    public function toMetadata(): ClassMetadata
     {
         $classMetadata = new ClassMetadata();
         $classMetadata->className = $this->className;
@@ -130,5 +96,127 @@ class ClassDefinition extends AbstractDefinition
             }
         }
         return $classMetadata;
+    }
+
+    /**
+     * Get namespace
+     *
+     * @return string
+     */
+    public function getNameSpace(): string
+    {
+        return $this->nameSpace;
+    }
+
+    /**
+     * Get class name
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    /**
+     * Add scope to definition
+     *
+     * @param AbstractScope $scope
+     * @return ClassDefinition
+     * @throws ScopeAlreadyExistsException
+     */
+    public function addScope(AbstractScope $scope): ClassDefinition
+    {
+        if ($this->hasScope($scope::getId())) {
+            throw new ScopeAlreadyExistsException();
+        }
+
+        $this->scopes[$scope::getId()] = $scope;
+
+        return $this;
+    }
+
+    /**
+     * Remove scope from definition
+     *
+     * @param string $id
+     * @return ClassDefinition
+     * @throws ScopeNotFoundException
+     */
+    public function removeScope(string $id): ClassDefinition
+    {
+        if (!$this->hasScope($id)) {
+            throw new ScopeNotFoundException();
+        }
+
+        unset($this->scopes[$id]);
+
+        return $this;
+    }
+
+    /**
+     * Check if scope exists in definition
+     *
+     * @param string $id
+     * @return bool
+     */
+    public function hasScope(string $id): bool
+    {
+        return in_array($id, $this->scopes, true);
+    }
+
+    /**
+     * Get scope from definition
+     *
+     * @param string $id
+     * @return mixed
+     * @throws ScopeNotFoundException
+     */
+    public function getScope(string $id): AbstractScope
+    {
+        if (!$this->hasScope($id)) {
+            throw new ScopeNotFoundException();
+        }
+        return $this->scopes[$id];
+    }
+
+    /**
+     * Get all scopes
+     *
+     * @return AbstractScope[]
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param string $className
+     * @return ClassDefinition
+     */
+    public function setClassName(string $className): ClassDefinition
+    {
+        $this->className = $className;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return $this->serviceName;
+    }
+
+    /**
+     * @param string $serviceName
+     * @return ClassDefinition
+     */
+    public function setServiceName(string $serviceName): ClassDefinition
+    {
+        $this->serviceName = $serviceName;
+
+        return $this;
     }
 }
