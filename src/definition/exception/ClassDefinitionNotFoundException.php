@@ -5,13 +5,13 @@
  * Date: 02.08.16
  * Time: 0:46.
  */
-namespace samsonframework\container\exception;
+namespace samsonframework\container\definition\exception;
 
 /**
- * Class ClassDefinitionAlreadyExistsException
+ * Class ClassDefinitionNotFoundException
  *
  * @package samsonframework\container\exception
  */
-class ClassDefinitionAlreadyExistsException extends \Exception
+class ClassDefinitionNotFoundException extends \Exception
 {
 }

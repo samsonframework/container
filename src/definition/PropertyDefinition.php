@@ -8,9 +8,6 @@
 namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\reference\ReferenceInterface;
-use samsonframework\container\exception\ReferenceNotImplementsException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\PropertyMetadata;
 
 /**
  * Class PropertyDefinition
@@ -23,7 +20,7 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
     protected $propertyName;
 
     /**
-     * Define argument
+     * Define dependency
      *
      * @param ReferenceInterface $dependency
      * @return PropertyDefinition
@@ -36,22 +33,6 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
     }
 
     /**
-     * Get property metadata
-     *
-     * @param ClassMetadata $classMetadata
-     * @return PropertyMetadata
-     * @throws ReferenceNotImplementsException
-     */
-    public function toPropertyMetadata(ClassMetadata $classMetadata): PropertyMetadata
-    {
-        $propertyMetadata = new PropertyMetadata($classMetadata);
-        $propertyMetadata->name = $this->getPropertyName();
-        $propertyMetadata->dependency = $this->resolveReference($this->getValue());
-
-        return $propertyMetadata;
-    }
-
-    /**
      * @return string
      */
     public function getPropertyName(): string
@@ -61,9 +42,9 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
 
     /**
      * @param string $propertyName
-     * @return AbstractPropertyDefinition
+     * @return PropertyDefinition
      */
-    public function setPropertyName(string $propertyName): AbstractPropertyDefinition
+    public function setPropertyName(string $propertyName): PropertyDefinition
     {
         $this->propertyName = $propertyName;
 

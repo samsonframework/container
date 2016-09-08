@@ -23,7 +23,7 @@ abstract class AbstractPropertyDefinition extends AbstractDefinition
     /** @var bool Flag that property is public */
     public $isPublic = false;
     /** @var string Property typeHint from typeHint hint */
-    public $typeHint = '';
+    public $typeHint;
     /** @var mixed Property value */
     public $value;
 

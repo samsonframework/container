@@ -7,11 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\reference\ReferenceInterface;
-use samsonframework\container\exception\ParameterDefinitionAlreadyExistsException;
-use samsonframework\container\exception\ReferenceNotImplementsException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 
 /**
  * Class MethodDefinition
@@ -48,21 +44,6 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
         $this->parametersCollection[$parameterName] = $parameter;
 
         return $parameter;
-    }
-
-    /**
-     * Resolve method metadata
-     *
-     * @param ClassMetadata $classMetadata
-     * @return MethodMetadata
-     * @throws ReferenceNotImplementsException
-     */
-    public function toMethodMetadata(ClassMetadata $classMetadata): MethodMetadata
-    {
-        $methodMetadata = new MethodMetadata($classMetadata);
-        $methodMetadata->name = $this->getMethodName();
-
-        return $methodMetadata;
     }
 
     /**

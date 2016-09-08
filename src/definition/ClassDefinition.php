@@ -7,14 +7,11 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\scope\AbstractScope;
-use samsonframework\container\exception\MethodDefinitionAlreadyExistsException;
-use samsonframework\container\exception\PropertyDefinitionAlreadyExistsException;
-use samsonframework\container\exception\ScopeAlreadyExistsException;
-use samsonframework\container\exception\ScopeNotFoundException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\ScopeAlreadyExistsException;
+use samsonframework\container\definition\exception\ScopeNotFoundException;
 
 /**
  * Class ClassDefinition
@@ -74,30 +71,6 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         return $propertyDefinition;
     }
 
-    /** {@inheritdoc} */
-    public function toMetadata(): ClassMetadata
-    {
-        $classMetadata = new ClassMetadata();
-        $classMetadata->className = $this->className;
-        $classMetadata->name = $this->serviceName ?? $this->className;
-
-        // Resolve methods
-        if (count($this->methodsCollection)) {
-            foreach ($this->methodsCollection as $methodDefinition) {
-                $classMetadata->methodsMetadata[$methodDefinition->getMethodName()] =
-                    $methodDefinition->toMethodMetadata($classMetadata);
-            }
-        }
-        // Resolve properties
-        if (count($this->propertiesCollection)) {
-            foreach ($this->propertiesCollection as $propertyDefinition) {
-                $classMetadata->propertiesMetadata[$propertyDefinition->getPropertyName()] =
-                    $propertyDefinition->toPropertyMetadata($classMetadata);
-            }
-        }
-        return $classMetadata;
-    }
-
     /**
      * Get namespace
      *
@@ -109,13 +82,14 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     }
 
     /**
-     * Get class name
-     *
-     * @return string
+     * @param string $nameSpace
+     * @return ClassDefinition
      */
-    public function getClassName(): string
+    public function setNameSpace(string $nameSpace): ClassDefinition
     {
-        return $this->className;
+        $this->nameSpace = $nameSpace;
+
+        return $this;
     }
 
     /**
@@ -188,6 +162,16 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     public function getScopes(): array
     {
         return $this->scopes;
+    }
+
+    /**
+     * Get class name
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
     }
 
     /**

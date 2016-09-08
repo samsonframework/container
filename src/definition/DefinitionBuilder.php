@@ -7,7 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\exception\ClassDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 
 /**
  * Class DefinitionBuilder

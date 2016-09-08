@@ -6,14 +6,8 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\ContainerBuilderInterface;
-use samsonframework\container\definition\reference\ReferenceInterface;
-use samsonframework\container\exception\MethodDefinitionAlreadyExistsException;
-use samsonframework\container\exception\PropertyDefinitionAlreadyExistsException;
-use samsonframework\container\exception\ReferenceNotImplementsException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\metadata\ParameterMetadata;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
 
 /**
  * Interface ClassBuilderInterface

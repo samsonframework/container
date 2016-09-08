@@ -6,27 +6,13 @@
 namespace samsonframework\container\tests\definition;
 
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\DefinitionBuilder;
-use samsonframework\container\definition\ParameterDefinition;
-use samsonframework\container\definition\reference\ClassReference;
-use samsonframework\container\definition\MethodDefinition;
-use samsonframework\container\definition\PropertyDefinition;
-use samsonframework\container\definition\reference\ResourceReference;
-use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\scope\ControllerScope;
 use samsonframework\container\definition\scope\ServiceScope;
-use samsonframework\container\exception\MethodDefinitionAlreadyExistsException;
-use samsonframework\container\exception\ParentDefinitionNotFoundException;
-use samsonframework\container\exception\PropertyDefinitionAlreadyExistsException;
-use samsonframework\container\exception\ScopeAlreadyExistsException;
-use samsonframework\container\exception\ScopeNotFoundException;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\ScopeAlreadyExistsException;
+use samsonframework\container\definition\exception\ScopeNotFoundException;
 use samsonframework\container\tests\classes\Car;
-use samsonframework\container\tests\classes\CarController;
-use samsonframework\container\tests\classes\DriverInterface;
-use samsonframework\container\tests\classes\FastDriver;
-use samsonframework\container\tests\classes\Leg;
-use samsonframework\container\tests\classes\SlowDriver;
-use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
 
 
@@ -36,7 +22,7 @@ class ClassDefinitionTest extends TestCaseDefinition
     {
         $class = Car::class;
 
-        static::expectException(MethodDefinitionAlreadyExistsException::class);
+        $this->expectException(MethodDefinitionAlreadyExistsException::class);
 
         (new ClassDefinition())
             ->setClassName($class)
@@ -48,7 +34,7 @@ class ClassDefinitionTest extends TestCaseDefinition
     {
         $class = Car::class;
 
-        static::expectException(MethodDefinitionAlreadyExistsException::class);
+        $this->expectException(MethodDefinitionAlreadyExistsException::class);
 
         (new ClassDefinition())
             ->setClassName($class)
@@ -56,17 +42,35 @@ class ClassDefinitionTest extends TestCaseDefinition
             ->defineMethod('method')->end();
     }
 
+    public function testNameSpace()
+    {
+        $class = Car::class;
+        $namespace = preg_replace('/\\\(.*)$/', '', Car::class);
+
+        /** @var ClassDefinition $definition */
+        $definition = (new ClassDefinition())
+            ->setClassName($class)
+            ->setNameSpace($namespace)
+            ->defineProperty('prop')->end();
+
+        static::assertEquals($namespace, $definition->getNameSpace());
+    }
 
     public function testSecondEqualPropertyError()
     {
         $class = Car::class;
+        $namespace = preg_replace('/\\\(.*)$/', '', Car::class);
 
         $this->expectException(PropertyDefinitionAlreadyExistsException::class);
 
-        (new ClassDefinition())
+        /** @var ClassDefinition $definition */
+        $definition = (new ClassDefinition())
             ->setClassName($class)
+            ->setNameSpace($namespace)
             ->defineProperty('prop')->end()
             ->defineProperty('prop')->end();
+
+        static::assertEquals($namespace, $definition->getNameSpace());
     }
 
     public function testScope()
@@ -79,17 +83,44 @@ class ClassDefinitionTest extends TestCaseDefinition
 
         static::assertEquals('service', ServiceScope::getId());
         static::assertInstanceOf(ServiceScope::class, $classDefinition->getScope(ServiceScope::getId()));
-        static::assertCount(2, $this->getProperty('scopes', $classDefinition));
+        static::assertCount(2, $classDefinition->getScopes());
+        static::assertTrue($classDefinition->hasScope(ServiceScope::getId()));
 
         $classDefinition->removeScope(ServiceScope::getId());
 
         static::assertCount(1, $this->getProperty('scopes', $classDefinition));
+    }
+
+    public function testGetNotFoundScope()
+    {
+        $class = Car::class;
+        $classDefinition = (new ClassDefinition())
+            ->setClassName($class)
+            ->addScope(new ControllerScope());
 
         $this->expectException(ScopeNotFoundException::class);
         $classDefinition->getScope(ServiceScope::getId());
+    }
+
+    public function testExistsScope()
+    {
+        $class = Car::class;
+        $classDefinition = (new ClassDefinition())
+            ->setClassName($class)
+            ->addScope(new ControllerScope());
 
         $this->expectException(ScopeAlreadyExistsException::class);
+        $classDefinition->addScope(new ControllerScope());
+    }
 
-        $classDefinition->addScope(new ServiceScope());
+    public function testRemoveNotFoundScope()
+    {
+        $class = Car::class;
+        $classDefinition = (new ClassDefinition())
+            ->setClassName($class)
+            ->addScope(new ControllerScope());
+
+        $this->expectException(ScopeNotFoundException::class);
+        $classDefinition->removeScope(ServiceScope::getId());
     }
 }

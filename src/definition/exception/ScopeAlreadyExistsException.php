@@ -4,7 +4,7 @@
  * Date: 07.09.2016
  * Time: 5:26
  */
-namespace samsonframework\container\exception;
+namespace samsonframework\container\definition\exception;
 
 /**
  * Class ScopeAlreadyExistsException

@@ -5,13 +5,13 @@
  * Date: 02.08.16
  * Time: 0:46.
  */
-namespace samsonframework\container\exception;
+namespace samsonframework\container\definition\exception;
 
 /**
- * Class ReferenceNotImplements
+ * Class PropertyDefinitionAlreadyExistsException
  *
  * @package samsonframework\container\exception
  */
-class ReferenceNotImplementsException extends \Exception
+class PropertyDefinitionAlreadyExistsException extends \Exception
 {
 }

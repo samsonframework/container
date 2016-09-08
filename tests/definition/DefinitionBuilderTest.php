@@ -5,22 +5,16 @@
  */
 namespace samsonframework\container\tests\definition;
 
-use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\DefinitionBuilder;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
-use samsonframework\container\definition\reference\ResourceReference;
-use samsonframework\container\definition\reference\ServiceReference;
-use samsonframework\container\exception\ParentDefinitionNotFoundException;
+use samsonframework\container\definition\exception\ParentDefinitionNotFoundException;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
-use samsonframework\container\tests\classes\DriverInterface;
 use samsonframework\container\tests\classes\FastDriver;
 use samsonframework\container\tests\classes\Leg;
-use samsonframework\container\tests\classes\SlowDriver;
-use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
 
 

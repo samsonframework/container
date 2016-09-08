@@ -6,12 +6,6 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\reference\ReferenceInterface;
-use samsonframework\container\exception\ReferenceNotImplementsException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\metadata\ParameterMetadata;
-
 /**
  * Interface MethodBuilderInterface
  *

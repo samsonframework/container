@@ -7,10 +7,6 @@
 namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\reference\ReferenceInterface;
-use samsonframework\container\exception\ReferenceNotImplementsException;
-use samsonframework\container\metadata\ClassMetadata;
-use samsonframework\container\metadata\MethodMetadata;
-use samsonframework\container\metadata\ParameterMetadata;
 
 /**
  * Class ParameterDefinition
@@ -33,23 +29,6 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
         $this->dependency = $dependency;
 
         return $this;
-    }
-
-    /**
-     * Get property metadata
-     *
-     * @param ClassMetadata $classMetadata
-     * @param MethodMetadata $methodMetadata
-     * @return ParameterMetadata
-     * @throws ReferenceNotImplementsException
-     */
-    public function toPropertyMetadata(ClassMetadata $classMetadata, MethodMetadata $methodMetadata): ParameterMetadata
-    {
-        $propertyMetadata = new ParameterMetadata($classMetadata, $methodMetadata);
-        $propertyMetadata->name = $this->getParameterName();
-        $propertyMetadata->dependency = $this->resolveReferenceValue($this->getDependency());
-
-        return $propertyMetadata;
     }
 
     /**
