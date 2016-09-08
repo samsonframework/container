@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests\definition;
 
 use samsonframework\container\definition\DefinitionBuilder;
+use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\MethodDefinition;
@@ -108,5 +109,15 @@ class DefinitionBuilderTest extends TestCaseDefinition
 
         $this->expectException(ParentDefinitionNotFoundException::class);
         $builder->end();
+    }
+
+    public function testEqualDefinitionName()
+    {
+        $this->expectException(ClassDefinitionAlreadyExistsException::class);
+
+        $class = CarController::class;
+        (new DefinitionBuilder())
+            ->addDefinition($class)->end()
+            ->addDefinition($class)->end();
     }
 }

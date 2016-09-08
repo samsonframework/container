@@ -9,18 +9,18 @@ namespace samsonframework\container\definition\analyzer;
 use samsonframework\container\definition\DefinitionAnalyzer;
 
 /**
- * Interface ClassAnalyzerInterface
+ * Interface ParameterAnalyzerInterface
  *
  * @package samsonframework\container\definition
  */
-interface ClassAnalyzerInterface
+interface ParameterAnalyzerInterface
 {
     /**
-     * Analyze class definition
+     * Analyze parameter definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param \ReflectionClass $reflectionClass
-     * @return mixed
+     * @param \ReflectionParameter $reflectionParameter
      */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass);
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionParameter $reflectionParameter);
 }
+

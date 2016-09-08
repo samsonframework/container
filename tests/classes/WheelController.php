@@ -22,6 +22,11 @@ class WheelController
     public $car;
 
     /**
+     * @var bool
+     */
+    public $defaultValue = true;
+
+    /**
      * @param FastDriver $fastDriver
      * @param SlowDriver $slowDriver
      * @param array $params
@@ -37,5 +42,9 @@ class WheelController
     protected function setLeg(Leg $leg)
     {
         $this->leg = $leg;
+    }
+
+    protected function setDriver(string $leg = 'leg')
+    {
     }
 }

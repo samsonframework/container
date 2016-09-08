@@ -4,7 +4,9 @@
  * Date: 07.09.2016
  * Time: 5:53
  */
-namespace samsonframework\container\definition;
+namespace samsonframework\container\definition\analyzer;
+
+use samsonframework\container\definition\DefinitionAnalyzer;
 
 /**
  * Interface PropertyAnalyzerInterface

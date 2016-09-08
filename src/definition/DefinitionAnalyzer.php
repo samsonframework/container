@@ -7,6 +7,8 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
+
 /**
  * Class DefinitionAnalyzer
  *
@@ -17,6 +19,11 @@ class DefinitionAnalyzer
     /** @var  DefinitionBuilder */
     protected $builder;
 
+    /**
+     * DefinitionAnalyzer constructor.
+     *
+     * @param DefinitionBuilder $builder
+     */
     public function __construct(DefinitionBuilder $builder)
     {
         $this->builder = $builder;

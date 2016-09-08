@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\analyzer\PropertyAnalyzerInterface;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
@@ -18,6 +19,10 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
 {
     /** @var string Property name */
     protected $propertyName;
+    /** @var bool Flag that property is public */
+    public $isPublic = false;
+    /** @var int Property modifiers */
+    public $modifiers = 0;
 
     /**
      * Define dependency
@@ -30,6 +35,14 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
         $this->dependency = $dependency;
 
         return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionProperty $reflectionProperty)
+    {
+        // Set property metadata
+        $this->setIsPublic($reflectionProperty->isPublic());
+        $this->setModifiers($reflectionProperty->getModifiers());
     }
 
     /**
@@ -51,8 +64,41 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
         return $this;
     }
 
-    /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionProperty $reflectionProperty)
+    /**
+     * @return int
+     */
+    public function getModifiers(): int
     {
+        return $this->modifiers;
+    }
+
+    /**
+     * @param int $modifiers
+     * @return AbstractPropertyDefinition
+     */
+    public function setModifiers(int $modifiers): AbstractPropertyDefinition
+    {
+        $this->modifiers = $modifiers;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param boolean $isPublic
+     * @return AbstractPropertyDefinition
+     */
+    public function setIsPublic(bool $isPublic): AbstractPropertyDefinition
+    {
+        $this->isPublic = $isPublic;
+
+        return $this;
     }
 }

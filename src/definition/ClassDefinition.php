@@ -7,6 +7,9 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
+use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
+use samsonframework\container\definition\analyzer\PropertyAnalyzerInterface;
 use samsonframework\container\definition\scope\AbstractScope;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
@@ -69,6 +72,29 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         $this->propertiesCollection[$propertyName] = $propertyDefinition;
 
         return $propertyDefinition;
+    }
+
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass)
+    {
+        // Get name space from class name
+        $this->setNameSpace($reflectionClass->getNamespaceName());
+
+        // Analyze property definition
+        foreach ($this->propertiesCollection as $propertyDefinition) {
+            if ($propertyDefinition instanceof PropertyAnalyzerInterface) {
+                $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
+                $propertyDefinition->analyze($analyzer, $reflectionProperty);
+            }
+        }
+
+        // Analyze method definitions
+        foreach ($this->methodsCollection as $methodDefinition) {
+            if ($methodDefinition instanceof MethodAnalyzerInterface) {
+                $reflectionMethod = $reflectionClass->getMethod($methodDefinition->getMethodName());
+                $methodDefinition->analyze($analyzer, $reflectionMethod);
+            }
+        }
     }
 
     /**
@@ -202,25 +228,5 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         $this->serviceName = $serviceName;
 
         return $this;
-    }
-
-    /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass)
-    {
-        // Analyze property definition
-        foreach ($this->propertiesCollection as $propertyDefinition) {
-            if ($propertyDefinition instanceof PropertyAnalyzerInterface) {
-                $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
-                $propertyDefinition->analyze($analyzer, $reflectionProperty);
-            }
-        }
-
-        // Analyze method definitions
-        foreach ($this->methodsCollection as $methodDefinition) {
-            if ($methodDefinition instanceof MethodAnalyzerInterface) {
-                $reflectionMethod = $reflectionClass->getMethod($methodDefinition->getMethodName());
-                $methodDefinition->analyze($analyzer, $reflectionMethod);
-            }
-        }
     }
 }

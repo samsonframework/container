@@ -7,7 +7,10 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
+use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\ParameterNotFoundException;
 
 /**
  * Class MethodDefinition
@@ -21,9 +24,9 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
     /** @var ParameterDefinition[] Collection of parameter collection */
     protected $parametersCollection = [];
     /** @var int Method modifiers */
-    public $modifiers = 0;
+    protected $modifiers = 0;
     /** @var bool Flag that method is public */
-    public $isPublic = false;
+    protected $isPublic = false;
 
     /**
      * Define arguments
@@ -46,6 +49,29 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
         return $parameter;
     }
 
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionMethod $reflectionMethod)
+    {
+        // Set method metadata
+        $this->setModifiers($reflectionMethod->getModifiers());
+        $this->setIsPublic($reflectionMethod->isPublic());
+
+        // Get methods parameters
+        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
+            // Check if parameter exists in method
+            if (array_key_exists($reflectionParameter->getName(), $this->parametersCollection)) {
+                /** @var ParameterDefinition $parameterDefinition */
+                $parameterDefinition = $this->parametersCollection[$reflectionParameter->getName()];
+                if ($parameterDefinition instanceof ParameterAnalyzerInterface) {
+                    // Analyze parameter
+                    $parameterDefinition->analyze($analyzer, $reflectionParameter);
+                }
+            } else {
+                throw new ParameterNotFoundException();
+            }
+        }
+    }
+
     /**
      * @return string
      */
@@ -57,7 +83,7 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
     /**
      * @return boolean
      */
-    public function getIsPublic(): bool
+    public function isPublic(): bool
     {
         return $this->isPublic;
     }
@@ -101,10 +127,5 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
         $this->modifiers = $modifiers;
 
         return $this;
-    }
-
-    /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionMethod $reflectionMethod)
-    {
     }
 }
