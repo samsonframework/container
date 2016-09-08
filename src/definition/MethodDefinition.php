@@ -14,7 +14,7 @@ use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExi
  *
  * @package samsonframework\container\definition
  */
-class MethodDefinition extends AbstractDefinition implements MethodBuilderInterface
+class MethodDefinition extends AbstractDefinition implements MethodBuilderInterface, MethodAnalyzerInterface
 {
     /** @var  string Method name */
     protected $methodName;
@@ -101,5 +101,10 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
         $this->modifiers = $modifiers;
 
         return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionMethod $reflectionMethod)
+    {
     }
 }

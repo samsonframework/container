@@ -18,7 +18,7 @@ use samsonframework\container\definition\exception\ScopeNotFoundException;
  *
  * @package samsonframework\container\definition
  */
-class ClassDefinition extends AbstractDefinition implements ClassBuilderInterface
+class ClassDefinition extends AbstractDefinition implements ClassBuilderInterface, ClassAnalyzerInterface
 {
     /** @var string Class name with namespace */
     protected $className;
@@ -202,5 +202,25 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         $this->serviceName = $serviceName;
 
         return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass)
+    {
+        // Analyze property definition
+        foreach ($this->propertiesCollection as $propertyDefinition) {
+            if ($propertyDefinition instanceof PropertyAnalyzerInterface) {
+                $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
+                $propertyDefinition->analyze($analyzer, $reflectionProperty);
+            }
+        }
+
+        // Analyze method definitions
+        foreach ($this->methodsCollection as $methodDefinition) {
+            if ($methodDefinition instanceof MethodAnalyzerInterface) {
+                $reflectionMethod = $reflectionClass->getMethod($methodDefinition->getMethodName());
+                $methodDefinition->analyze($analyzer, $reflectionMethod);
+            }
+        }
     }
 }

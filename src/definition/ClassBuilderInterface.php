@@ -29,7 +29,7 @@ interface ClassBuilderInterface
      *
      * @param string $methodName
      * @return MethodBuilderInterface
-     * @throws MethodDefinitionAlreadyExistsException
+     * @throws MethodDefinitionAlreadyExistsException, ParentDefinitionNotFoundException
      */
     public function defineMethod(string $methodName): MethodBuilderInterface;
 

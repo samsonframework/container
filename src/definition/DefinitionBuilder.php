@@ -61,4 +61,12 @@ class DefinitionBuilder extends AbstractDefinition
 
         return $metadataCollection;
     }
+
+    /**
+     * @return ClassDefinition[]
+     */
+    public function getDefinitionCollection(): array
+    {
+        return $this->definitionCollection;
+    }
 }

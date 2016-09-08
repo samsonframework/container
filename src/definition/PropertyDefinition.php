@@ -14,7 +14,7 @@ use samsonframework\container\definition\reference\ReferenceInterface;
  *
  * @package samsonframework\container\definition
  */
-class PropertyDefinition extends AbstractPropertyDefinition implements PropertyBuilderInterface
+class PropertyDefinition extends AbstractPropertyDefinition implements PropertyBuilderInterface, PropertyAnalyzerInterface
 {
     /** @var string Property name */
     protected $propertyName;
@@ -49,5 +49,10 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
         $this->propertyName = $propertyName;
 
         return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionProperty $reflectionProperty)
+    {
     }
 }
