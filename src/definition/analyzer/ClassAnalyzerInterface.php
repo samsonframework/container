@@ -18,9 +18,8 @@ interface ClassAnalyzerInterface
     /**
      * Analyze class definition
      *
-     * @param DefinitionAnalyzer $analyzer
      * @param \ReflectionClass $reflectionClass
      * @return mixed
      */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass);
+    public function analyze(\ReflectionClass $reflectionClass);
 }

@@ -75,7 +75,7 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     }
 
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass)
+    public function analyze(\ReflectionClass $reflectionClass)
     {
         // Get name space from class name
         $this->setNameSpace($reflectionClass->getNamespaceName());
@@ -84,7 +84,7 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         foreach ($this->propertiesCollection as $propertyDefinition) {
             if ($propertyDefinition instanceof PropertyAnalyzerInterface) {
                 $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
-                $propertyDefinition->analyze($analyzer, $reflectionProperty);
+                $propertyDefinition->analyze($reflectionProperty);
             }
         }
 
@@ -92,7 +92,7 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         foreach ($this->methodsCollection as $methodDefinition) {
             if ($methodDefinition instanceof MethodAnalyzerInterface) {
                 $reflectionMethod = $reflectionClass->getMethod($methodDefinition->getMethodName());
-                $methodDefinition->analyze($analyzer, $reflectionMethod);
+                $methodDefinition->analyze($reflectionMethod);
             }
         }
     }

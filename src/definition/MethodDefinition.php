@@ -50,7 +50,7 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
     }
 
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionMethod $reflectionMethod)
+    public function analyze(\ReflectionMethod $reflectionMethod)
     {
         // Set method metadata
         $this->setModifiers($reflectionMethod->getModifiers());
@@ -64,7 +64,7 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
                 $parameterDefinition = $this->parametersCollection[$reflectionParameter->getName()];
                 if ($parameterDefinition instanceof ParameterAnalyzerInterface) {
                     // Analyze parameter
-                    $parameterDefinition->analyze($analyzer, $reflectionParameter);
+                    $parameterDefinition->analyze($reflectionParameter);
                 }
             } else {
                 throw new ParameterNotFoundException();

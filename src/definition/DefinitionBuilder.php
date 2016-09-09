@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 
 /**
@@ -48,18 +49,17 @@ class DefinitionBuilder extends AbstractDefinition
     }
 
     /**
-     * Convert to metadata collection
-     *
-     * @return array
+     * Analyze definition collection
      */
-    public function toMetadataCollection(): array
+    public function analyze()
     {
-        $metadataCollection = [];
-        foreach ($this->definitionCollection as $classDefinition) {
-            $metadataCollection[$classDefinition->getClassName()] = $classDefinition->toMetadata();
+        // Analyze class definitions
+        foreach ($this->getDefinitionCollection() as $classDefinition) {
+            if ($classDefinition instanceof ClassAnalyzerInterface) {
+                $reflectionClass = new \ReflectionClass($classDefinition->getClassName());
+                $classDefinition->analyze($reflectionClass);
+            }
         }
-
-        return $metadataCollection;
     }
 
     /**

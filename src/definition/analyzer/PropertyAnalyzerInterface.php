@@ -18,10 +18,9 @@ interface PropertyAnalyzerInterface
     /**
      * Analyze property definition
      * 
-     * @param DefinitionAnalyzer $analyzer
      * @param \ReflectionProperty $reflectionProperty
      * @return mixed
      */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionProperty $reflectionProperty);
+    public function analyze(\ReflectionProperty $reflectionProperty);
 }
 

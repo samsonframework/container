@@ -38,7 +38,7 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
     }
 
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionProperty $reflectionProperty)
+    public function analyze(\ReflectionProperty $reflectionProperty)
     {
         // Set property metadata
         $this->setIsPublic($reflectionProperty->isPublic());

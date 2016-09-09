@@ -39,7 +39,7 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
     }
 
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionParameter $reflectionParameter)
+    public function analyze(\ReflectionParameter $reflectionParameter)
     {
         // Set parameter metadata
         if ($reflectionParameter->isDefaultValueAvailable()) {
