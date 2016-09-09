@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests\definition;
 
 use samsonframework\container\definition\DefinitionBuilder;
+use samsonframework\container\definition\DefinitionCompiler;
 use samsonframework\container\definition\exception\ParameterNotFoundException;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\tests\classes\Car;
@@ -17,6 +18,14 @@ use samsonframework\container\tests\TestCaseDefinition;
 
 class DefinitionAnalyzerTest extends TestCaseDefinition
 {
+    public function callAnalyze(DefinitionBuilder $definitionBuilder)
+    {
+        $method = (new \ReflectionClass(DefinitionCompiler::class))->getMethod('analyze');
+        $method->setAccessible(true);
+        $method->invoke(new DefinitionCompiler(), $definitionBuilder);
+        $method->setAccessible(false);
+    }
+
     public function testAddDefinition()
     {
         $definitionBuilder = new DefinitionBuilder();
@@ -31,7 +40,7 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
                 ->defineDependency(new ClassReference(FastDriver::class))
             ->end();
 
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
 
         $classDefinition = $this->getClassDefinition($definitionBuilder, Car::class);
         $methodDefinition = $this->getMethodDefinition($definitionBuilder, Car::class, '__construct');
@@ -61,7 +70,7 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
                 ->defineParameter('leg')->end()
             ->end();
 
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
 
         $parameterDefinition = $this->getParameterDefinition($definitionBuilder, WheelController::class, 'setDriver', 'leg');
         static::assertEquals('leg', $parameterDefinition->getValue());
@@ -74,7 +83,7 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
         $definitionBuilder = new DefinitionBuilder();
 
         $definitionBuilder->addDefinition('sdf');
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
     }
 
     public function testWrongMethodName()
@@ -85,7 +94,7 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
 
         $definitionBuilder->addDefinition(Car::class)
             ->defineMethod('sdf')->end();
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
     }
 
     public function testWrongPropertyName()
@@ -96,7 +105,7 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
 
         $definitionBuilder->addDefinition(Car::class)
             ->defineProperty('sdf')->end();
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
     }
 
     public function testWrongParameterName()
@@ -109,6 +118,6 @@ class DefinitionAnalyzerTest extends TestCaseDefinition
             ->defineConstructor()
                 ->defineParameter('sdfsdf')->end()
             ->end();
-        $definitionBuilder->analyze();
+        $this->callAnalyze($definitionBuilder);
     }
 }

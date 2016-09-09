@@ -6,6 +6,7 @@
 namespace samsonframework\container\tests\definition;
 
 use samsonframework\container\definition\DefinitionBuilder;
+use samsonframework\container\definition\DefinitionCompiler;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
@@ -18,9 +19,9 @@ use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
 
 
-class DefinitionCompilerTest extends TestCaseDefinition
+class DefinitionGeneratorTest extends TestCaseDefinition
 {
-    public function testAddDefinition()
+    public function testGetCode()
     {
         $definitionBuilder = new DefinitionBuilder();
 
@@ -68,7 +69,10 @@ class DefinitionCompilerTest extends TestCaseDefinition
             ->end()
         ;
 
-        $definitionBuilder->analyze();
-        $container = $definitionBuilder->compile();
+        $compiler = new DefinitionCompiler();
+
+        $namespace = (new \ReflectionClass(self::class))->getNamespaceName();
+        $container = $compiler->compile($definitionBuilder, 'Container', $namespace, __DIR__);
+        $container->get(Car::class);
     }
 }
