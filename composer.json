@@ -18,7 +18,7 @@
   ],
   "require": {
     "php": "^7.0",
-    "samsonphp/generator": "*",
+    "samsonframework/generator": "*",
     "samsonframework/base": "*",
     "samsonframework/di": "*"
   },

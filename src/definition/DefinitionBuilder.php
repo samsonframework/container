@@ -7,8 +7,10 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\ContainerInterface;
 use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
+use samsonframework\generator\ClassGenerator;
 
 /**
  * Class DefinitionBuilder
@@ -60,6 +62,22 @@ class DefinitionBuilder extends AbstractDefinition
                 $classDefinition->analyze($reflectionClass);
             }
         }
+    }
+
+    /**
+     * Compile and get container
+     *
+     * @return ContainerInterface
+     */
+    public function compile()
+    {
+        $this->analyze();
+
+        // TODO Move this to construct injection
+        $compiler = new DefinitionCompiler(
+            new ClassGenerator('Container')
+        );
+        $compiler->compile($this->getDefinitionCollection());
     }
 
     /**

@@ -31,6 +31,8 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     protected $serviceName;
     /** @var array Class container scopes */
     protected $scopes = [];
+    /** @var bool Is singleton */
+    protected $isSingleton = false;
 
     /** @var MethodDefinition[] Methods collection */
     protected $methodsCollection = [];
@@ -72,6 +74,22 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         $this->propertiesCollection[$propertyName] = $propertyDefinition;
 
         return $propertyDefinition;
+    }
+
+    /** {@inheritdoc} */
+    public function defineIsPrototype(): ClassBuilderInterface
+    {
+        $this->isSingleton = false;
+
+        return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function defineIsSingleton(): ClassBuilderInterface
+    {
+        $this->isSingleton = true;
+
+        return $this;
     }
 
     /** {@inheritdoc} */
@@ -212,9 +230,9 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getServiceName(): string
+    public function getServiceName()
     {
         return $this->serviceName;
     }
@@ -228,5 +246,40 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
         $this->serviceName = $serviceName;
 
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSingleton(): bool
+    {
+        return $this->isSingleton;
+    }
+
+    /**
+     * @param boolean $isSingleton
+     * @return ClassDefinition
+     */
+    public function setIsSingleton(bool $isSingleton): ClassDefinition
+    {
+        $this->isSingleton = $isSingleton;
+
+        return $this;
+    }
+
+    /**
+     * @return PropertyDefinition[]
+     */
+    public function getPropertiesCollection(): array
+    {
+        return $this->propertiesCollection;
+    }
+
+    /**
+     * @return MethodDefinition[]
+     */
+    public function getMethodsCollection(): array
+    {
+        return $this->methodsCollection;
     }
 }

@@ -19,9 +19,9 @@ interface PropertyBuilderInterface
      * Define property
      *
      * @param ReferenceInterface $dependency
-     * @return PropertyDefinition
+     * @return PropertyBuilderInterface
      */
-    public function defineDependency(ReferenceInterface $dependency): PropertyDefinition;
+    public function defineDependency(ReferenceInterface $dependency): PropertyBuilderInterface;
 
     /**
      * Return to parent definition

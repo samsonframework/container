@@ -43,6 +43,20 @@ interface ClassBuilderInterface
     public function defineProperty(string $propertyName): PropertyBuilderInterface;
 
     /**
+     * Define is this class is singleton singleton
+     *
+     * @return ClassBuilderInterface
+     */
+    public function defineIsSingleton(): ClassBuilderInterface;
+
+    /**
+     * Define is this class is prototype object
+     *
+     * @return ClassBuilderInterface
+     */
+    public function defineIsPrototype(): ClassBuilderInterface;
+
+    /**
      * Return to parent definition
      *
      * @return DefinitionBuilder

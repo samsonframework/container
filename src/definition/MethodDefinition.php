@@ -128,4 +128,12 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
 
         return $this;
     }
+
+    /**
+     * @return ParameterDefinition[]
+     */
+    public function getParametersCollection(): array
+    {
+        return $this->parametersCollection;
+    }
 }

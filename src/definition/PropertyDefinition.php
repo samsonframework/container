@@ -28,9 +28,9 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
      * Define dependency
      *
      * @param ReferenceInterface $dependency
-     * @return PropertyDefinition
+     * @return PropertyBuilderInterface
      */
-    public function defineDependency(ReferenceInterface $dependency): PropertyDefinition
+    public function defineDependency(ReferenceInterface $dependency): PropertyBuilderInterface
     {
         $this->dependency = $dependency;
 
