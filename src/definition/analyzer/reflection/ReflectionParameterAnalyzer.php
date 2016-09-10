@@ -8,6 +8,7 @@ namespace samsonframework\container\definition\analyzer\reflection;
 
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
+use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\ParameterDefinition;
 
 /**
@@ -21,6 +22,7 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
     public function analyze(
         DefinitionAnalyzer $analyzer,
         \ReflectionParameter $reflectionParameter,
+        ClassDefinition $classDefinition,
         ParameterDefinition $parameterDefinition = null
     ) {
         if ($parameterDefinition) {

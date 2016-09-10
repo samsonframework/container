@@ -8,6 +8,7 @@ namespace samsonframework\container\definition\analyzer\reflection;
 
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\PropertyAnalyzerInterface;
+use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 
 /**
@@ -21,6 +22,7 @@ class ReflectionPropertyAnalyzer implements PropertyAnalyzerInterface
     public function analyze(
         DefinitionAnalyzer $analyzer,
         \ReflectionProperty $reflectionProperty,
+        ClassDefinition $classDefinition,
         PropertyDefinition $propertyDefinition = null
     ) {
         if ($propertyDefinition) {

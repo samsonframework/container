@@ -7,6 +7,7 @@
 namespace samsonframework\container\definition\analyzer;
 
 use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
+use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\MethodDefinition;
 
 /**
@@ -21,12 +22,13 @@ interface MethodAnalyzerInterface
      *
      * @param DefinitionAnalyzer $analyzer
      * @param \ReflectionMethod $reflectionMethod
+     * @param ClassDefinition $classDefinition
      * @param MethodDefinition $methodDefinition
-     * @throws ParameterNotFoundException
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
         \ReflectionMethod $reflectionMethod,
+        ClassDefinition $classDefinition,
         MethodDefinition $methodDefinition = null
     );
 }

@@ -12,6 +12,7 @@ use samsonframework\container\definition\analyzer\exception\WrongAnalyzerTypeExc
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\ParameterDefinition;
+use samsonframework\container\tests\classes\annotation\PropClass;
 
 /**
  * Class DefinitionAnalyzer
@@ -113,10 +114,10 @@ class DefinitionAnalyzer
     {
         // Analyze method definitions
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
             foreach ($this->methodAnalyzers as $methodAnalyzer) {
                 if ($methodAnalyzer instanceof MethodAnalyzerInterface) {
-                    $methodAnalyzer->analyze($this, $reflectionMethod, $methodDefinition);
+                    $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
+                    $methodAnalyzer->analyze($this, $reflectionMethod, $classDefinition, $methodDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements MethodAnalyzerInterface',
@@ -124,7 +125,8 @@ class DefinitionAnalyzer
                     ));
                 }
             }
-            $this->analyzeParameter($reflectionMethod, $methodDefinition);
+            $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
+            $this->analyzeParameter($reflectionMethod, $classDefinition, $methodDefinition);
         }
     }
 
@@ -137,12 +139,13 @@ class DefinitionAnalyzer
      */
     protected function analyzeProperty(\ReflectionClass $reflectionClass, ClassDefinition $classDefinition)
     {
-        // Analyze property definition
-        foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
+        // Iterate class properties
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            // Analyze property definition
             foreach ($this->propertyAnalyzers as $propertyAnalyzer) {
                 if ($propertyAnalyzer instanceof PropertyAnalyzerInterface) {
-                    $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
-                    $propertyAnalyzer->analyze($this, $reflectionProperty, $propertyDefinition);
+                    $propertyDefinition = $classDefinition->getPropertiesCollection()[$reflectionProperty->getName()] ?? null;
+                    $propertyAnalyzer->analyze($this, $reflectionProperty, $classDefinition, $propertyDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements PropertyAnalyzerInterface',
@@ -157,28 +160,33 @@ class DefinitionAnalyzer
      * Analyze parameter
      *
      * @param \ReflectionMethod $reflectionMethod
+     * @param ClassDefinition $classDefinition
      * @param MethodDefinition $methodDefinition
      * @throws ParameterNotFoundException
      * @throws WrongAnalyzerTypeException
      */
-    protected function analyzeParameter(\ReflectionMethod $reflectionMethod, MethodDefinition $methodDefinition = null)
-    {
+    protected function analyzeParameter(
+        \ReflectionMethod $reflectionMethod,
+        ClassDefinition $classDefinition,
+        MethodDefinition $methodDefinition = null
+    ) {
         // Get methods parameters
         foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
             $parameterDefinition = null;
-            if ($methodDefinition) {
-                // Check if parameter exists in method
-                if (!array_key_exists($reflectionParameter->getName(), $methodDefinition->getParametersCollection())) {
-                    throw new ParameterNotFoundException();
-                } else {
-                    /** @var ParameterDefinition $parameterDefinition */
-                    $parameterDefinition = $methodDefinition->getParametersCollection()[$reflectionParameter->getName()];
-                }
+            $parameterName = $reflectionParameter->getName();
+            // Check if parameter exists in method
+            if ($methodDefinition && !array_key_exists($parameterName, $methodDefinition->getParametersCollection())) {
+                throw new ParameterNotFoundException();
             }
             // Analyze parameters
             foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
                 if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {
-                    $parameterAnalyzer->analyze($this, $reflectionParameter, $parameterDefinition);
+                    /** @var ParameterDefinition $parameterDefinition */
+                    $parameterDefinition = $methodDefinition &&
+                    array_key_exists($parameterName, $methodDefinition->getParametersCollection())
+                        ? $methodDefinition->getParametersCollection()[$parameterName]
+                        : null;
+                    $parameterAnalyzer->analyze($this, $reflectionParameter, $classDefinition, $parameterDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements ParameterAnalyzerInterface',

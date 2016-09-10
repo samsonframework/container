@@ -6,13 +6,15 @@
  */
 namespace samsonframework\container\definition\analyzer\annotation;
 
-use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
-use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
-use samsonframework\container\definition\ClassDefinition;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 class AbstractAnnotationAnalyzer
 {
-    public function __construct()
+    /** @var AnnotationReader */
+    protected $reader;
+
+    public function __construct(AnnotationReader $annotationReader)
     {
+        $this->reader = $annotationReader;
     }
 }

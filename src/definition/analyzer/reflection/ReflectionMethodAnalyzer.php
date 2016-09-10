@@ -8,6 +8,7 @@ namespace samsonframework\container\definition\analyzer\reflection;
 
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
+use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\MethodDefinition;
 
 /**
@@ -21,6 +22,7 @@ class ReflectionMethodAnalyzer implements MethodAnalyzerInterface
     public function analyze(
         DefinitionAnalyzer $analyzer,
         \ReflectionMethod $reflectionMethod,
+        ClassDefinition $classDefinition,
         MethodDefinition $methodDefinition = null
     ) {
         if ($methodDefinition) {

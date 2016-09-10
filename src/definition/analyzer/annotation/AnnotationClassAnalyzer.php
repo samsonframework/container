@@ -10,14 +10,13 @@ use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\ClassDefinition;
 
-class AnnotationClassAnalyzer implements ClassAnalyzerInterface
+class AnnotationClassAnalyzer extends AbstractAnnotationAnalyzer implements ClassAnalyzerInterface
 {
     public function analyze(
         DefinitionAnalyzer $analyzer,
         \ReflectionClass $reflectionClass,
         ClassDefinition $classDefinition
     ) {
-        $reader = new AnnotationReader();
-
+        $annotations = $this->reader->getClassAnnotations($reflectionClass);
     }
 }
