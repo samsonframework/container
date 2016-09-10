@@ -4,9 +4,12 @@
  * Date: 09.09.2016
  * Time: 7:19
  */
-namespace samsonframework\container\definition;
+namespace samsonframework\container\definition\builder;
 
-use samsonframework\container\definition\exception\ReferenceNotImplementsException;
+use samsonframework\container\definition\ClassDefinition;
+use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
+use samsonframework\container\definition\MethodDefinition;
+use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
@@ -37,11 +40,21 @@ class DefinitionGenerator
     }
 
     /**
+     * Get class generator
+     *
+     * @return ClassGenerator
+     */
+    public function getClassGenerator()
+    {
+        return $this->generator;
+    }
+
+    /**
      * Compile and get container
      *
      * @param ClassDefinition[] $classDefinitionCollection
      * @return string Get container code
-     * @throws \samsonframework\container\definition\exception\ReferenceNotImplementsException
+     * @throws ReferenceNotImplementsException
      * @throws \InvalidArgumentException
      */
     public function generateClass(array $classDefinitionCollection): string
@@ -147,11 +160,12 @@ class DefinitionGenerator
      *
      * @param ClassDefinition $classDefinition
      * @return string
-     * @throws \samsonframework\container\definition\exception\ReferenceNotImplementsException
+     * @throws ReferenceNotImplementsException
      */
     protected function generateConstructor(ClassDefinition $classDefinition): string
     {
-        $className = $classDefinition->getClassName();
+        // TODO Fix adding slash before namespace
+        $className = '\\' . $classDefinition->getClassName();
         $arguments = '';
         if (array_key_exists('__construct', $classDefinition->getMethodsCollection())) {
             $arguments .= $this->generateArguments($classDefinition->getMethodsCollection()['__construct']);
@@ -164,7 +178,7 @@ class DefinitionGenerator
      *
      * @param MethodDefinition $methodDefinition
      * @return string
-     * @throws \samsonframework\container\definition\exception\ReferenceNotImplementsException
+     * @throws ReferenceNotImplementsException
      */
     protected function generateArguments(MethodDefinition $methodDefinition): string
     {
@@ -195,7 +209,7 @@ class DefinitionGenerator
      *
      * @param MethodDefinition $methodDefinition
      * @return string
-     * @throws \samsonframework\container\definition\exception\ReferenceNotImplementsException
+     * @throws ReferenceNotImplementsException
      */
     protected function generateSetters(MethodDefinition $methodDefinition): string
     {
@@ -210,7 +224,7 @@ class DefinitionGenerator
      * @param PropertyDefinition $propertyDefinition
      * @param ClassDefinition $classDefinition
      * @return string
-     * @throws \samsonframework\container\definition\exception\ReferenceNotImplementsException
+     * @throws ReferenceNotImplementsException
      */
     protected function generateProperty(ClassDefinition $classDefinition, PropertyDefinition $propertyDefinition): string
     {

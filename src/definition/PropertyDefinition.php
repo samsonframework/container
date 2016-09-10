@@ -7,7 +7,6 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\analyzer\PropertyAnalyzerInterface;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
@@ -15,7 +14,7 @@ use samsonframework\container\definition\reference\ReferenceInterface;
  *
  * @package samsonframework\container\definition
  */
-class PropertyDefinition extends AbstractPropertyDefinition implements PropertyBuilderInterface, PropertyAnalyzerInterface
+class PropertyDefinition extends AbstractPropertyDefinition implements PropertyBuilderInterface
 {
     /** @var string Property name */
     protected $propertyName;
@@ -35,14 +34,6 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
         $this->dependency = $dependency;
 
         return $this;
-    }
-
-    /** {@inheritdoc} */
-    public function analyze(\ReflectionProperty $reflectionProperty)
-    {
-        // Set property metadata
-        $this->setIsPublic($reflectionProperty->isPublic());
-        $this->setModifiers($reflectionProperty->getModifiers());
     }
 
     /**

@@ -6,6 +6,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
 

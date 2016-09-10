@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 18.08.16 at 14:38
  */
-namespace samsonframework\container\tests\definition;
+namespace samsonframework\container\tests\definition\definition;
 
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\scope\ControllerScope;
@@ -51,9 +51,11 @@ class ClassDefinitionTest extends TestCaseDefinition
         $definition = (new ClassDefinition())
             ->setClassName($class)
             ->setNameSpace($namespace)
+            ->defineIsPrototype()
             ->defineProperty('prop')->end();
 
         static::assertEquals($namespace, $definition->getNameSpace());
+        static::assertFalse($definition->isSingleton());
     }
 
     public function testSecondEqualPropertyError()
@@ -67,10 +69,12 @@ class ClassDefinitionTest extends TestCaseDefinition
         $definition = (new ClassDefinition())
             ->setClassName($class)
             ->setNameSpace($namespace)
+            ->defineIsPrototype()
             ->defineProperty('prop')->end()
             ->defineProperty('prop')->end();
 
         static::assertEquals($namespace, $definition->getNameSpace());
+        static::assertTrue($definition->isSingleton());
     }
 
     public function testScope()
@@ -78,6 +82,7 @@ class ClassDefinitionTest extends TestCaseDefinition
         $class = Car::class;
         $classDefinition = (new ClassDefinition())
             ->setClassName($class)
+            ->setIsSingleton(true)
             ->addScope(new ControllerScope())
             ->addScope(new ServiceScope());
 
@@ -85,6 +90,7 @@ class ClassDefinitionTest extends TestCaseDefinition
         static::assertInstanceOf(ServiceScope::class, $classDefinition->getScope(ServiceScope::getId()));
         static::assertCount(2, $classDefinition->getScopes());
         static::assertTrue($classDefinition->hasScope(ServiceScope::getId()));
+        static::assertTrue($classDefinition->isSingleton());
 
         $classDefinition->removeScope(ServiceScope::getId());
 

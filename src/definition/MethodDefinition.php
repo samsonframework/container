@@ -7,8 +7,6 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
-use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\ParameterNotFoundException;
 
@@ -17,7 +15,7 @@ use samsonframework\container\definition\exception\ParameterNotFoundException;
  *
  * @package samsonframework\container\definition
  */
-class MethodDefinition extends AbstractDefinition implements MethodBuilderInterface, MethodAnalyzerInterface
+class MethodDefinition extends AbstractDefinition implements MethodBuilderInterface
 {
     /** @var  string Method name */
     protected $methodName;
@@ -47,29 +45,6 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
         $this->parametersCollection[$parameterName] = $parameter;
 
         return $parameter;
-    }
-
-    /** {@inheritdoc} */
-    public function analyze(\ReflectionMethod $reflectionMethod)
-    {
-        // Set method metadata
-        $this->setModifiers($reflectionMethod->getModifiers());
-        $this->setIsPublic($reflectionMethod->isPublic());
-
-        // Get methods parameters
-        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
-            // Check if parameter exists in method
-            if (array_key_exists($reflectionParameter->getName(), $this->parametersCollection)) {
-                /** @var ParameterDefinition $parameterDefinition */
-                $parameterDefinition = $this->parametersCollection[$reflectionParameter->getName()];
-                if ($parameterDefinition instanceof ParameterAnalyzerInterface) {
-                    // Analyze parameter
-                    $parameterDefinition->analyze($reflectionParameter);
-                }
-            } else {
-                throw new ParameterNotFoundException();
-            }
-        }
     }
 
     /**

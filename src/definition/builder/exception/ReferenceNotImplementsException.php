@@ -5,13 +5,13 @@
  * Date: 02.08.16
  * Time: 0:46.
  */
-namespace samsonframework\container\definition\exception;
+namespace samsonframework\container\definition\builder\exception;
 
 /**
- * Class ParameterNotFoundException
+ * Class ReferenceNotImplements
  *
  * @package samsonframework\container\exception
  */
-class ParameterNotFoundException extends \Exception
+class ReferenceNotImplementsException extends \Exception
 {
 }

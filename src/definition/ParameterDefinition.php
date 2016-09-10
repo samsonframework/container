@@ -6,7 +6,6 @@
  */
 namespace samsonframework\container\definition;
 
-use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
@@ -14,7 +13,7 @@ use samsonframework\container\definition\reference\ReferenceInterface;
  *
  * @author Ruslan Molodyko <molodyko@samsonos.com>
  */
-class ParameterDefinition extends AbstractPropertyDefinition implements ParameterBuilderInterface, ParameterAnalyzerInterface
+class ParameterDefinition extends AbstractPropertyDefinition implements ParameterBuilderInterface
 {
     /** @var string Property name */
     protected $parameterName;
@@ -36,17 +35,6 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
         $this->dependency = $dependency;
 
         return $this;
-    }
-
-    /** {@inheritdoc} */
-    public function analyze(\ReflectionParameter $reflectionParameter)
-    {
-        // Set parameter metadata
-        if ($reflectionParameter->isDefaultValueAvailable()) {
-            $this->setValue($reflectionParameter->getDefaultValue());
-        }
-        $this->setTypeHint($reflectionParameter->getType());
-        $this->setIsOptional($reflectionParameter->isOptional());
     }
 
     /**

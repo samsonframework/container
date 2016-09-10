@@ -5,7 +5,7 @@
  */
 namespace samsonframework\container\tests\definition;
 
-use samsonframework\container\definition\DefinitionBuilder;
+use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\reference\ClassReference;

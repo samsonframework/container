@@ -3,11 +3,15 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 18.08.16 at 14:38
  */
-namespace samsonframework\container\tests\definition;
+namespace samsonframework\container\tests\definition\analyzer;
 
-use samsonframework\container\definition\DefinitionBuilder;
-use samsonframework\container\definition\DefinitionCompiler;
-use samsonframework\container\definition\exception\ParameterNotFoundException;
+use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
+use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
+use samsonframework\container\definition\analyzer\reflection\ReflectionClassAnalyzer;
+use samsonframework\container\definition\analyzer\reflection\ReflectionMethodAnalyzer;
+use samsonframework\container\definition\analyzer\reflection\ReflectionParameterAnalyzer;
+use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyAnalyzer;
+use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;
@@ -16,13 +20,18 @@ use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
 
 
-class DefinitionAnalyzerTest extends TestCaseDefinition
+class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
 {
     public function callAnalyze(DefinitionBuilder $definitionBuilder)
     {
-        $method = (new \ReflectionClass(DefinitionCompiler::class))->getMethod('analyze');
+        $method = (new \ReflectionClass(DefinitionAnalyzer::class))->getMethod('analyze');
         $method->setAccessible(true);
-        $method->invoke(new DefinitionCompiler(), $definitionBuilder);
+        $method->invoke(new DefinitionAnalyzer(
+            [new ReflectionClassAnalyzer()],
+            [new ReflectionMethodAnalyzer()],
+            [new ReflectionPropertyAnalyzer()],
+            [new ReflectionParameterAnalyzer()]
+        ), $definitionBuilder);
         $method->setAccessible(false);
     }
 

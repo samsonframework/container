@@ -5,13 +5,12 @@
  * Date: 02.08.16
  * Time: 0:46.
  */
-namespace samsonframework\container\definition;
+namespace samsonframework\container\definition\builder;
 
-use samsonframework\container\ContainerInterface;
-use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
+use samsonframework\container\definition\AbstractDefinition;
+use samsonframework\container\definition\ClassBuilderInterface;
+use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
-use samsonframework\container\definition\exception\ReferenceNotImplementsException;
-use samsonframework\generator\ClassGenerator;
 
 /**
  * Class DefinitionBuilder
@@ -34,7 +33,7 @@ class DefinitionBuilder extends AbstractDefinition
     public function addDefinition($className, string $serviceName = null): ClassBuilderInterface
     {
         // Check if class already exists
-        if (array_key_exists($className, $this->definitionCollection)) {
+        if ($this->hasDefinition($className)) {
             throw new ClassDefinitionAlreadyExistsException();
         }
 
@@ -49,6 +48,17 @@ class DefinitionBuilder extends AbstractDefinition
         $this->definitionCollection[$className] = $classDefinition;
 
         return $classDefinition;
+    }
+
+    /**
+     * When definition for class name is exists in collection
+     *
+     * @param $className
+     * @return bool
+     */
+    public function hasDefinition($className): bool
+    {
+        return array_key_exists($className, $this->definitionCollection);
     }
 
     /**

@@ -6,20 +6,21 @@
  */
 namespace samsonframework\container\definition\analyzer;
 
-use samsonframework\container\definition\DefinitionAnalyzer;
+use samsonframework\container\definition\ClassDefinition;
 
 /**
  * Interface ClassAnalyzerInterface
  *
- * @package samsonframework\container\definition
+ * @package samsonframework\container\definition\analyzer
  */
 interface ClassAnalyzerInterface
 {
     /**
      * Analyze class definition
      *
+     * @param DefinitionAnalyzer $analyzer
+     * @param ClassDefinition $classDefinition
      * @param \ReflectionClass $reflectionClass
-     * @return mixed
      */
-    public function analyze(\ReflectionClass $reflectionClass);
+    public function analyze(DefinitionAnalyzer $analyzer, ClassDefinition $classDefinition, \ReflectionClass $reflectionClass);
 }

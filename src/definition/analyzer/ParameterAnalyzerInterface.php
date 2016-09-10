@@ -6,7 +6,7 @@
  */
 namespace samsonframework\container\definition\analyzer;
 
-use samsonframework\container\definition\DefinitionAnalyzer;
+use samsonframework\container\definition\ParameterDefinition;
 
 /**
  * Interface ParameterAnalyzerInterface
@@ -18,8 +18,14 @@ interface ParameterAnalyzerInterface
     /**
      * Analyze parameter definition
      *
+     * @param DefinitionAnalyzer $analyzer
+     * @param ParameterDefinition $parameterDefinition
      * @param \ReflectionParameter $reflectionParameter
      */
-    public function analyze(\ReflectionParameter $reflectionParameter);
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        ParameterDefinition $parameterDefinition,
+        \ReflectionParameter $reflectionParameter
+    );
 }
 

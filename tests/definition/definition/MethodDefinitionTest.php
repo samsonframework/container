@@ -3,7 +3,7 @@
  * Created by Vitaly Iegorov <egorov@samsonos.com>.
  * on 18.08.16 at 14:38
  */
-namespace samsonframework\container\tests\definition;
+namespace samsonframework\container\tests\definition\definition;
 
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\reference\ClassReference;

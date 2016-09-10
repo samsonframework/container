@@ -6,7 +6,7 @@
  */
 namespace samsonframework\container\definition\analyzer;
 
-use samsonframework\container\definition\DefinitionAnalyzer;
+use samsonframework\container\definition\PropertyDefinition;
 
 /**
  * Interface PropertyAnalyzerInterface
@@ -17,10 +17,15 @@ interface PropertyAnalyzerInterface
 {
     /**
      * Analyze property definition
-     * 
+     *
+     * @param DefinitionAnalyzer $analyzer
+     * @param PropertyDefinition $propertyDefinition
      * @param \ReflectionProperty $reflectionProperty
-     * @return mixed
      */
-    public function analyze(\ReflectionProperty $reflectionProperty);
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        PropertyDefinition $propertyDefinition,
+        \ReflectionProperty $reflectionProperty
+    );
 }
 

@@ -6,7 +6,7 @@
 namespace samsonframework\container\tests;
 
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\DefinitionBuilder;
+use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\PropertyDefinition;

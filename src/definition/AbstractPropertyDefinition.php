@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
@@ -18,6 +19,14 @@ abstract class AbstractPropertyDefinition extends AbstractDefinition
 {
     /** @var ReferenceInterface */
     protected $dependency;
+
+    /** {@inheritdoc} */
+    public function __construct(AbstractDefinition $parentDefinition = null)
+    {
+        parent::__construct($parentDefinition);
+
+        $this->dependency = new NullReference();
+    }
 
     /**
      * @param ReferenceInterface $dependency
