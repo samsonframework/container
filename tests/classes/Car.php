@@ -18,7 +18,10 @@ class Car
     /** @var Wheel */
     protected $backRightWheel;
 
-    /** @var DriverInterface */
+    /**
+     * @var DriverInterface
+     * @
+     */
     protected $driver;
     /**
      * @var DriverService

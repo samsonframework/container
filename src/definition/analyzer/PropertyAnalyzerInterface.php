@@ -19,13 +19,13 @@ interface PropertyAnalyzerInterface
      * Analyze property definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param PropertyDefinition $propertyDefinition
      * @param \ReflectionProperty $reflectionProperty
+     * @param PropertyDefinition $propertyDefinition
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        PropertyDefinition $propertyDefinition,
-        \ReflectionProperty $reflectionProperty
+        \ReflectionProperty $reflectionProperty,
+        PropertyDefinition $propertyDefinition = null
     );
 }
 

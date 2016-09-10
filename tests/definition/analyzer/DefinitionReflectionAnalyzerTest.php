@@ -95,16 +95,16 @@ class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
         $this->callAnalyze($definitionBuilder);
     }
 
-    public function testWrongMethodName()
-    {
-        $this->expectException(\ReflectionException::class);
-
-        $definitionBuilder = new DefinitionBuilder();
-
-        $definitionBuilder->addDefinition(Car::class)
-            ->defineMethod('sdf')->end();
-        $this->callAnalyze($definitionBuilder);
-    }
+//    public function testWrongMethodName()
+//    {
+//        $this->expectException(\ReflectionException::class);
+//
+//        $definitionBuilder = new DefinitionBuilder();
+//
+//        $definitionBuilder->addDefinition(Car::class)
+//            ->defineMethod('sdf')->end();
+//        $this->callAnalyze($definitionBuilder);
+//    }
 
     public function testWrongPropertyName()
     {

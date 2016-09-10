@@ -20,14 +20,16 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
     /** {@inheritdoc} */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        ParameterDefinition $parameterDefinition,
-        \ReflectionParameter $reflectionParameter
+        \ReflectionParameter $reflectionParameter,
+        ParameterDefinition $parameterDefinition = null
     ) {
-        // Set parameter metadata
-        if ($reflectionParameter->isDefaultValueAvailable()) {
-            $parameterDefinition->setValue($reflectionParameter->getDefaultValue());
+        if ($parameterDefinition) {
+            // Set parameter metadata
+            if ($reflectionParameter->isDefaultValueAvailable()) {
+                $parameterDefinition->setValue($reflectionParameter->getDefaultValue());
+            }
+            $parameterDefinition->setTypeHint($reflectionParameter->getType());
+            $parameterDefinition->setIsOptional($reflectionParameter->isOptional());
         }
-        $parameterDefinition->setTypeHint($reflectionParameter->getType());
-        $parameterDefinition->setIsOptional($reflectionParameter->isOptional());
     }
 }

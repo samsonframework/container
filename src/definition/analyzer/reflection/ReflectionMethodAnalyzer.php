@@ -18,10 +18,15 @@ use samsonframework\container\definition\MethodDefinition;
 class ReflectionMethodAnalyzer implements MethodAnalyzerInterface
 {
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, MethodDefinition $methodDefinition,  \ReflectionMethod $reflectionMethod)
-    {
-        // Set method metadata
-        $methodDefinition->setModifiers($reflectionMethod->getModifiers());
-        $methodDefinition->setIsPublic($reflectionMethod->isPublic());
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        \ReflectionMethod $reflectionMethod,
+        MethodDefinition $methodDefinition = null
+    ) {
+        if ($methodDefinition) {
+            // Set method metadata
+            $methodDefinition->setModifiers($reflectionMethod->getModifiers());
+            $methodDefinition->setIsPublic($reflectionMethod->isPublic());
+        }
     }
 }

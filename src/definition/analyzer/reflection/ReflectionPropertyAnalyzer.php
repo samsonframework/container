@@ -20,11 +20,13 @@ class ReflectionPropertyAnalyzer implements PropertyAnalyzerInterface
     /** {@inheritdoc} */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        PropertyDefinition $propertyDefinition,
-        \ReflectionProperty $reflectionProperty
+        \ReflectionProperty $reflectionProperty,
+        PropertyDefinition $propertyDefinition = null
     ) {
-        // Set property metadata
-        $propertyDefinition->setIsPublic($reflectionProperty->isPublic());
-        $propertyDefinition->setModifiers($reflectionProperty->getModifiers());
+        if ($propertyDefinition) {
+            // Set property metadata
+            $propertyDefinition->setIsPublic($reflectionProperty->isPublic());
+            $propertyDefinition->setModifiers($reflectionProperty->getModifiers());
+        }
     }
 }

@@ -19,13 +19,13 @@ interface ParameterAnalyzerInterface
      * Analyze parameter definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param ParameterDefinition $parameterDefinition
      * @param \ReflectionParameter $reflectionParameter
+     * @param ParameterDefinition $parameterDefinition
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        ParameterDefinition $parameterDefinition,
-        \ReflectionParameter $reflectionParameter
+        \ReflectionParameter $reflectionParameter,
+        ParameterDefinition $parameterDefinition = null
     );
 }
 

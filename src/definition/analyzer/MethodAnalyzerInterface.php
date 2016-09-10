@@ -20,10 +20,14 @@ interface MethodAnalyzerInterface
      * Analyze property definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param MethodDefinition $methodDefinition
      * @param \ReflectionMethod $reflectionMethod
+     * @param MethodDefinition $methodDefinition
      * @throws ParameterNotFoundException
      */
-    public function analyze(DefinitionAnalyzer $analyzer, MethodDefinition $methodDefinition, \ReflectionMethod $reflectionMethod);
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        \ReflectionMethod $reflectionMethod,
+        MethodDefinition $methodDefinition = null
+    );
 }
 

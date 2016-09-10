@@ -19,8 +19,8 @@ interface ClassAnalyzerInterface
      * Analyze class definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param ClassDefinition $classDefinition
      * @param \ReflectionClass $reflectionClass
+     * @param ClassDefinition $classDefinition
      */
-    public function analyze(DefinitionAnalyzer $analyzer, ClassDefinition $classDefinition, \ReflectionClass $reflectionClass);
+    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass, ClassDefinition $classDefinition);
 }

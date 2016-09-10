@@ -86,7 +86,7 @@ class DefinitionAnalyzer
         // Iterate analyzers
         foreach ($this->classAnalyzers as $classAnalyzer) {
             if ($classAnalyzer instanceof ClassAnalyzerInterface) {
-                $classAnalyzer->analyze($this, $classDefinition, $reflectionClass);
+                $classAnalyzer->analyze($this, $reflectionClass, $classDefinition);
             } else {
                 throw new WrongAnalyzerTypeException(sprintf(
                     'Analyzer "%s" should implements ClassAnalyzerInterface',
@@ -112,12 +112,11 @@ class DefinitionAnalyzer
     protected function analyzeMethod(\ReflectionClass $reflectionClass, ClassDefinition $classDefinition)
     {
         // Analyze method definitions
-        foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
-
-            $reflectionMethod = $reflectionClass->getMethod($methodDefinition->getMethodName());
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
             foreach ($this->methodAnalyzers as $methodAnalyzer) {
                 if ($methodAnalyzer instanceof MethodAnalyzerInterface) {
-                    $methodAnalyzer->analyze($this, $methodDefinition, $reflectionMethod);
+                    $methodAnalyzer->analyze($this, $reflectionMethod, $methodDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements MethodAnalyzerInterface',
@@ -125,11 +124,7 @@ class DefinitionAnalyzer
                     ));
                 }
             }
-
-            // Analyze parameters if exists
-            if (count($methodDefinition->getParametersCollection())) {
-                $this->analyzeParameter($reflectionMethod, $methodDefinition);
-            }
+            $this->analyzeParameter($reflectionMethod, $methodDefinition);
         }
     }
 
@@ -147,7 +142,7 @@ class DefinitionAnalyzer
             foreach ($this->propertyAnalyzers as $propertyAnalyzer) {
                 if ($propertyAnalyzer instanceof PropertyAnalyzerInterface) {
                     $reflectionProperty = $reflectionClass->getProperty($propertyDefinition->getPropertyName());
-                    $propertyAnalyzer->analyze($this, $propertyDefinition, $reflectionProperty);
+                    $propertyAnalyzer->analyze($this, $reflectionProperty, $propertyDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements PropertyAnalyzerInterface',
@@ -166,26 +161,30 @@ class DefinitionAnalyzer
      * @throws ParameterNotFoundException
      * @throws WrongAnalyzerTypeException
      */
-    protected function analyzeParameter(\ReflectionMethod $reflectionMethod, MethodDefinition $methodDefinition)
+    protected function analyzeParameter(\ReflectionMethod $reflectionMethod, MethodDefinition $methodDefinition = null)
     {
         // Get methods parameters
         foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
-            // Check if parameter exists in method
-            if (array_key_exists($reflectionParameter->getName(), $methodDefinition->getParametersCollection())) {
-                /** @var ParameterDefinition $parameterDefinition */
-                $parameterDefinition = $methodDefinition->getParametersCollection()[$reflectionParameter->getName()];
-                foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
-                    if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {
-                        $parameterAnalyzer->analyze($this, $parameterDefinition, $reflectionParameter);
-                    } else {
-                        throw new WrongAnalyzerTypeException(sprintf(
-                            'Analyzer "%s" should implements ParameterAnalyzerInterface',
-                            get_class($parameterAnalyzer)
-                        ));
-                    }
+            $parameterDefinition = null;
+            if ($methodDefinition) {
+                // Check if parameter exists in method
+                if (!array_key_exists($reflectionParameter->getName(), $methodDefinition->getParametersCollection())) {
+                    throw new ParameterNotFoundException();
+                } else {
+                    /** @var ParameterDefinition $parameterDefinition */
+                    $parameterDefinition = $methodDefinition->getParametersCollection()[$reflectionParameter->getName()];
                 }
-            } else {
-                throw new ParameterNotFoundException();
+            }
+            // Analyze parameters
+            foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
+                if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {
+                    $parameterAnalyzer->analyze($this, $reflectionParameter, $parameterDefinition);
+                } else {
+                    throw new WrongAnalyzerTypeException(sprintf(
+                        'Analyzer "%s" should implements ParameterAnalyzerInterface',
+                        get_class($parameterAnalyzer)
+                    ));
+                }
             }
         }
     }
