@@ -57,10 +57,7 @@ class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
     ) {
         // Get parameter key
         $key = array_keys($this->value)[0];
-        if (!is_array($this->value) || count($this->value) === 0) {
-            throw new WrongAnnotationConstructorException();
-        }
         // Add dependency
-        $methodDefinition->defineParameter($key)->defineDependency($this->value[$key])->end();
+        $methodDefinition->defineParameter($key)->defineDependency(new ClassReference($this->value[$key]))->end();
     }
 }

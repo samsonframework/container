@@ -8,16 +8,11 @@ namespace samsonframework\container\tests\classes\annotation;
 use samsonframework\container\definition\analyzer\annotation\annotation\InjectClass;
 use samsonframework\container\tests\classes\Car;
 
-class PropClass
+class WrongPropClass
 {
     /**
-     * @InjectClass("samsonframework\container\tests\classes\Car")
-     */
-    public $car;
-
-    /**
      * PropClass constructor.
-     * @InjectClass(car="samsonframework\container\tests\classes\Car")
+     * @InjectClass("samsonframework\container\tests\classes\Car")
      */
     public function __construct(Car $car)
     {

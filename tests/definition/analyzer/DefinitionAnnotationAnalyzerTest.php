@@ -10,12 +10,14 @@ use samsonframework\container\definition\analyzer\annotation\annotation\InjectCl
 use samsonframework\container\definition\analyzer\annotation\AnnotationMethodAnalyzer;
 use samsonframework\container\definition\analyzer\annotation\AnnotationPropertyAnalyzer;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
+use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
 use samsonframework\container\definition\analyzer\reflection\ReflectionClassAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionMethodAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionParameterAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyAnalyzer;
 use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\tests\classes\annotation\PropClass;
+use samsonframework\container\tests\classes\annotation\WrongPropClass;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\TestCaseDefinition;
 
@@ -67,5 +69,17 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
 
         $parameterDefinition = $this->getParameterDefinition($definitionBuilder, PropClass::class, '__construct', 'car');
         static::assertEquals(Car::class, $parameterDefinition->getDependency()->getClassName());
+    }
+
+    public function testMethodAnnotationsWrongConstruct()
+    {
+        $this->expectException(ParameterNotFoundException::class);
+
+        new InjectClass('');
+
+        $definitionBuilder = new DefinitionBuilder();
+
+        $definitionBuilder->addDefinition(WrongPropClass::class)->end();
+        $this->callAnalyze($definitionBuilder);
     }
 }
