@@ -6,9 +6,12 @@
  */
 namespace samsonframework\container\definition\analyzer\annotation\annotation;
 
+use samsonframework\container\definition\analyzer\annotation\ResolveMethodInterface;
 use samsonframework\container\definition\analyzer\annotation\ResolvePropertyInterface;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
+use samsonframework\container\definition\analyzer\exception\WrongAnnotationConstructorException;
 use samsonframework\container\definition\ClassDefinition;
+use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 
@@ -17,7 +20,7 @@ use samsonframework\container\definition\reference\ClassReference;
  *
  * @Annotation
  */
-class InjectClass implements ResolvePropertyInterface
+class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
 {
     /** @var mixed */
     protected $value;
@@ -40,5 +43,24 @@ class InjectClass implements ResolvePropertyInterface
         PropertyDefinition $propertyDefinition
     ) {
         $propertyDefinition->defineDependency(new ClassReference($this->value['value']));
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws WrongAnnotationConstructorException
+     */
+    public function resolveMethod(
+        DefinitionAnalyzer $analyzer,
+        \ReflectionMethod $reflectionMethod,
+        ClassDefinition $classDefinition,
+        MethodDefinition $methodDefinition
+    ) {
+        // Get parameter key
+        $key = array_keys($this->value)[0];
+        if (!is_array($this->value) || count($this->value) === 0) {
+            throw new WrongAnnotationConstructorException();
+        }
+        // Add dependency
+        $methodDefinition->defineParameter($key)->defineDependency($this->value[$key])->end();
     }
 }

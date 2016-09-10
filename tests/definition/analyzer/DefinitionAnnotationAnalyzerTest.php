@@ -7,6 +7,7 @@ namespace samsonframework\container\tests\definition\analyzer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use samsonframework\container\definition\analyzer\annotation\annotation\InjectClass;
+use samsonframework\container\definition\analyzer\annotation\AnnotationMethodAnalyzer;
 use samsonframework\container\definition\analyzer\annotation\AnnotationPropertyAnalyzer;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionClassAnalyzer;
@@ -28,14 +29,14 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
         $reader = new AnnotationReader();
         $method->invoke(new DefinitionAnalyzer(
             [new ReflectionClassAnalyzer()],
-            [new ReflectionMethodAnalyzer()],
-            [new ReflectionPropertyAnalyzer(), new AnnotationPropertyAnalyzer($reader)],
+            [new AnnotationMethodAnalyzer($reader), new ReflectionMethodAnalyzer()],
+            [new AnnotationPropertyAnalyzer($reader), new ReflectionPropertyAnalyzer()],
             [new ReflectionParameterAnalyzer()]
         ), $definitionBuilder);
         $method->setAccessible(false);
     }
 
-    public function testAddDefinition()
+    public function testPropertyAnnotations()
     {
         new InjectClass('');
 
@@ -51,5 +52,20 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
         $propertyDefinition = $this->getPropertyDefinition($definitionBuilder, PropClass::class, 'car');
 
         static::assertEquals(Car::class, $propertyDefinition->getDependency()->getClassName());
+        static::assertEquals(256, $propertyDefinition->getModifiers());
+    }
+
+    public function testMethodAnnotations()
+    {
+        new InjectClass('');
+
+        $definitionBuilder = new DefinitionBuilder();
+
+        $definitionBuilder->addDefinition(PropClass::class)->end();
+
+        $this->callAnalyze($definitionBuilder);
+
+        $parameterDefinition = $this->getParameterDefinition($definitionBuilder, PropClass::class, '__construct', 'car');
+        static::assertEquals(Car::class, $parameterDefinition->getDependency()->getClassName());
     }
 }
