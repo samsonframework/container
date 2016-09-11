@@ -8,12 +8,14 @@ namespace samsonframework\container\definition\analyzer\reflection;
 
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
+use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
+use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
 use samsonframework\container\definition\reference\FloatReference;
@@ -32,6 +34,7 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
     /**
      * {@inheritdoc}
      * @throws ParameterDefinitionAlreadyExistsException
+     * @throws ReferenceNotImplementsException
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
@@ -65,21 +68,9 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
                         );
                         // There is some php types
                     } else {
-                        $defaultValue = $reflectionParameter->getDefaultValue();
-                        if ($defaultValue === null) {
-                            $parameterDefinition->setDependency(new NullReference());
-                        } elseif (is_string($defaultValue)) {
-                            $parameterDefinition->setDependency(new StringReference($defaultValue));
-                        } elseif (is_int($defaultValue)) {
-                            $parameterDefinition->setDependency(new IntegerReference($defaultValue));
-                        } elseif (is_float($defaultValue)) {
-                            $parameterDefinition->setDependency(new FloatReference($defaultValue));
-                        } elseif (is_bool($defaultValue)) {
-                            $parameterDefinition->setDependency(new BoolReference($defaultValue));
-                        } elseif (is_array($defaultValue)) {
-                            // TODO Convert all items to collection item
-                            $parameterDefinition->setDependency(new CollectionReference($defaultValue));
-                        }
+                        $parameterDefinition->setDependency(
+                            CollectionItem::convertValueToReference($reflectionParameter->getDefaultValue())
+                        );
                     }
                     // There is class dependency
                 } elseif (

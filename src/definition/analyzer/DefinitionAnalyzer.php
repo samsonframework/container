@@ -174,10 +174,6 @@ class DefinitionAnalyzer
         foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
             $parameterDefinition = null;
             $parameterName = $reflectionParameter->getName();
-            // Check if parameter exists in method
-//            if ($methodDefinition && !array_key_exists($parameterName, $methodDefinition->getParametersCollection())) {
-//                throw new ParameterNotFoundException();
-//            }
             // Analyze parameters
             foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
                 if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {

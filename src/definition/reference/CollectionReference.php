@@ -7,6 +7,8 @@
  */
 namespace samsonframework\container\definition\reference;
 
+use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
+
 /**
  * Class CollectionReference
  *
@@ -28,11 +30,29 @@ class CollectionReference implements ReferenceInterface
     }
 
     /**
+     * @param bool $convertToCollectionItem
      * @return array
+     * @throws ReferenceNotImplementsException
      */
-    public function getCollection(): array
+    public function getCollection(bool $convertToCollectionItem = false): array
     {
-        return $this->collection;
+        // When need convert simple array to collection item collection
+        if ($convertToCollectionItem) {
+            $collection = [];
+            foreach ($this->collection as $key => $value) {
+                if ($value instanceof CollectionItem) {
+                    $collection[$key] = $value;
+                } else {
+                    $collection[$key] = new CollectionItem(
+                        CollectionItem::convertValueToReference($key),
+                        CollectionItem::convertValueToReference($value)
+                    );
+                }
+            }
+        } else {
+            $collection = $this->collection;
+        }
+        return $collection;
     }
 
     /**

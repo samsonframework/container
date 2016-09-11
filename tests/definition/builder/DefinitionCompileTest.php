@@ -28,7 +28,7 @@ use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
 use samsonframework\generator\ClassGenerator;
 
-class DefinitionGeneratorTest extends TestCaseDefinition
+class DefinitionCompileTest extends TestCaseDefinition
 {
 
     public function getAnalyzer()
