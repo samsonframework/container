@@ -10,10 +10,13 @@ use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
+use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
+use samsonframework\container\definition\reference\FloatReference;
+use samsonframework\container\definition\reference\IntegerReference;
 use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ServiceReference;
@@ -292,6 +295,15 @@ class DefinitionGenerator
         } elseif ($reference instanceof StringReference) {
             $value = $reference->getValue();
             return "'$value'";
+        } elseif ($reference instanceof FloatReference) {
+            $value = $reference->getValue();
+            return "$value";
+        } elseif ($reference instanceof BoolReference) {
+            $value = $reference->getValue();
+            return "$value";
+        } elseif ($reference instanceof IntegerReference) {
+            $value = $reference->getValue();
+            return "$value";
         } elseif ($reference instanceof ConstantReference) {
             $value = $reference->getValue();
             return "$value";
@@ -300,41 +312,10 @@ class DefinitionGenerator
             $value = $reference->getCollection();
             $string = '[';
             // Iterate items
-            foreach ($value as $key => $item) {
-                // If item is the collection item then resolve it
-                if ($item instanceof CollectionItem) {
-                    $value = $item->getValue();
-                    $key = $item->getKey();
-                    // If there is another reference then resolve it
-                    if (is_object($value) && ($value instanceof ReferenceInterface)) {
-                        $value = $this->resolveDependency($value);
-                        // If its simple string then surround it
-                    } elseif (is_string($value)) {
-                        $value = "'$value'";
-                    }
-                    // If there is another reference then resolve it
-                    if (is_object($key) && ($key instanceof ReferenceInterface)) {
-                        $key = $this->resolveDependency($key);
-                        // If its simple string then surround it
-                    } elseif (is_string($key)) {
-                        $key = "'$key'";
-                    }
-                    $string .= "$key => $value, ";
-                    // There is simple array
-                } else {
-                    // If its simple string then surround it
-                    if (is_string($key)) {
-                        $key = "'$key'";
-                    }
-                    // Resolve item
-                    if ($item instanceof ReferenceInterface) {
-                        $item = $this->resolveDependency($item);
-                        // If its simple string then surround it
-                    } elseif (is_string($item)) {
-                        $item = "'$item'";
-                    }
-                    $string .= "$key => $item, ";
-                }
+            foreach ($value as $item) {
+                $value = $this->resolveDependency($item->getValue());
+                $key = $this->resolveDependency($item->getKey());
+                $string .= "$key => $value, ";
             }
             // Remove comma
             $string = rtrim($string, ', ');

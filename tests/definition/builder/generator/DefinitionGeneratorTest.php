@@ -18,6 +18,8 @@ use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
+use samsonframework\container\definition\reference\IntegerReference;
+use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\StringReference;
 use samsonframework\container\tests\classes\annotation\ProductClass;
 use samsonframework\container\tests\classes\Car;
@@ -72,14 +74,14 @@ class DefinitionGeneratorTest extends TestCaseDefinition
                     ->end()
                     ->defineParameter('params')
                         ->defineDependency((new CollectionReference([
-                            new CollectionItem(new ConstantReference('PHP_VERSION'), 1),
+                            new CollectionItem(new ConstantReference('PHP_VERSION'), new IntegerReference(1)),
                             'sdf' => 33,
                             'sdf1' => new ConstantReference('PHP_MAJOR_VERSION'),
                             'sdf2' => new StringReference('value'),
                             3333 => 5555
-                        ]))->addItem(3333, new ConstantReference('PHP_MINOR_VERSION'))
-                        ->addItem('sdf')
-                        ->addItem('sdf', 'dsddd'))
+                        ]))->addItem(CollectionItem::create(3333, new ConstantReference('PHP_MINOR_VERSION')))
+                        ->addItem(CollectionItem::create(22, 'sdf'))
+                        ->addItem(CollectionItem::create('sdf', 'dsddd')))
                     ->end()
                     ->defineParameter('id')
                         ->defineDependency(new ConstantReference('PHP_RELEASE_VERSION'))

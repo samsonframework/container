@@ -24,10 +24,10 @@ class CollectionItem
     /**
      * CollectionItem constructor.
      *
-     * @param $key
-     * @param $value
+     * @param ReferenceInterface $key
+     * @param ReferenceInterface $value
      */
-    public function __construct($key, $value)
+    public function __construct(ReferenceInterface $key, ReferenceInterface $value)
     {
         $this->key = $key;
         $this->value = $value;
@@ -50,33 +50,19 @@ class CollectionItem
     }
 
     /**
-     * Convert value to reference instance
+     * Create collection item from php type
      *
+     * @param $key
      * @param $value
-     * @return ReferenceInterface
+     * @return CollectionItem
      * @throws ReferenceNotImplementsException
+     * @throws \InvalidArgumentException
      */
-    public static function convertValueToReference($value)
+    public static function create($key, $value)
     {
-        $reference = null;
-        // Convert type to appropriate reference instance
-        if ($value === null) {
-            $reference = new NullReference();
-        } elseif (is_string($value)) {
-            $reference = new StringReference($value);
-        } elseif (is_int($value)) {
-            $reference = new IntegerReference($value);
-        } elseif (is_float($value)) {
-            $reference = new FloatReference($value);
-        } elseif (is_bool($value)) {
-            $reference = new BoolReference($value);
-        } elseif (is_array($value)) {
-            $reference = new CollectionReference($value);
-        } else {
-            throw new ReferenceNotImplementsException(sprintf(
-                'Value "%s" does not have convert implementation', $value
-            ));
-        }
-        return $reference;
+        return new CollectionItem(
+            CollectionReference::convertValueToReference($key),
+            CollectionReference::convertValueToReference($value)
+        );
     }
 }

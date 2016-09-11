@@ -22,57 +22,114 @@ class CollectionReference implements ReferenceInterface
     /**
      * CollectionReference constructor.
      *
-     * @param array $collection
+     * @param array|CollectionReference $collection
+     * @throws \InvalidArgumentException
+     * @throws ReferenceNotImplementsException
      */
-    public function __construct(array $collection)
+    public function __construct($collection = null)
     {
-        $this->collection = $collection;
+        if ($collection) {
+            $this->merge($collection);
+        }
     }
 
     /**
-     * @param bool $convertToCollectionItem
-     * @return array
+     * Merge collections
+     *
+     * @param $collection
+     * @throws \InvalidArgumentException
      * @throws ReferenceNotImplementsException
      */
-    public function getCollection(bool $convertToCollectionItem = false): array
+    public function merge($collection)
     {
-        // When need convert simple array to collection item collection
-        if ($convertToCollectionItem) {
-            $collection = [];
-            foreach ($this->collection as $key => $value) {
-                if ($value instanceof CollectionItem) {
-                    $collection[$key] = $value;
-                } else {
-                    $collection[$key] = new CollectionItem(
-                        CollectionItem::convertValueToReference($key),
-                        CollectionItem::convertValueToReference($value)
-                    );
-                }
-            }
+        if (is_array($collection)) {
+            $this->merge(self::convertArrayToCollection($collection));
+        } elseif ($collection instanceof CollectionReference) {
+            $this->collection = array_merge($this->collection, $collection->getCollection());
         } else {
-            $collection = $this->collection;
+            throw new \InvalidArgumentException(sprintf('Wrong type "%s" of collection', gettype($collection)));
         }
-        return $collection;
+    }
+
+    /**
+     * Get collection
+     *
+     * @return CollectionItem[]
+     * @throws ReferenceNotImplementsException
+     */
+    public function getCollection()
+    {
+        return $this->collection;
     }
 
     /**
      * Add item to collection
      *
-     * @param $value
-     * @param null $key
+     * @param CollectionItem $collectionItem
      * @return CollectionReference
      */
-    public function addItem($value, $key = null): CollectionReference
+    public function addItem(CollectionItem $collectionItem): CollectionReference
     {
-        // If its reference then create collection item
-        if ($key instanceof ReferenceInterface) {
-            $this->collection[] = new CollectionItem($key, $value);
-        } elseif ($key) {
-            $this->collection[$key] = $value;
-        } else {
-            $this->collection[] = $value;
-        }
+        $this->collection[] = $collectionItem;
 
         return $this;
+    }
+
+    /**
+     * Convert array to collection reference
+     *
+     * @param array $array
+     * @return CollectionReference
+     * @throws ReferenceNotImplementsException
+     * @throws \InvalidArgumentException
+     */
+    public static function convertArrayToCollection(array $array)
+    {
+        $collection = new CollectionReference();
+        foreach ($array as $key => $value) {
+            if ($value instanceof CollectionItem) {
+                $collection->addItem($value);
+            } else {
+                // Add item to collection
+                $collection->addItem(new CollectionItem(
+                    self::convertValueToReference($key),
+                    self::convertValueToReference($value)
+                ));
+            }
+        }
+        return $collection;
+    }
+
+    /**
+     * Convert value to reference instance
+     *
+     * @param $value
+     * @return ReferenceInterface
+     * @throws \InvalidArgumentException
+     * @throws ReferenceNotImplementsException
+     */
+    public static function convertValueToReference($value)
+    {
+        // Convert type to appropriate reference instance
+        if ($value instanceof ReferenceInterface) {
+            $reference = $value;
+        } elseif ($value === null) {
+            $reference = new NullReference();
+        } elseif (is_string($value)) {
+            $reference = new StringReference($value);
+        } elseif (is_int($value)) {
+            $reference = new IntegerReference($value);
+        } elseif (is_float($value)) {
+            $reference = new FloatReference($value);
+        } elseif (is_bool($value)) {
+            $reference = new BoolReference($value);
+        } elseif (is_array($value)) {
+            $reference = new CollectionReference($value);
+        } else {
+            throw new ReferenceNotImplementsException(sprintf(
+                'Value "%s" does not have convert implementation', gettype($value)
+            ));
+        }
+        return $reference;
     }
 }

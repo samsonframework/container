@@ -72,14 +72,14 @@ class DefinitionCompileTest extends TestCaseDefinition
                     ->end()
                     ->defineParameter('params')
                         ->defineDependency((new CollectionReference([
-                            new CollectionItem(new ConstantReference('PHP_VERSION'), 1),
-                            'sdf' => 33,
-                            'sdf1' => new ConstantReference('PHP_MAJOR_VERSION'),
-                            'sdf2' => new StringReference('value'),
-                            3333 => 5555
-                        ]))->addItem(3333, new ConstantReference('PHP_MINOR_VERSION'))
-                        ->addItem('sdf')
-                        ->addItem('sdf', 'dsddd'))
+                            CollectionItem::create(new ConstantReference('PHP_VERSION'), 1),
+                            'key0' => 33,
+                            'key1' => new ConstantReference('PHP_MAJOR_VERSION'),
+                            'kye2' => new StringReference('value'),
+                            1=> 5555
+                        ]))->addItem(CollectionItem::create(2, new ConstantReference('PHP_MINOR_VERSION')))
+                        ->addItem(CollectionItem::create(3, 'sdf'))
+                        ->addItem(CollectionItem::create('key3', 'dsddd')))
                     ->end()
                     ->defineParameter('id')
                         ->defineDependency(new ConstantReference('PHP_RELEASE_VERSION'))

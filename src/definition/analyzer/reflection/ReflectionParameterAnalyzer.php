@@ -13,15 +13,9 @@ use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\ParameterDefinition;
-use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
-use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
-use samsonframework\container\definition\reference\FloatReference;
-use samsonframework\container\definition\reference\IntegerReference;
-use samsonframework\container\definition\reference\NullReference;
-use samsonframework\container\definition\reference\StringReference;
 use samsonframework\container\definition\reference\UndefinedReference;
 
 /**
@@ -69,7 +63,7 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
                         // There is some php types
                     } else {
                         $parameterDefinition->setDependency(
-                            CollectionItem::convertValueToReference($reflectionParameter->getDefaultValue())
+                            CollectionReference::convertValueToReference($reflectionParameter->getDefaultValue())
                         );
                     }
                     // There is class dependency
