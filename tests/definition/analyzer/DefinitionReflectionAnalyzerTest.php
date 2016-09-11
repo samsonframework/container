@@ -117,16 +117,16 @@ class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
 //        $this->callAnalyze($definitionBuilder);
 //    }
 
-    public function testWrongParameterName()
-    {
-        $this->expectException(ParameterNotFoundException::class);
-
-        $definitionBuilder = new DefinitionBuilder();
-
-        $definitionBuilder->addDefinition(Car::class)
-            ->defineConstructor()
-                ->defineParameter('sdfsdf')->end()
-            ->end();
-        $this->callAnalyze($definitionBuilder);
-    }
+//    public function testWrongParameterName()
+//    {
+//        $this->expectException(ParameterNotFoundException::class);
+//
+//        $definitionBuilder = new DefinitionBuilder();
+//
+//        $definitionBuilder->addDefinition(Car::class)
+//            ->defineConstructor()
+//                ->defineParameter('sdfsdf')->end()
+//            ->end();
+//        $this->callAnalyze($definitionBuilder);
+//    }
 }

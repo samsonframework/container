@@ -175,9 +175,9 @@ class DefinitionAnalyzer
             $parameterDefinition = null;
             $parameterName = $reflectionParameter->getName();
             // Check if parameter exists in method
-            if ($methodDefinition && !array_key_exists($parameterName, $methodDefinition->getParametersCollection())) {
-                throw new ParameterNotFoundException();
-            }
+//            if ($methodDefinition && !array_key_exists($parameterName, $methodDefinition->getParametersCollection())) {
+//                throw new ParameterNotFoundException();
+//            }
             // Analyze parameters
             foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
                 if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {
@@ -186,7 +186,7 @@ class DefinitionAnalyzer
                     array_key_exists($parameterName, $methodDefinition->getParametersCollection())
                         ? $methodDefinition->getParametersCollection()[$parameterName]
                         : null;
-                    $parameterAnalyzer->analyze($this, $reflectionParameter, $classDefinition, $parameterDefinition);
+                    $parameterAnalyzer->analyze($this, $reflectionParameter, $classDefinition, $methodDefinition, $parameterDefinition);
                 } else {
                     throw new WrongAnalyzerTypeException(sprintf(
                         'Analyzer "%s" should implements ParameterAnalyzerInterface',

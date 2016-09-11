@@ -19,8 +19,10 @@ use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
 use samsonframework\container\definition\reference\StringReference;
+use samsonframework\container\tests\classes\annotation\ProductClass;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;
+use samsonframework\container\tests\classes\Leg;
 use samsonframework\container\tests\classes\SlowDriver;
 use samsonframework\container\tests\classes\WheelController;
 use samsonframework\container\tests\TestCaseDefinition;
@@ -85,12 +87,15 @@ class DefinitionGeneratorTest extends TestCaseDefinition
                 ->end()
                 ->defineMethod('setLeg')
                     ->defineParameter('leg')
-                        ->defineDependency(new ClassReference(SlowDriver::class))
+                        ->defineDependency(new ClassReference(Leg::class))
                     ->end()
                 ->end()
                 ->defineProperty('car')
                     ->defineDependency(new ClassReference(Car::class))
                 ->end()
+            ->end()
+            ->addDefinition(ProductClass::class)
+                ->defineConstructor()->end()
             ->end()
         ;
 

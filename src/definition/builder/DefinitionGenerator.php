@@ -14,6 +14,7 @@ use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
+use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\reference\StringReference;
@@ -91,7 +92,7 @@ class DefinitionGenerator
             foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
                 // Constructor is not a method skip it
                 if ($methodDefinition->getMethodName() !== '__construct') {
-                    $methodGenerator->defLine($this->generateSetters($methodDefinition));
+                    $methodGenerator->defLine($this->generateSetters($classDefinition, $methodDefinition));
                 }
             }
 
@@ -207,15 +208,26 @@ class DefinitionGenerator
     /**
      * Generate setters for class
      *
+     * @param ClassDefinition $classDefinition
      * @param MethodDefinition $methodDefinition
      * @return string
      * @throws ReferenceNotImplementsException
      */
-    protected function generateSetters(MethodDefinition $methodDefinition): string
+    protected function generateSetters(ClassDefinition $classDefinition, MethodDefinition $methodDefinition): string
     {
+        $className = $classDefinition->getClassName();
         $methodName = $methodDefinition->getMethodName();
         $arguments = $this->generateArguments($methodDefinition);
-        return "\t\$temp->$methodName($arguments);";
+        // Call method by reflection
+        if (!$methodDefinition->isPublic()) {
+            $isEmptyArguments = count($methodDefinition->getParametersCollection()) === 0;
+            return "\t\$method = (new \\ReflectionClass('$className'))->getMethod('$methodName');" .
+            "\n\t\t\t\$method->setAccessible(true);" .
+            "\n\t\t\t\$method->invoke(\$temp" . ($isEmptyArguments ? '' : ", $arguments") . ');' .
+            "\n\t\t\t\$method->setAccessible(false);";
+        } else {
+            return "\t\$temp->$methodName($arguments);";
+        }
     }
 
     /**
@@ -272,6 +284,8 @@ class DefinitionGenerator
         if ($reference instanceof ClassReference) {
             $value = $reference->getClassName();
             return "\$this->logic('$value')";
+        } elseif ($reference instanceof NullReference) {
+            return 'null';
         } elseif ($reference instanceof ServiceReference) {
             $value = $reference->getName();
             return "\$this->logic('$value')";
@@ -326,7 +340,9 @@ class DefinitionGenerator
             $string = rtrim($string, ', ');
             return $string . ']';
         } else {
-            throw new ReferenceNotImplementsException();
+            throw new ReferenceNotImplementsException(sprintf(
+                'Class "%s" does not have correct implementation in generator', get_class($reference)
+            ));
         }
     }
 }

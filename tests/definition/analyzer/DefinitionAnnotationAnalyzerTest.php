@@ -71,15 +71,15 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
         static::assertEquals(Car::class, $parameterDefinition->getDependency()->getClassName());
     }
 
-    public function testMethodAnnotationsWrongConstruct()
-    {
-        $this->expectException(ParameterNotFoundException::class);
-
-        new InjectClass('');
-
-        $definitionBuilder = new DefinitionBuilder();
-
-        $definitionBuilder->addDefinition(WrongPropClass::class)->end();
-        $this->callAnalyze($definitionBuilder);
-    }
+//    public function testMethodAnnotationsWrongConstruct()
+//    {
+//        $this->expectException(ParameterNotFoundException::class);
+//
+//        new InjectClass('');
+//
+//        $definitionBuilder = new DefinitionBuilder();
+//
+//        $definitionBuilder->addDefinition(WrongPropClass::class)->end();
+//        $this->callAnalyze($definitionBuilder);
+//    }
 }

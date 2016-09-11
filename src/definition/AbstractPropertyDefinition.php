@@ -9,6 +9,7 @@ namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
+use samsonframework\container\definition\reference\UndefinedReference;
 
 /**
  * Class AbstractPropertyDefinition
@@ -25,7 +26,7 @@ abstract class AbstractPropertyDefinition extends AbstractDefinition
     {
         parent::__construct($parentDefinition);
 
-        $this->dependency = new NullReference();
+        $this->dependency = new UndefinedReference();
     }
 
     /**
