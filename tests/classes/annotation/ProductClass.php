@@ -9,7 +9,7 @@ use samsonframework\container\tests\classes\Shoes;
 
 class ProductClass
 {
-    public function __construct(Shoes $shoes)
+    public function __construct(Shoes $shoes, $val = 'sdf', string $val1 = 'sdfsdfkj', array $arr = [])
     {
     }
 }

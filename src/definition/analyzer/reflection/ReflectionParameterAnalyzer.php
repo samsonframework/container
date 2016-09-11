@@ -47,7 +47,9 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
             if ($reflectionParameter->isDefaultValueAvailable()) {
                 $parameterDefinition->setValue($reflectionParameter->getDefaultValue());
             }
-            $parameterDefinition->setTypeHint($reflectionParameter->getType());
+            if ($reflectionParameter->getType()) {
+                $parameterDefinition->setTypeHint($reflectionParameter->getType());
+            }
             $parameterDefinition->setIsOptional($reflectionParameter->isOptional());
 
             $dependency = $parameterDefinition->getDependency();
