@@ -94,7 +94,7 @@ class DefinitionCompiler
         }
 
         // Get container code
-        $code = $this->generator->generateClass($definitionBuilder->getDefinitionCollection());
+        $code = $this->generator->generateClass($definitionBuilder);
         // Get file path
         $containerFilePath = rtrim($containerDir, '/') . '/' . $containerName . '.php';
         // Save file

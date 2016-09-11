@@ -15,12 +15,14 @@ use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\builder\DefinitionCompiler;
 use samsonframework\container\definition\builder\DefinitionGenerator;
 use samsonframework\container\definition\parameter\ParameterBuilder;
+use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
 use samsonframework\container\definition\reference\IntegerReference;
 use samsonframework\container\definition\reference\NullReference;
+use samsonframework\container\definition\reference\ParameterReference;
 use samsonframework\container\definition\reference\StringReference;
 use samsonframework\container\tests\classes\annotation\ProductClass;
 use samsonframework\container\tests\classes\Car;
@@ -51,11 +53,14 @@ class DefinitionGeneratorTest extends TestCaseDefinition
 
         $definitionBuilder
 //            ->addDefinition(SlowDriver::class)->end()
+            ->defineParameter('key', new StringReference('value'))
+            ->defineParameter('key1', new BoolReference(true))
+            ->defineParameter('slow_driver', new ClassReference(SlowDriver::class))->end()
             ->addDefinition(Car::class)
                 ->defineIsSingleton()
                 ->defineConstructor()
                     ->defineParameter('driver')
-                        ->defineDependency(new ClassReference(SlowDriver::class))
+                        ->defineDependency(new ParameterReference('slow_driver'))
                     ->end()
                 ->end()
                 ->defineProperty('driver')
@@ -109,7 +114,7 @@ class DefinitionGeneratorTest extends TestCaseDefinition
 
         $namespace = (new \ReflectionClass(self::class))->getNamespaceName();
         /** @var ContainerInterface $container */
-        $container = $compiler->compile($definitionBuilder, 'ContainerGeneratorTest', $namespace, __DIR__ . '/../../generated');
+        $container = $compiler->compile($definitionBuilder, 'ContainerGeneratorTest1', $namespace, __DIR__ . '/../../generated');
         static::assertInstanceOf(WheelController::class, $container->get(WheelController::class));
     }
 }

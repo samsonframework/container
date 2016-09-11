@@ -12,12 +12,12 @@ use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
-use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
 use samsonframework\container\definition\reference\FloatReference;
 use samsonframework\container\definition\reference\IntegerReference;
 use samsonframework\container\definition\reference\NullReference;
+use samsonframework\container\definition\reference\ParameterReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\reference\StringReference;
@@ -56,13 +56,33 @@ class DefinitionGenerator
     /**
      * Compile and get container
      *
-     * @param ClassDefinition[] $classDefinitionCollection
+     * @param DefinitionBuilder $definitionBuilder
      * @return string Get container code
      * @throws ReferenceNotImplementsException
      * @throws \InvalidArgumentException
      */
-    public function generateClass(array $classDefinitionCollection): string
+    public function generateClass(DefinitionBuilder $definitionBuilder): string
     {
+        // Generate parameters if exists
+        if (count($definitionBuilder->getParameterCollection())) {
+            $parameterMethodGenerator = $this->generator
+                ->defMethod('parameter')
+                ->defProtected()
+                ->defArgument('parameterName');
+
+            $isFirstCondition = true;
+            // Generate parameters
+            foreach ($definitionBuilder->getParameterCollection() as $parameterName => $reference) {
+                $parameterMethodGenerator->defLine(
+                    $this->generateParameterCondition($parameterName, $reference, $isFirstCondition)
+                );
+                $isFirstCondition = false;
+            }
+
+            // Close method
+            $parameterMethodGenerator->end();
+        }
+
         $methodGenerator = $this->generator
             ->defMethod('logic')
             ->defProtected()
@@ -72,7 +92,7 @@ class DefinitionGenerator
 
         $isFirstCondition = true;
         /** @var ClassDefinition $classDefinition */
-        foreach ($classDefinitionCollection as $classDefinition) {
+        foreach ($definitionBuilder->getDefinitionCollection() as $classDefinition) {
 
             $className = $classDefinition->getClassName();
             $serviceName = $classDefinition->getServiceName();
@@ -118,6 +138,28 @@ class DefinitionGenerator
         $methodGenerator->end();
 
         return "<?php \n" . $this->generator->code();
+    }
+
+    /**
+     * Generate start if parameter condition with smart if/else creation
+     *
+     * @param string $parameterName
+     * @param ReferenceInterface $reference
+     * @param bool $isFirstCondition
+     * @return string
+     * @throws ReferenceNotImplementsException
+     */
+    protected function generateParameterCondition(
+        string $parameterName,
+        ReferenceInterface $reference,
+        bool $isFirstCondition = false
+    ): string
+    {
+        // If call this method first time then generate simple if or elseif construction
+        $ifCondition = $isFirstCondition ? 'if' : 'elseif';
+        return "$ifCondition (\$parameterName === '$parameterName') {\n" .
+        "\t\t\treturn " . $this->resolveDependency($reference) . ";\n" .
+        "\t\t}";
     }
 
     /**
@@ -304,6 +346,9 @@ class DefinitionGenerator
         } elseif ($reference instanceof IntegerReference) {
             $value = $reference->getValue();
             return "$value";
+        } elseif ($reference instanceof ParameterReference) {
+            $value = $reference->getParameterName();
+            return "\$this->parameter('$value')";
         } elseif ($reference instanceof ConstantReference) {
             $value = $reference->getValue();
             return "$value";
