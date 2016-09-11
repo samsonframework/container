@@ -11,6 +11,10 @@ use samsonframework\container\definition\AbstractDefinition;
 use samsonframework\container\definition\ClassBuilderInterface;
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
+use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
+use samsonframework\container\definition\parameter\ParameterBuilder;
+use samsonframework\container\definition\parameter\ParameterBuilderInterface;
+use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
  * Class DefinitionBuilder
@@ -21,6 +25,35 @@ class DefinitionBuilder extends AbstractDefinition
 {
     /** @var  ClassDefinition[] Definition collection */
     protected $definitionCollection = [];
+    /** @var  ParameterBuilder */
+    protected $parameterBuilder;
+
+    /**
+     * DefinitionBuilder constructor.
+     *
+     * @param ParameterBuilder $parameterBuilder
+     * @param AbstractDefinition|null $parentDefinition
+     */
+    public function __construct(ParameterBuilder $parameterBuilder, AbstractDefinition $parentDefinition = null)
+    {
+        parent::__construct($parentDefinition);
+
+        $this->parameterBuilder = $parameterBuilder;
+        $this->parameterBuilder->setParentDefinition($this);
+    }
+
+    /**
+     * Define parameters
+     *
+     * @param string $name
+     * @param ReferenceInterface $reference
+     * @return ParameterBuilderInterface
+     * @throws ParameterAlreadyExistsException
+     */
+    public function defineParameter(string $name, ReferenceInterface $reference): ParameterBuilderInterface
+    {
+        return $this->parameterBuilder->defineParameter($name, $reference);
+    }
 
     /**
      * Add new class definition
@@ -67,5 +100,13 @@ class DefinitionBuilder extends AbstractDefinition
     public function getDefinitionCollection(): array
     {
         return $this->definitionCollection;
+    }
+
+    /**
+     * @return ReferenceInterface[]
+     */
+    public function getParameterCollection(): array
+    {
+        return $this->parameterBuilder->getParameterCollection();
     }
 }

@@ -7,11 +7,14 @@ namespace samsonframework\container\tests\definition;
 
 use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
+use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\ParameterDefinition;
+use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\exception\ParentDefinitionNotFoundException;
+use samsonframework\container\definition\reference\StringReference;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\CarController;
 use samsonframework\container\tests\classes\FastDriver;
@@ -24,7 +27,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     public function testAddDefinition()
     {
         $class = Car::class;
-        $builder = (new DefinitionBuilder())
+        $builder = (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class, 'car')->end();
 
         static::assertEquals($class, $this->getClassDefinition($builder, $class)->getClassName());
@@ -34,7 +37,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     public function testConstructor()
     {
         $class = Car::class;
-        $builder = (new DefinitionBuilder())
+        $builder = (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class, 'car')
                 ->defineConstructor()
                     ->defineParameter('driver')
@@ -61,7 +64,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     {
         $class = CarController::class;
         $method = 'setLeg';
-        $builder = (new DefinitionBuilder())
+        $builder = (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class)
                 ->defineMethod($method)
                     ->defineParameter('leg')
@@ -86,7 +89,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     {
         $class = CarController::class;
         $property = 'car';
-        $builder = (new DefinitionBuilder())
+        $builder = (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class)
                 ->defineProperty($property)
                     ->defineDependency(new ClassReference(Leg::class))
@@ -105,7 +108,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
     public function testEndBuilder()
     {
         $class = CarController::class;
-        $builder = (new DefinitionBuilder())->addDefinition($class)->end();
+        $builder = (new DefinitionBuilder(new ParameterBuilder()))->addDefinition($class)->end();
 
         $this->expectException(ParentDefinitionNotFoundException::class);
         $builder->end();
@@ -116,8 +119,19 @@ class DefinitionBuilderTest extends TestCaseDefinition
         $this->expectException(ClassDefinitionAlreadyExistsException::class);
 
         $class = CarController::class;
-        (new DefinitionBuilder())
+        (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class)->end()
             ->addDefinition($class)->end();
+    }
+
+    public function testParameterDefinition()
+    {
+        $definitionBuilder = (new DefinitionBuilder(new ParameterBuilder()))
+            ->defineParameter('key1', new StringReference('value1'))
+            ->defineParameter('key2', new BoolReference(true))
+        ->end();
+
+        static::assertInstanceOf(StringReference::class, $definitionBuilder->getParameterCollection()['key1']);
+        static::assertInstanceOf(BoolReference::class, $definitionBuilder->getParameterCollection()['key2']);
     }
 }

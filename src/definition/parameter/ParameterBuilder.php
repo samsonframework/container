@@ -119,4 +119,14 @@ class ParameterBuilder extends AbstractDefinition implements ParameterBuilderInt
     {
         return $this->parameterCollection;
     }
+
+    /**
+     * Set parent definition
+     *
+     * @param AbstractDefinition $definition
+     */
+    public function setParentDefinition(AbstractDefinition $definition)
+    {
+        $this->parentDefinition = $definition;
+    }
 }

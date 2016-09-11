@@ -14,6 +14,7 @@ use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyA
 use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\builder\DefinitionCompiler;
 use samsonframework\container\definition\builder\DefinitionGenerator;
+use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
@@ -44,7 +45,7 @@ class DefinitionCompileTest extends TestCaseDefinition
     // This test if wrong but i can't test generated code
     public function testGetCode()
     {
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder
 //            ->addDefinition(SlowDriver::class)->end()

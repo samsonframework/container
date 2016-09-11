@@ -14,6 +14,7 @@ use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyA
 use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\builder\DefinitionCompiler;
 use samsonframework\container\definition\builder\DefinitionGenerator;
+use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
@@ -51,7 +52,7 @@ class DefinitionCompilerTest extends TestCaseDefinition
 
     public function testGetDependencies()
     {
-        $builder = new DefinitionBuilder();
+        $builder = new DefinitionBuilder(new ParameterBuilder());
         $builder->addDefinition(Car::class)
             ->defineConstructor()
                 ->defineParameter('driver')
@@ -71,7 +72,7 @@ class DefinitionCompilerTest extends TestCaseDefinition
 
     public function testCreatingDefinitions()
     {
-        $builder = new DefinitionBuilder();
+        $builder = new DefinitionBuilder(new ParameterBuilder());
         $builder->addDefinition(Car::class)
                 ->defineConstructor()
                     ->defineParameter('driver')

@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\scope\AbstractScope;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;

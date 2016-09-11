@@ -5,6 +5,7 @@
  */
 namespace samsonframework\container\tests\definition\definition;
 
+use samsonframework\container\definition\builder\DefinitionBuilder;
 use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
 use samsonframework\container\definition\parameter\exception\ParameterNotFoundException;
 use samsonframework\container\definition\parameter\ParameterBuilder;
@@ -151,5 +152,17 @@ class ParameterBuilderTest extends TestCaseDefinition
             ->defineParameter('param2', new FloatReference(2.2));
 
         $parameterBuilder->changeParameter('param_missing', new CollectionReference());
+    }
+
+    public function testSetParentDefinition()
+    {
+        $parameterBuilder = new ParameterBuilder();
+        $builder = new DefinitionBuilder($parameterBuilder);
+
+        $parameterBuilder
+            ->defineParameter('param1', new StringReference('value1'))
+            ->defineParameter('param2', new FloatReference(2.2));
+
+        static::assertSame($builder, $parameterBuilder->getParentDefinition());
     }
 }

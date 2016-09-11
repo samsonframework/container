@@ -12,6 +12,7 @@ use samsonframework\container\definition\analyzer\reflection\ReflectionMethodAna
 use samsonframework\container\definition\analyzer\reflection\ReflectionParameterAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyAnalyzer;
 use samsonframework\container\definition\builder\DefinitionBuilder;
+use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\classes\FastDriver;
@@ -37,7 +38,7 @@ class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
 
     public function testAddDefinition()
     {
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder->addDefinition(Car::class)
             ->defineConstructor()
@@ -72,7 +73,7 @@ class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
 
     public function testPropertyDefaultValue()
     {
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder->addDefinition(WheelController::class)
             ->defineMethod('setDriver')
@@ -89,7 +90,7 @@ class DefinitionReflectionAnalyzerTest extends TestCaseDefinition
     {
         $this->expectException(\ReflectionException::class);
 
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder->addDefinition('sdf');
         $this->callAnalyze($definitionBuilder);

@@ -16,8 +16,8 @@ use samsonframework\container\definition\analyzer\reflection\ReflectionMethodAna
 use samsonframework\container\definition\analyzer\reflection\ReflectionParameterAnalyzer;
 use samsonframework\container\definition\analyzer\reflection\ReflectionPropertyAnalyzer;
 use samsonframework\container\definition\builder\DefinitionBuilder;
+use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\tests\classes\annotation\PropClass;
-use samsonframework\container\tests\classes\annotation\WrongPropClass;
 use samsonframework\container\tests\classes\Car;
 use samsonframework\container\tests\TestCaseDefinition;
 
@@ -42,7 +42,7 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
     {
         new InjectClass('');
 
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder->addDefinition(PropClass::class)->end();
 
@@ -61,7 +61,7 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
     {
         new InjectClass('');
 
-        $definitionBuilder = new DefinitionBuilder();
+        $definitionBuilder = new DefinitionBuilder(new ParameterBuilder());
 
         $definitionBuilder->addDefinition(PropClass::class)->end();
 
