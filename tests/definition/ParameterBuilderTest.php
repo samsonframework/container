@@ -5,15 +5,13 @@
  */
 namespace samsonframework\container\tests\definition\definition;
 
+use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
+use samsonframework\container\definition\parameter\exception\ParameterNotFoundException;
 use samsonframework\container\definition\parameter\ParameterBuilder;
-use samsonframework\container\definition\reference\BoolReference;
-use samsonframework\container\definition\reference\CollectionItem;
-use samsonframework\container\definition\reference\ConstantReference;
+use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\FloatReference;
 use samsonframework\container\definition\reference\IntegerReference;
 use samsonframework\container\definition\reference\StringReference;
-use samsonframework\container\definition\scope\ControllerScope;
-use samsonframework\container\definition\scope\ServiceScope;
 use samsonframework\container\tests\TestCaseDefinition;
 
 
@@ -23,8 +21,7 @@ class ParameterBuilderTest extends TestCaseDefinition
     {
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
-            ->defineParameter('param1', new StringReference('value1'))
-        ->end();
+            ->defineParameter('param1', new StringReference('value1'));
 
         static::assertCount(1, $parameterBuilder->getParameterCollection());
         static::assertInstanceOf(StringReference::class, $parameterBuilder->get('param1'));
@@ -36,8 +33,7 @@ class ParameterBuilderTest extends TestCaseDefinition
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
             ->defineParameter('param2', new FloatReference(2.2))
-            ->defineParameter('param3', new IntegerReference(3))
-        ->end();
+            ->defineParameter('param3', new IntegerReference(3));
 
         static::assertCount(3, $parameterBuilder->getParameterCollection());
         static::assertInstanceOf(StringReference::class, $parameterBuilder->get('param1'));
@@ -49,8 +45,7 @@ class ParameterBuilderTest extends TestCaseDefinition
     {
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
-            ->defineParameter('param1', new StringReference('value1'))
-            ->end();
+            ->defineParameter('param1', new StringReference('value1'));
 
         static::assertCount(1, $parameterBuilder->getParameterCollection());
         static::assertInstanceOf(StringReference::class, $parameterBuilder->get('param1'));
@@ -65,8 +60,7 @@ class ParameterBuilderTest extends TestCaseDefinition
         $parameterBuilder
             ->add('param1', new StringReference('value1'))
             ->add('param2', new FloatReference(2.2))
-            ->add('param3', new IntegerReference(3))
-        ->end();
+            ->add('param3', new IntegerReference(3));
 
         static::assertCount(3, $parameterBuilder->getParameterCollection());
         static::assertInstanceOf(StringReference::class, $parameterBuilder->get('param1'));
@@ -80,8 +74,7 @@ class ParameterBuilderTest extends TestCaseDefinition
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
             ->defineParameter('param2', new FloatReference(2.2))
-            ->defineParameter('param3', new IntegerReference(3))
-        ->end();
+            ->defineParameter('param3', new IntegerReference(3));
 
         static::assertTrue($parameterBuilder->has('param1'));
     }
@@ -92,49 +85,45 @@ class ParameterBuilderTest extends TestCaseDefinition
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
             ->defineParameter('param2', new FloatReference(2.2))
-            ->defineParameter('param3', new IntegerReference(3))
-        ->end();
+            ->defineParameter('param3', new IntegerReference(3));
 
-        static::assertCount(3, $parameterBuilder->getCollection());
+        static::assertCount(3, $parameterBuilder->getParameterCollection());
         static::assertTrue($parameterBuilder->has('param1'));
 
         $parameterBuilder->remove('param1');
 
-        static::assertCount(2, $parameterBuilder->getCollection());
+        static::assertCount(2, $parameterBuilder->getParameterCollection());
         static::assertFalse($parameterBuilder->has('param1'));
     }
 
     public function testDefineParameterTwice()
     {
-        $this->expectException();
+        $this->expectException(ParameterAlreadyExistsException::class);
 
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
-            ->defineParameter('param1', new FloatReference(2.2))
-        ->end();
+            ->defineParameter('param1', new FloatReference(2.2));
     }
 
     public function testAddParameterTwice()
     {
-        $this->expectException();
+        $this->expectException(ParameterAlreadyExistsException::class);
 
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
             ->add('param1', new StringReference('value1'))
-            ->add('param1', new FloatReference(2.2))
-        ->end();
+            ->add('param1', new FloatReference(2.2));
     }
 
     public function testRemoveMissing()
     {
-        $this->expectException();
+        $this->expectException(ParameterNotFoundException::class);
 
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
-            ->defineParameter('param2', new FloatReference(2.2))
-        ->end();
+            ->defineParameter('param2', new FloatReference(2.2));
 
         $parameterBuilder->remove('param1');
         $parameterBuilder->remove('param1');
@@ -142,27 +131,25 @@ class ParameterBuilderTest extends TestCaseDefinition
 
     public function testGetMissing()
     {
-        $this->expectException();
+        $this->expectException(ParameterNotFoundException::class);
 
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
-            ->defineParameter('param2', new FloatReference(2.2))
-            ->end();
+            ->defineParameter('param2', new FloatReference(2.2));
 
         $parameterBuilder->get('missing_parameter');
     }
 
     public function testChangeMissingError()
     {
-        $this->expectException();
+        $this->expectException(ParameterNotFoundException::class);
 
         $parameterBuilder = new ParameterBuilder();
         $parameterBuilder
             ->defineParameter('param1', new StringReference('value1'))
-            ->defineParameter('param2', new FloatReference(2.2))
-            ->end();
+            ->defineParameter('param2', new FloatReference(2.2));
 
-        $parameterBuilder->get('missing_parameter');
+        $parameterBuilder->changeParameter('param_missing', new CollectionReference());
     }
 }
