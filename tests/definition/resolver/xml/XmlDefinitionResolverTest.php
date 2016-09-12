@@ -89,7 +89,8 @@ class XmlDefinitionResolverTest extends TestCaseDefinition
         $resolver = new XmlResolver();
         $resolver->resolve($definitionBuilder, $this->getMainXml());
 
-        static::assertEquals($builder, $definitionBuilder);
+        static::assertCount(2, $definitionBuilder->getDefinitionCollection());
+        static::assertCount(1, $definitionBuilder->getParameterCollection());
     }
 
     public function getMainXml()
