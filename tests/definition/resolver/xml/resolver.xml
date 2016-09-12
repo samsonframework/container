@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dependencies>
+    <definition class="\PDO">
+        <constructor>
+            <arguments>
+                <dsn type="string">mysql:host=localhost;port=3306;dbname=stylelike.io;charset=UTF8</dsn>
+                <username type="string">samsonos</username>
+                <passwd type="string">AzUzrcVe4LJJre9f</passwd>
+                <options type="collection">
+                    <item>
+                        <key type="constant">\PDO::ATTR_ERRMODE</key>
+                        <value type="parameter">pdo_exception</value>
+                    </item>
+                    <item>
+                        <key type="constant">\PDO::ATTR_DEFAULT_FETCH_MODE</key>
+                        <value type="constant">\PDO::FETCH_ASSOC</value>
+                    </item>
+                </options>
+            </arguments>
+        </constructor>
+    </definition>
+    <definition class="samsonframework\container\tests\classes\annotation\XmlProductClass">
+        <constructor>
+            <arguments>
+                <shoes type="class">samsonframework\container\tests\classes\Shoes</shoes>
+                <val type="string">value</val>
+                <val1 type="string">value1</val1>
+                <arr type="collection">
+                    <item>
+                        <key type="string">param</key>
+                        <value type="string">value</value>
+                    </item>
+                </arr>
+            </arguments>
+        </constructor>
+        <methods>
+            <setLeg>
+                <arguments>
+                    <driver type="class">samsonframework\container\tests\classes\SlowDriver</driver>
+                </arguments>
+            </setLeg>
+        </methods>
+        <properties>
+            <driver type="class">samsonframework\container\tests\classes\SlowDriver</driver>
+        </properties>
+    </definition>
+</dependencies>
