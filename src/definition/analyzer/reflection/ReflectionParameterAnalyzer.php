@@ -62,8 +62,7 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
                         $parameterDefinition->setDependency(
                             new ConstantReference($reflectionParameter->getDefaultValueConstantName())
                         );
-                        // There is some php types
-                    } else {
+                    } else { // There is some php types
                         $parameterDefinition->setDependency(
                             CollectionReference::convertValueToReference($reflectionParameter->getDefaultValue())
                         );

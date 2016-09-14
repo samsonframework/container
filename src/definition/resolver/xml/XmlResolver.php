@@ -18,6 +18,7 @@ use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
+use samsonframework\container\definition\reference\FloatReference;
 use samsonframework\container\definition\reference\IntegerReference;
 use samsonframework\container\definition\reference\NullReference;
 use samsonframework\container\definition\reference\ParameterReference;
@@ -214,6 +215,8 @@ class XmlResolver
             case 'int':
             case 'integer':
                 return new IntegerReference($value);
+            case 'float':
+                return new FloatReference($value);
             case 'boolean':
             case 'bool':
                 return new BoolReference($value);
