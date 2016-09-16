@@ -24,15 +24,18 @@ class AnnotationMethodAnalyzer extends AbstractAnnotationAnalyzer implements Met
         ClassDefinition $classDefinition,
         MethodDefinition $methodDefinition = null
     ) {
-        // Define property if not exists
-        if (!$methodDefinition) {
-            $methodDefinition = $classDefinition->defineMethod($reflectionMethod->getName());
-        }
         // Resolve annotations
         $annotations = $this->reader->getMethodAnnotations($reflectionMethod);
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof ResolveMethodInterface) {
-                $annotation->resolveMethod($analyzer, $reflectionMethod, $classDefinition, $methodDefinition);
+        // Create method definition if annotation is exists
+        if (count($annotations)) {
+            // Define property if not exists
+            if (!$methodDefinition) {
+                $methodDefinition = $classDefinition->defineMethod($reflectionMethod->getName());
+            }
+            foreach ($annotations as $annotation) {
+                if ($annotation instanceof ResolveMethodInterface) {
+                    $annotation->resolveMethod($analyzer, $reflectionMethod, $classDefinition, $methodDefinition);
+                }
             }
         }
     }

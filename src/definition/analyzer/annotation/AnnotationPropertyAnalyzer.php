@@ -24,15 +24,17 @@ class AnnotationPropertyAnalyzer extends AbstractAnnotationAnalyzer implements P
         ClassDefinition $classDefinition,
         PropertyDefinition $propertyDefinition = null
     ) {
-        // Define property if not exists
-        if (!$propertyDefinition) {
-            $propertyDefinition = $classDefinition->defineProperty($reflectionProperty->getName());
-        }
         // Resolve annotations
         $annotations = $this->reader->getPropertyAnnotations($reflectionProperty);
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof ResolvePropertyInterface) {
-                $annotation->resolveProperty($analyzer, $reflectionProperty, $classDefinition, $propertyDefinition);
+        if (count($annotations)) {
+            // Define property if not exists
+            if (!$propertyDefinition) {
+                $propertyDefinition = $classDefinition->defineProperty($reflectionProperty->getName());
+            }
+            foreach ($annotations as $annotation) {
+                if ($annotation instanceof ResolvePropertyInterface) {
+                    $annotation->resolveProperty($analyzer, $reflectionProperty, $classDefinition, $propertyDefinition);
+                }
             }
         }
     }

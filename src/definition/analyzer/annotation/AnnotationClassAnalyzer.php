@@ -18,5 +18,10 @@ class AnnotationClassAnalyzer extends AbstractAnnotationAnalyzer implements Clas
         ClassDefinition $classDefinition
     ) {
         $annotations = $this->reader->getClassAnnotations($reflectionClass);
+        foreach ($annotations as $annotation) {
+            if ($annotation instanceof ResolveClassInterface) {
+                $annotation->resolveClass($analyzer, $reflectionClass, $classDefinition);
+            }
+        }
     }
 }

@@ -76,9 +76,9 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
     }
 
     /**
-     * @return \ReflectionType
+     * @return \ReflectionType|null
      */
-    public function getTypeHint(): \ReflectionType
+    public function getTypeHint()
     {
         return $this->typeHint;
     }

@@ -12,7 +12,7 @@ namespace samsonframework\container\definition\reference;
  *
  * @package samsonframework\container\definition
  */
-class ClassReference implements ReferenceInterface
+class ClassReference implements ReferenceInterface, ReferenceDependencyInterface
 {
     /** @var string Class name */
     protected $className;

@@ -14,6 +14,7 @@ use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsE
 use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
 use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\parameter\ParameterBuilderInterface;
+use samsonframework\container\definition\reference\ReferenceDependencyInterface;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
 /**
@@ -54,6 +55,17 @@ class DefinitionBuilder extends AbstractDefinition
     {
         return $this->parameterBuilder->defineParameter($name, $reference);
     }
+
+//    public function defineTypeImplementer(
+//        ReferenceDependencyInterface $classTypeName,
+//        ReferenceDependencyInterface $classImpelementerName
+//    ): ParameterBuilderInterface
+//    {
+//        if () {
+//
+//        }
+//        return $this->parameterBuilder->defineParameter($name, $reference);
+//    }
 
     /**
      * Add new class definition

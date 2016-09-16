@@ -211,7 +211,11 @@ class DefinitionGenerator
     protected function generateConstructor(ClassDefinition $classDefinition): string
     {
         // TODO Fix adding slash before namespace
-        $className = '\\' . $classDefinition->getClassName();
+        if (strpos($classDefinition->getClassName(), '\\') === 0) {
+            $className = $classDefinition->getClassName();
+        } else {
+            $className = '\\' . $classDefinition->getClassName();
+        }
         $arguments = '';
         if (array_key_exists('__construct', $classDefinition->getMethodsCollection())) {
             $arguments .= $this->generateArguments($classDefinition->getMethodsCollection()['__construct']);

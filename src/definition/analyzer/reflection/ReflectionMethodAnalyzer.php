@@ -25,6 +25,9 @@ class ReflectionMethodAnalyzer implements MethodAnalyzerInterface
         ClassDefinition $classDefinition,
         MethodDefinition $methodDefinition = null
     ) {
+        if (!$methodDefinition && $reflectionMethod->getName() === '__construct') {
+            $methodDefinition = $classDefinition->defineConstructor();
+        }
         if ($methodDefinition) {
             // Set method metadata
             $methodDefinition->setModifiers($reflectionMethod->getModifiers());

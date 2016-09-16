@@ -13,6 +13,7 @@ use samsonframework\container\definition\exception\MethodDefinitionAlreadyExists
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
 use samsonframework\container\definition\MethodDefinition;
+use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
 use samsonframework\container\definition\reference\BoolReference;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionItem;
@@ -25,6 +26,7 @@ use samsonframework\container\definition\reference\ParameterReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\reference\StringReference;
+use samsonframework\container\definition\resolver\exception\FileNotFoundException;
 use samsonframework\container\definition\resolver\exception\ReferenceNotImplementsException;
 
 /**
@@ -42,10 +44,34 @@ class XmlResolver
     const INSTANCE_KEY = 'definition';
 
     /**
+     * Resolve file
+     *
+     * @param DefinitionBuilder $builder
+     * @param string $path
+     *
+     * @throws FileNotFoundException
+     * @throws ClassDefinitionAlreadyExistsException
+     * @throws \InvalidArgumentException
+     * @throws PropertyDefinitionAlreadyExistsException
+     * @throws ReferenceNotImplementsException
+     * @throws MethodDefinitionAlreadyExistsException
+     * @throws ParameterDefinitionAlreadyExistsException
+     * @throws ParameterAlreadyExistsException
+     */
+    public function resolveFile(DefinitionBuilder $builder, string $path)
+    {
+        if (!file_exists($path)) {
+            throw new FileNotFoundException($path);
+        }
+        $xml = file_get_contents($path);
+        $this->resolve($builder, $xml);
+    }
+
+    /**
      * Resolve xml code
      *
      * @param DefinitionBuilder $definitionBuilder
-     * @param $xml
+     * @param string $xml
      *
      * @throws ClassDefinitionAlreadyExistsException
      * @throws \InvalidArgumentException
@@ -53,9 +79,9 @@ class XmlResolver
      * @throws ReferenceNotImplementsException
      * @throws MethodDefinitionAlreadyExistsException
      * @throws ParameterDefinitionAlreadyExistsException
-     * @throws \samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException
+     * @throws ParameterAlreadyExistsException
      */
-    public function resolve(DefinitionBuilder $definitionBuilder, $xml)
+    public function resolve(DefinitionBuilder $definitionBuilder, string $xml)
     {
         /**
          * Iterate config and resolve single instance
@@ -128,7 +154,7 @@ class XmlResolver
      * @throws ParameterDefinitionAlreadyExistsException
      * @throws ReferenceNotImplementsException
      */
-    public function resolveConstructor(ClassDefinition $classDefinition, array $constructorArray)
+    protected function resolveConstructor(ClassDefinition $classDefinition, array $constructorArray)
     {
         $methodDefinition = $classDefinition->defineConstructor();
         if (array_key_exists('arguments', $constructorArray)) {
@@ -146,7 +172,7 @@ class XmlResolver
      * @throws ReferenceNotImplementsException
      * @throws PropertyDefinitionAlreadyExistsException
      */
-    public function resolveProperty(ClassDefinition $classDefinition, array $propertyArray, string $propertyName)
+    protected function resolveProperty(ClassDefinition $classDefinition, array $propertyArray, string $propertyName)
     {
         $propertyDefinition = $classDefinition->defineProperty($propertyName);
         $propertyDefinition->defineDependency($this->resolveDependency($propertyArray));
@@ -163,7 +189,7 @@ class XmlResolver
      * @throws ParameterDefinitionAlreadyExistsException
      * @throws ReferenceNotImplementsException
      */
-    public function resolveMethod(ClassDefinition $classDefinition, array $methodArray, string $methodName)
+    protected function resolveMethod(ClassDefinition $classDefinition, array $methodArray, string $methodName)
     {
         $methodDefinition = $classDefinition->defineMethod($methodName);
         if (array_key_exists('arguments', $methodArray)) {
@@ -180,7 +206,7 @@ class XmlResolver
      * @throws \InvalidArgumentException
      * @throws ReferenceNotImplementsException
      */
-    public function resolveArguments(MethodDefinition $methodDefinition, array $arguments)
+    protected function resolveArguments(MethodDefinition $methodDefinition, array $arguments)
     {
         foreach ($arguments as $argumentName => $argumentValue) {
             $methodDefinition
@@ -197,7 +223,7 @@ class XmlResolver
      * @throws \InvalidArgumentException
      * @throws ReferenceNotImplementsException
      */
-    public function resolveDependency($data): ReferenceInterface
+    protected function resolveDependency($data): ReferenceInterface
     {
         // Get value type
         $type = $data['@attributes']['type'] ?? 'string';
@@ -242,10 +268,11 @@ class XmlResolver
      *
      * @param array $data
      * @return CollectionReference
+     * @throws \samsonframework\container\definition\builder\exception\ReferenceNotImplementsException
      * @throws ReferenceNotImplementsException
      * @throws \InvalidArgumentException
      */
-    public function resolveCollection(array $data): CollectionReference
+    protected function resolveCollection(array $data): CollectionReference
     {
         $collection = new CollectionReference();
         if (array_key_exists('item', $data)) {

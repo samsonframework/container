@@ -12,7 +12,7 @@ namespace samsonframework\container\definition\reference;
  *
  * @package samsonframework\container\definition
  */
-class ServiceReference implements ReferenceInterface
+class ServiceReference implements ReferenceInterface, ReferenceDependencyInterface
 {
     /** @var string Service name */
     protected $name;

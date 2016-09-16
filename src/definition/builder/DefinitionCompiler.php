@@ -8,9 +8,11 @@
 namespace samsonframework\container\definition\builder;
 
 use samsonframework\container\ContainerInterface;
+use samsonframework\container\definition\AbstractPropertyDefinition;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
 use samsonframework\container\definition\analyzer\exception\WrongAnalyzerTypeException;
+use samsonframework\container\definition\builder\exception\ImplementerForTypeNotFoundException;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
 use samsonframework\container\definition\reference\ClassReference;
@@ -112,6 +114,7 @@ class DefinitionCompiler
      *
      * @param DefinitionBuilder $definitionBuilder
      * @return array
+     * @throws ImplementerForTypeNotFoundException
      */
     protected function getClassDependencies(DefinitionBuilder $definitionBuilder): array
     {
@@ -123,11 +126,11 @@ class DefinitionCompiler
                 // Iterate properties and get their dependencies
                 foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
                     // Add dependency to list if valid
-                    $this->addDependency($dependencyList, $propertyDefinition->getDependency());
+                    $this->addDependency($dependencyList, $propertyDefinition->getDependency(), $propertyDefinition);
                 }
                 foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
                     foreach ($methodDefinition->getParametersCollection() as $parameterDefinition) {
-                        $this->addDependency($dependencyList, $parameterDefinition->getDependency());
+                        $this->addDependency($dependencyList, $parameterDefinition->getDependency(), $parameterDefinition);
                     }
                 }
             }
@@ -141,6 +144,7 @@ class DefinitionCompiler
      * @param DefinitionBuilder $definitionBuilder
      * @param array $dependencyList
      * @throws ClassDefinitionAlreadyExistsException
+     * @throws ImplementerForTypeNotFoundException
      */
     protected function generateDefinitions(
         DefinitionBuilder $definitionBuilder,
@@ -155,17 +159,64 @@ class DefinitionCompiler
     }
 
     /**
+     * Check if class name is interface or abstract class
+     *
+     * @param string $className
+     * @return bool
+     */
+    protected function checkIfType(string $className): bool
+    {
+        $reflectionClass = new \ReflectionClass($className);
+        return $reflectionClass->isInterface() || $reflectionClass->isAbstract();
+    }
+
+    /**
+     * Get class which implements the interface
+     *
+     * @param string $interfaceName
+     * @return string
+     * @throws ImplementerForTypeNotFoundException
+     * TODO Add interface resolvers functionality
+     */
+    protected function resolveTypeImplementer(string $interfaceName): string
+    {
+        // Gather all interface implementations
+        foreach (get_declared_classes() as $class) {
+            $classImplements = class_implements($class);
+            if (in_array($interfaceName, $classImplements, true)) {
+                return $class;
+            }
+        }
+        throw new ImplementerForTypeNotFoundException(
+            sprintf('Type "%s" does not have some implementers', $interfaceName)
+        );
+    }
+
+    /**
      * Add dependencies which then will be use for automatic creation the definitions
      *
      * @param array $dependencyList
      * @param ReferenceInterface $reference
+     * @param AbstractPropertyDefinition $definition
      * @return array
+     * @throws ImplementerForTypeNotFoundException
      */
-    protected function addDependency(array &$dependencyList, ReferenceInterface $reference)
-    {
+    protected function addDependency(
+        array &$dependencyList,
+        ReferenceInterface $reference,
+        AbstractPropertyDefinition $definition
+    ) {
         // Add class dependency to list
         if ($reference instanceof ClassReference) {
-            $dependencyList[$reference->getClassName()] = $reference;
+            $className = $reference->getClassName();
+            // When there is not simple class then resolve it by type
+            if ($this->checkIfType($className)) {
+                $className = $this->resolveTypeImplementer($className);
+                $reference = new ClassReference($className);
+                // Set new implementer dependency instead of type one
+                $definition->setDependency($reference);
+            }
+            $dependencyList[$className] = $reference;
         }
     }
 }
