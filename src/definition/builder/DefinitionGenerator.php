@@ -217,7 +217,11 @@ class DefinitionGenerator
      * @param string|null $serviceName
      * @return string
      */
-    protected function generateStartIfCondition(bool $isFirstCondition, string $className, string $serviceName = null): string
+    protected function generateStartIfCondition(
+        bool $isFirstCondition,
+        string $className,
+        string $serviceName = null
+    ): string
     {
         // If call this method first time then generate simple if or elseif construction
         $ifCondition = $isFirstCondition ? 'if' : 'elseif';
@@ -260,12 +264,7 @@ class DefinitionGenerator
      */
     protected function generateConstructor(ClassDefinition $classDefinition): string
     {
-        // TODO Fix adding slash before namespace
-        if (strpos($classDefinition->getClassName(), '\\') === 0) {
-            $className = $classDefinition->getClassName();
-        } else {
-            $className = '\\' . $classDefinition->getClassName();
-        }
+        $className = $classDefinition->getClassName();
         $arguments = '';
         if (array_key_exists('__construct', $classDefinition->getMethodsCollection())) {
             $arguments .= $this->generateArguments($classDefinition->getMethodsCollection()['__construct']);
@@ -382,7 +381,6 @@ class DefinitionGenerator
     {
         if ($reference instanceof ClassReference) {
             $value = $reference->getClassName();
-//            $value = strpos($value, '\\') === 0 ? $value : '\\' . $value;
             return "\$this->logic('$value')";
         } elseif ($reference instanceof NullReference) {
             return 'null';

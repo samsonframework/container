@@ -32,6 +32,7 @@ class ClassReference implements ReferenceInterface, ReferenceDependencyInterface
      */
     public function getClassName(): string
     {
+        // If class name without slash add it
         if (strpos($this->className, '\\') !== 0) {
             return '\\' . $this->className;
         }

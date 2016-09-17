@@ -57,23 +57,13 @@ class DefinitionBuilder extends AbstractDefinition
         return $this->parameterBuilder->defineParameter($name, $reference);
     }
 
-//    public function defineTypeImplementer(
-//        ReferenceDependencyInterface $classTypeName,
-//        ReferenceDependencyInterface $classImpelementerName
-//    ): ParameterBuilderInterface
-//    {
-//        if () {
-//
-//        }
-//        return $this->parameterBuilder->defineParameter($name, $reference);
-//    }
-
     /**
      * Add new class definition
      *
      * @param $className
      * @param string $serviceName
      * @return ClassBuilderInterface
+     * @throws \InvalidArgumentException
      * @throws ClassDefinitionAlreadyExistsException
      */
     public function addDefinition($className, string $serviceName = null): ClassBuilderInterface

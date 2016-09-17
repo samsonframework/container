@@ -54,6 +54,7 @@ class DefinitionCompiler
      * @param $namespace
      * @param $containerDir
      * @return ContainerInterface
+     * @throws ImplementerForTypeNotFoundException
      * @throws ParameterNotFoundException
      * @throws ClassDefinitionAlreadyExistsException
      * @throws ReferenceNotImplementsException
@@ -119,17 +120,18 @@ class DefinitionCompiler
         $dependencyList = [];
         // Get dependencies which will be used for generation definitions
         foreach ($definitionBuilder->getDefinitionCollection() as $classDefinition) {
-            // When this class definition did not analyzed
-            if (true || !$classDefinition->isAnalyzed()) {
-                // Iterate properties and get their dependencies
-                foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
-                    // Add dependency to list if valid
-                    $this->addDependency($dependencyList, $propertyDefinition->getDependency(), $propertyDefinition);
-                }
-                foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
-                    foreach ($methodDefinition->getParametersCollection() as $parameterDefinition) {
-                        $this->addDependency($dependencyList, $parameterDefinition->getDependency(), $parameterDefinition);
-                    }
+            // Iterate properties and get their dependencies
+            foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
+                // Add dependency to list if valid
+                $this->addDependency($dependencyList, $propertyDefinition->getDependency(), $propertyDefinition);
+            }
+            foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
+                foreach ($methodDefinition->getParametersCollection() as $parameterDefinition) {
+                    $this->addDependency(
+                        $dependencyList,
+                        $parameterDefinition->getDependency(),
+                        $parameterDefinition
+                    );
                 }
             }
         }
@@ -143,6 +145,7 @@ class DefinitionCompiler
      * @param array $dependencyList
      * @throws ClassDefinitionAlreadyExistsException
      * @throws ImplementerForTypeNotFoundException
+     * @throws \InvalidArgumentException
      */
     protected function generateDefinitions(
         DefinitionBuilder $definitionBuilder,
