@@ -74,16 +74,13 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
                     !$parameterDefinition->getTypeHint()->isBuiltin()
                 ) {
                     $class = (string)$parameterDefinition->getTypeHint();
-                    $reflectionClass = new \ReflectionClass($class);
-                    $className = $reflectionClass->getName();
+//                    $reflectionClass = new \ReflectionClass($class);
+//                    $className = $reflectionClass->getName();
 //                    // TODO Fix pdo for example
-                    if ($reflectionClass->getNamespaceName() === '') {
-                        $className = '\\' . $className;
-                    }
-                    $parameterDefinition->setDependency(
-                        // TODO Fix slash
-                        new ClassReference($className)
-                    );
+//                    if ($reflectionClass->getNamespaceName() === '') {
+//                        $className = '\\' . $className;
+//                    }
+                    $parameterDefinition->setDependency(new ClassReference($class));
                 }
             }
         }

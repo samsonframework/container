@@ -53,7 +53,7 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
 //        $parameterDefinition = $this->getParameterDefinition($definitionBuilder, Car::class, '__construct', 'driver');
         $propertyDefinition = $this->getPropertyDefinition($definitionBuilder, PropClass::class, 'car');
 
-        static::assertEquals(Car::class, $propertyDefinition->getDependency()->getClassName());
+        static::assertEquals('\\' . Car::class, $propertyDefinition->getDependency()->getClassName());
         static::assertEquals(256, $propertyDefinition->getModifiers());
     }
 
@@ -68,7 +68,7 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
         $this->callAnalyze($definitionBuilder);
 
         $parameterDefinition = $this->getParameterDefinition($definitionBuilder, PropClass::class, '__construct', 'car');
-        static::assertEquals(Car::class, $parameterDefinition->getDependency()->getClassName());
+        static::assertEquals('\\' . Car::class, $parameterDefinition->getDependency()->getClassName());
     }
 
 //    public function testMethodAnnotationsWrongConstruct()

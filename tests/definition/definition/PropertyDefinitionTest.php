@@ -23,6 +23,6 @@ class PropertyDefinitionTest extends TestCaseDefinition
             ->defineDependency(new ClassReference($class));
 
         static::assertInstanceOf(ClassReference::class, $propertyDefinition->getDependency());
-        static::assertEquals(Car::class, $propertyDefinition->getDependency()->getClassName());
+        static::assertEquals('\\' . Car::class, $propertyDefinition->getDependency()->getClassName());
     }
 }

@@ -14,6 +14,7 @@ use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsE
 use samsonframework\container\definition\parameter\exception\ParameterAlreadyExistsException;
 use samsonframework\container\definition\parameter\ParameterBuilder;
 use samsonframework\container\definition\parameter\ParameterBuilderInterface;
+use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\ReferenceDependencyInterface;
 use samsonframework\container\definition\reference\ReferenceInterface;
 
@@ -84,7 +85,7 @@ class DefinitionBuilder extends AbstractDefinition
 
         // Create new definition
         $classDefinition = new ClassDefinition($this);
-        $classDefinition->setClassName($className);
+        $classDefinition->setClassName(new ClassReference($className));
         if ($serviceName) {
             $classDefinition->setServiceName($serviceName);
         }

@@ -183,7 +183,8 @@ class DefinitionCompiler
         // Gather all interface implementations
         foreach (get_declared_classes() as $class) {
             $classImplements = class_implements($class);
-            if (in_array($interfaceName, $classImplements, true)) {
+            // Remove slash for start of interface
+            if (in_array(ltrim($interfaceName, '\\'), $classImplements, true)) {
                 return $class;
             }
         }

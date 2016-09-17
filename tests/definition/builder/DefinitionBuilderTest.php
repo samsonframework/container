@@ -30,7 +30,7 @@ class DefinitionBuilderTest extends TestCaseDefinition
         $builder = (new DefinitionBuilder(new ParameterBuilder()))
             ->addDefinition($class, 'car')->end();
 
-        static::assertEquals($class, $this->getClassDefinition($builder, $class)->getClassName());
+        static::assertEquals('\\' . $class, $this->getClassDefinition($builder, $class)->getClassName());
         static::assertEquals('car', $this->getClassDefinition($builder, $class)->getServiceName());
     }
 

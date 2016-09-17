@@ -7,6 +7,7 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\scope\AbstractScope;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
@@ -196,12 +197,19 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     }
 
     /**
-     * @param string $className
+     * @param string|ClassReference $className
      * @return ClassDefinition
+     * @throws \InvalidArgumentException
      */
-    public function setClassName(string $className): ClassDefinition
+    public function setClassName($className): ClassDefinition
     {
-        $this->className = $className;
+        if ($className instanceof ClassReference) {
+            $this->className = $className->getClassName();
+        } elseif (is_string($className)) {
+            $this->className = $className;
+        } else {
+            throw new \InvalidArgumentException();
+        }
 
         return $this;
     }

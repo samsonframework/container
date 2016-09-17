@@ -22,6 +22,7 @@ use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\reference\StringReference;
 use samsonframework\generator\ClassGenerator;
+use samsonframework\generator\MethodGenerator;
 
 /**
  * Class DefinitionCompiler
@@ -90,9 +91,20 @@ class DefinitionGenerator
             ->defLine('static $singletonCollection = [];')
         ;
 
+        $scopes = [];
         $isFirstCondition = true;
         /** @var ClassDefinition $classDefinition */
         foreach ($definitionBuilder->getDefinitionCollection() as $classDefinition) {
+
+            // Get scopes
+            foreach ($classDefinition->getScopes() as $scope) {
+                $id = $scope::getId();
+                if (!array_key_exists($id, $scopes)) {
+                    $scopes[$id] = [];
+                }
+                // Store definition id
+                $scopes[$id][] = $classDefinition->getServiceName() ?: $classDefinition->getClassName();
+            }
 
             $className = $classDefinition->getClassName();
             $serviceName = $classDefinition->getServiceName();
@@ -137,7 +149,42 @@ class DefinitionGenerator
         // Close method
         $methodGenerator->end();
 
+        // Generate constructor
+        $constructorGenerator = $this->generator
+            ->defMethod('__construct');
+
+        // Generate scope list
+        $this->generateScopeList($constructorGenerator, $scopes);
+
+        // Close constructor
+        $constructorGenerator->end();
+
         return "<?php \n" . $this->generator->code();
+    }
+
+    /**
+     * Generate scope list
+     *
+     * @param MethodGenerator $constructorGenerator
+     * @param array $scopes
+     * @throws \InvalidArgumentException
+     */
+    protected function generateScopeList(MethodGenerator $constructorGenerator, array $scopes)
+    {
+        $constructorGenerator->defLine('$this->scopes = [');
+        /**
+         * @var string $scopeName
+         * @var array $ids
+         */
+        foreach ($scopes as $scopeName => $ids) {
+            $constructorGenerator->defLine("\t'$scopeName' => [");
+            // Iterate service ids
+            foreach ($ids as $id) {
+                $constructorGenerator->defLine("\t\t'$id',");
+            }
+            $constructorGenerator->defLine("\t]");
+        }
+        $constructorGenerator->defLine('];');
     }
 
     /**
@@ -176,7 +223,10 @@ class DefinitionGenerator
         $ifCondition = $isFirstCondition ? 'if' : 'elseif';
         // If service name exists then add it to condition
         $serviceCondition = $serviceName ? "\$classNameOrServiceName === '$serviceName' || " : '';
-        return "$ifCondition ($serviceCondition\$classNameOrServiceName === '$className') {";
+        // Get class name without slash
+        $classNameWithoutSlash = ltrim($className, '\\');
+        return "$ifCondition ($serviceCondition\$classNameOrServiceName === '$className'" .
+            " || \$classNameOrServiceName === '$classNameWithoutSlash') {";
     }
 
     /**
@@ -332,6 +382,7 @@ class DefinitionGenerator
     {
         if ($reference instanceof ClassReference) {
             $value = $reference->getClassName();
+//            $value = strpos($value, '\\') === 0 ? $value : '\\' . $value;
             return "\$this->logic('$value')";
         } elseif ($reference instanceof NullReference) {
             return 'null';
