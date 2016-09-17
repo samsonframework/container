@@ -6,9 +6,7 @@
  */
 namespace samsonframework\container\definition\analyzer;
 
-use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
 
 /**
  * Interface PropertyAnalyzerInterface

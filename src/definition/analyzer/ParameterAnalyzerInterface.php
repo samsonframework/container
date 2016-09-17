@@ -7,8 +7,6 @@
 namespace samsonframework\container\definition\analyzer;
 
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
-use samsonframework\container\definition\ParameterDefinition;
 
 /**
  * Interface ParameterAnalyzerInterface

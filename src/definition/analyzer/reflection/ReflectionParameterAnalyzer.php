@@ -45,10 +45,7 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
             $methodDefinition = $classDefinition->getMethod($methodName);
 
             // Define parameter definition if not exists
-            if (!$methodDefinition->hasParameter($parameterName)) {
-                $methodDefinition->defineParameter($reflectionParameter->getName());
-            }
-            $parameterDefinition = $methodDefinition->getParameter($parameterName);
+            $parameterDefinition = $methodDefinition->setupParameter($parameterName);
 
             // Set parameter metadata
             if ($reflectionParameter->isDefaultValueAvailable()) {

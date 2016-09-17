@@ -11,6 +11,11 @@ use samsonframework\container\definition\analyzer\annotation\ResolvePropertyInte
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\exception\WrongAnnotationConstructorException;
 use samsonframework\container\definition\ClassDefinition;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
+use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 use samsonframework\container\definition\reference\ClassReference;
 
 /**
@@ -33,18 +38,26 @@ class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
         $this->value = $value;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     * @throws PropertyDefinitionNotFoundException
+     * @throws PropertyDefinitionAlreadyExistsException
+     */
     public function resolveProperty(
         DefinitionAnalyzer $analyzer,
         ClassDefinition $classDefinition,
         \ReflectionProperty $reflectionProperty
     ) {
-        $propertyDefinition->defineDependency(new ClassReference($this->value['value']));
+        $classDefinition->setupProperty($reflectionProperty->getName())
+            ->defineDependency(new ClassReference($this->value['value']));
     }
 
     /**
      * {@inheritdoc}
      * @throws WrongAnnotationConstructorException
+     * @throws MethodDefinitionNotFoundException
+     * @throws ParameterDefinitionAlreadyExistsException
+     * @throws MethodDefinitionAlreadyExistsException
      */
     public function resolveMethod(
         DefinitionAnalyzer $analyzer,
@@ -53,7 +66,8 @@ class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
     ) {
         // Get parameter key
         $key = array_keys($this->value)[0];
-        // Add dependency
-        $methodDefinition->defineParameter($key)->defineDependency(new ClassReference($this->value[$key]))->end();
+        $classDefinition->setupMethod($reflectionMethod->getName())
+            ->defineParameter($key)
+            ->defineDependency(new ClassReference($this->value[$key]))->end();
     }
 }

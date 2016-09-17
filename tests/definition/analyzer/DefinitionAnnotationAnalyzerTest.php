@@ -29,12 +29,14 @@ class DefinitionAnnotationAnalyzerTest extends TestCaseDefinition
         $method = (new \ReflectionClass(DefinitionAnalyzer::class))->getMethod('analyze');
         $method->setAccessible(true);
         $reader = new AnnotationReader();
-        $method->invoke(new DefinitionAnalyzer(
-            [new ReflectionClassAnalyzer()],
-            [new AnnotationMethodAnalyzer($reader), new ReflectionMethodAnalyzer()],
-            [new AnnotationPropertyAnalyzer($reader), new ReflectionPropertyAnalyzer()],
-            [new ReflectionParameterAnalyzer()]
-        ), $definitionBuilder);
+        $method->invoke((new DefinitionAnalyzer())
+            ->addClassAnalyzer(new ReflectionClassAnalyzer())
+            ->addMethodAnalyzer(new AnnotationMethodAnalyzer($reader))
+            ->addMethodAnalyzer(new ReflectionMethodAnalyzer())
+            ->addPropertyAnalyzer(new AnnotationPropertyAnalyzer($reader))
+            ->addPropertyAnalyzer(new ReflectionPropertyAnalyzer())
+            ->addParameterAnalyzer(new ReflectionParameterAnalyzer())
+        , $definitionBuilder);
         $method->setAccessible(false);
     }
 

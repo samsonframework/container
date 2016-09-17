@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by Ruslan Molodyko.
  * Date: 10.09.2016
@@ -30,10 +30,10 @@ class AnnotationClassAnalyzer extends AbstractAnnotationAnalyzer implements Clas
         \ReflectionClass $reflectionClass
     ) {
         $annotations = $this->reader->getClassAnnotations($reflectionClass);
-        // Exec annotations
+        // Exec class annotations
         foreach ($annotations as $annotation) {
             if ($annotation instanceof ResolveClassInterface) {
-                $annotation->resolveClass($analyzer, $reflectionClass, $classDefinition);
+                $annotation->resolveClass($analyzer, $classDefinition, $reflectionClass);
             }
         }
     }

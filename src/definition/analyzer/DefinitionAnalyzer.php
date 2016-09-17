@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by Ruslan Molodyko.
  * Date: 10.09.2016
@@ -8,11 +8,7 @@ namespace samsonframework\container\definition\analyzer;
 
 use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
 use samsonframework\container\definition\builder\DefinitionBuilder;
-use samsonframework\container\definition\analyzer\exception\WrongAnalyzerTypeException;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
-use samsonframework\container\definition\ParameterDefinition;
-use samsonframework\container\tests\classes\annotation\PropClass;
 
 /**
  * Class DefinitionAnalyzer
@@ -32,18 +28,55 @@ class DefinitionAnalyzer
     protected $parameterAnalyzers = [];
 
     /**
-     * DefinitionAnalyzer constructor.
+     * Add class analyzer
      *
-     * @param ClassAnalyzerInterface[] $classAnalyzers
-     * @param MethodAnalyzerInterface[] $methodAnalyzers
-     * @param PropertyAnalyzerInterface[] $propertyAnalyzers
-     * @param ParameterAnalyzerInterface[] $parameterAnalyzers
+     * @param ClassAnalyzerInterface $classAnalyzer
+     * @return DefinitionAnalyzer
      */
-    public function __construct($classAnalyzers = [], $methodAnalyzers = [], $propertyAnalyzers = [], $parameterAnalyzers = []) {
-        $this->classAnalyzers = $classAnalyzers;
-        $this->methodAnalyzers = $methodAnalyzers;
-        $this->propertyAnalyzers = $propertyAnalyzers;
-        $this->parameterAnalyzers = $parameterAnalyzers;
+    public function addClassAnalyzer(ClassAnalyzerInterface $classAnalyzer): DefinitionAnalyzer
+    {
+        $this->classAnalyzers[] = $classAnalyzer;
+
+        return $this;
+    }
+
+    /**
+     * Add method analyzer
+     *
+     * @param MethodAnalyzerInterface $methodAnalyzer
+     * @return DefinitionAnalyzer
+     */
+    public function addMethodAnalyzer(MethodAnalyzerInterface $methodAnalyzer): DefinitionAnalyzer
+    {
+        $this->methodAnalyzers[] = $methodAnalyzer;
+
+        return $this;
+    }
+
+    /**
+     * Add property analyzer
+     *
+     * @param PropertyAnalyzerInterface $propertyAnalyzer
+     * @return DefinitionAnalyzer
+     */
+    public function addPropertyAnalyzer(PropertyAnalyzerInterface $propertyAnalyzer): DefinitionAnalyzer
+    {
+        $this->propertyAnalyzers[] = $propertyAnalyzer;
+
+        return $this;
+    }
+
+    /**
+     * Add parameter analyzer
+     *
+     * @param ParameterAnalyzerInterface $parameterAnalyzer
+     * @return DefinitionAnalyzer
+     */
+    public function addParameterAnalyzer(ParameterAnalyzerInterface $parameterAnalyzer): DefinitionAnalyzer
+    {
+        $this->parameterAnalyzers[] = $parameterAnalyzer;
+
+        return $this;
     }
 
     /**
@@ -51,7 +84,6 @@ class DefinitionAnalyzer
      *
      * @param DefinitionBuilder $definitionBuilder
      * @throws ParameterNotFoundException
-     * @throws WrongAnalyzerTypeException
      * @return bool
      */
     public function analyze(DefinitionBuilder $definitionBuilder): bool
@@ -61,10 +93,20 @@ class DefinitionAnalyzer
         foreach ($definitionBuilder->getDefinitionCollection() as $classDefinition) {
             // Analyze only not analyzed classes
             if (!$classDefinition->isAnalyzed()) {
+                // Get reflection
+                $reflectionClass = new \ReflectionClass($classDefinition->getClassName());
+
                 // Analyze class
-                $this->analyzeClass($classDefinition);
+                $this->analyzeClass($classDefinition, $reflectionClass);
+                // Analyze properties
+                $this->analyzeProperty($reflectionClass, $classDefinition);
+                // Analyze methods
+                $this->analyzeMethod($reflectionClass, $classDefinition);
+
                 // Class was analyzed
                 $classDefinition->setIsAnalyzed(true);
+
+                // Do not analyze this definition
                 $isAnalyzed = true;
             }
         }
@@ -76,30 +118,14 @@ class DefinitionAnalyzer
      * Analyze class
      *
      * @param ClassDefinition $classDefinition
-     * @throws WrongAnalyzerTypeException
-     * @throws ParameterNotFoundException
+     * @param \ReflectionClass $reflectionClass
      */
-    protected function analyzeClass(ClassDefinition $classDefinition)
+    protected function analyzeClass(ClassDefinition $classDefinition, \ReflectionClass $reflectionClass)
     {
-        // Get reflection
-        $reflectionClass = new \ReflectionClass($classDefinition->getClassName());
-
         // Iterate analyzers
         foreach ($this->classAnalyzers as $classAnalyzer) {
-            if ($classAnalyzer instanceof ClassAnalyzerInterface) {
-                $classAnalyzer->analyze($this, $reflectionClass, $classDefinition);
-            } else {
-                throw new WrongAnalyzerTypeException(sprintf(
-                    'Analyzer "%s" should implements ClassAnalyzerInterface',
-                    get_class($classAnalyzer)
-                ));
-            }
+            $classAnalyzer->analyze($this, $classDefinition, $reflectionClass);
         }
-
-        // Analyze properties
-        $this->analyzeProperty($reflectionClass, $classDefinition);
-        // Analyze methods
-        $this->analyzeMethod($reflectionClass, $classDefinition);
     }
 
     /**
@@ -108,25 +134,15 @@ class DefinitionAnalyzer
      * @param \ReflectionClass $reflectionClass
      * @param ClassDefinition $classDefinition
      * @throws ParameterNotFoundException
-     * @throws WrongAnalyzerTypeException
      */
     protected function analyzeMethod(\ReflectionClass $reflectionClass, ClassDefinition $classDefinition)
     {
         // Analyze method definitions
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             foreach ($this->methodAnalyzers as $methodAnalyzer) {
-                if ($methodAnalyzer instanceof MethodAnalyzerInterface) {
-                    $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
-                    $methodAnalyzer->analyze($this, $reflectionMethod, $classDefinition, $methodDefinition);
-                } else {
-                    throw new WrongAnalyzerTypeException(sprintf(
-                        'Analyzer "%s" should implements MethodAnalyzerInterface',
-                        get_class($methodAnalyzer)
-                    ));
-                }
+                $methodAnalyzer->analyze($this, $classDefinition, $reflectionMethod);
             }
-            $methodDefinition = $classDefinition->getMethodsCollection()[$reflectionMethod->getName()] ?? null;
-            $this->analyzeParameter($reflectionMethod, $classDefinition, $methodDefinition);
+            $this->analyzeParameter($reflectionMethod, $classDefinition);
         }
     }
 
@@ -135,7 +151,6 @@ class DefinitionAnalyzer
      *
      * @param \ReflectionClass $reflectionClass
      * @param ClassDefinition $classDefinition
-     * @throws WrongAnalyzerTypeException
      */
     protected function analyzeProperty(\ReflectionClass $reflectionClass, ClassDefinition $classDefinition)
     {
@@ -143,15 +158,7 @@ class DefinitionAnalyzer
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             // Analyze property definition
             foreach ($this->propertyAnalyzers as $propertyAnalyzer) {
-                if ($propertyAnalyzer instanceof PropertyAnalyzerInterface) {
-                    $propertyDefinition = $classDefinition->getPropertiesCollection()[$reflectionProperty->getName()] ?? null;
-                    $propertyAnalyzer->analyze($this, $reflectionProperty, $classDefinition, $propertyDefinition);
-                } else {
-                    throw new WrongAnalyzerTypeException(sprintf(
-                        'Analyzer "%s" should implements PropertyAnalyzerInterface',
-                        get_class($propertyAnalyzer)
-                    ));
-                }
+                $propertyAnalyzer->analyze($this, $classDefinition, $reflectionProperty);
             }
         }
     }
@@ -161,34 +168,14 @@ class DefinitionAnalyzer
      *
      * @param \ReflectionMethod $reflectionMethod
      * @param ClassDefinition $classDefinition
-     * @param MethodDefinition $methodDefinition
      * @throws ParameterNotFoundException
-     * @throws WrongAnalyzerTypeException
      */
-    protected function analyzeParameter(
-        \ReflectionMethod $reflectionMethod,
-        ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition = null
-    ) {
+    protected function analyzeParameter(\ReflectionMethod $reflectionMethod, ClassDefinition $classDefinition) {
         // Get methods parameters
         foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
-            $parameterDefinition = null;
-            $parameterName = $reflectionParameter->getName();
             // Analyze parameters
             foreach ($this->parameterAnalyzers as $parameterAnalyzer) {
-                if ($parameterAnalyzer instanceof ParameterAnalyzerInterface) {
-                    /** @var ParameterDefinition $parameterDefinition */
-                    $parameterDefinition = $methodDefinition &&
-                    array_key_exists($parameterName, $methodDefinition->getParametersCollection())
-                        ? $methodDefinition->getParametersCollection()[$parameterName]
-                        : null;
-                    $parameterAnalyzer->analyze($this, $reflectionParameter, $classDefinition, $methodDefinition, $parameterDefinition);
-                } else {
-                    throw new WrongAnalyzerTypeException(sprintf(
-                        'Analyzer "%s" should implements ParameterAnalyzerInterface',
-                        get_class($parameterAnalyzer)
-                    ));
-                }
+                $parameterAnalyzer->analyze($this, $classDefinition, $reflectionParameter);
             }
         }
     }

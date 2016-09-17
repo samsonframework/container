@@ -10,7 +10,6 @@ use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
-use samsonframework\container\definition\MethodDefinition;
 
 class AnnotationMethodAnalyzer extends AbstractAnnotationAnalyzer implements MethodAnalyzerInterface
 {
@@ -23,17 +22,19 @@ class AnnotationMethodAnalyzer extends AbstractAnnotationAnalyzer implements Met
         ClassDefinition $classDefinition,
         \ReflectionMethod $reflectionMethod
     ) {
+        $methodName = $reflectionMethod->getName();
         // Resolve annotations
         $annotations = $this->reader->getMethodAnnotations($reflectionMethod);
         // Create method definition if annotation is exists
         if (count($annotations)) {
-            // Define property if not exists
-            if (!$methodDefinition) {
-                $methodDefinition = $classDefinition->defineMethod($reflectionMethod->getName());
+            // Define method if not exists
+            if (!$classDefinition->hasMethod($methodName)) {
+                $classDefinition->defineMethod($methodName);
             }
+            // Exec method annotations
             foreach ($annotations as $annotation) {
                 if ($annotation instanceof ResolveMethodInterface) {
-                    $annotation->resolveMethod($analyzer, $reflectionMethod, $classDefinition, $methodDefinition);
+                    $annotation->resolveMethod($analyzer, $classDefinition, $reflectionMethod);
                 }
             }
         }

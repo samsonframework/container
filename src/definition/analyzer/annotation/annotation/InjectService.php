@@ -11,6 +11,10 @@ use samsonframework\container\definition\analyzer\annotation\ResolvePropertyInte
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\exception\WrongAnnotationConstructorException;
 use samsonframework\container\definition\ClassDefinition;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
+use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\ServiceReference;
@@ -35,18 +39,28 @@ class InjectService implements ResolvePropertyInterface, ResolveMethodInterface
         $this->value = $value;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     * @throws PropertyDefinitionNotFoundException
+     */
     public function resolveProperty(
         DefinitionAnalyzer $analyzer,
         ClassDefinition $classDefinition,
         \ReflectionProperty $reflectionProperty
     ) {
-        $propertyDefinition->defineDependency(new ServiceReference($this->value['value']));
+        $propertyName = $reflectionProperty->getName();
+        if ($classDefinition->hasProperty($propertyName)) {
+            $classDefinition->getProperty($propertyName)
+                ->defineDependency(new ServiceReference($this->value['value']));
+        }
     }
 
     /**
      * {@inheritdoc}
      * @throws WrongAnnotationConstructorException
+     * @throws MethodDefinitionNotFoundException
+     * @throws ParameterDefinitionAlreadyExistsException
+     * @throws MethodDefinitionAlreadyExistsException
      */
     public function resolveMethod(
         DefinitionAnalyzer $analyzer,
@@ -55,7 +69,8 @@ class InjectService implements ResolvePropertyInterface, ResolveMethodInterface
     ) {
         // Get parameter key
         $key = array_keys($this->value)[0];
-        // Add dependency
-        $methodDefinition->defineParameter($key)->defineDependency(new ServiceReference($this->value[$key]))->end();
+        $classDefinition->setupMethod($reflectionMethod->getName())
+            ->defineParameter($key)
+            ->defineDependency(new ServiceReference($this->value[$key]))->end();
     }
 }

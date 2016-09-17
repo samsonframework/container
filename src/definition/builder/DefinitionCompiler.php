@@ -11,7 +11,6 @@ use samsonframework\container\ContainerInterface;
 use samsonframework\container\definition\AbstractPropertyDefinition;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\exception\ParameterNotFoundException;
-use samsonframework\container\definition\analyzer\exception\WrongAnalyzerTypeException;
 use samsonframework\container\definition\builder\exception\ImplementerForTypeNotFoundException;
 use samsonframework\container\definition\exception\ClassDefinitionAlreadyExistsException;
 use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
@@ -55,7 +54,6 @@ class DefinitionCompiler
      * @param $namespace
      * @param $containerDir
      * @return ContainerInterface
-     * @throws WrongAnalyzerTypeException
      * @throws ParameterNotFoundException
      * @throws ClassDefinitionAlreadyExistsException
      * @throws ReferenceNotImplementsException

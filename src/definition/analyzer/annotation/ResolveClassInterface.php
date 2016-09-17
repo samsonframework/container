@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by Ruslan Molodyko.
  * Date: 10.09.2016
@@ -8,7 +8,6 @@ namespace samsonframework\container\definition\analyzer\annotation;
 
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
 
 /**
  * Interface ResolvePropertyInterface

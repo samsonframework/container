@@ -271,6 +271,42 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     }
 
     /**
+     * Get existing or define new method
+     *
+     * @param string $methodName
+     * @return MethodDefinition
+     * @throws MethodDefinitionAlreadyExistsException
+     * @throws MethodDefinitionNotFoundException
+     */
+    public function setupMethod(string $methodName): MethodDefinition
+    {
+        // Get existing method
+        if ($this->hasMethod($methodName)) {
+            return $this->getMethod($methodName);
+        } else { // Or define new method
+            return $this->defineMethod($methodName);
+        }
+    }
+
+    /**
+     * Get existing or define new property
+     *
+     * @param string $propertyName
+     * @return PropertyDefinition
+     * @throws PropertyDefinitionNotFoundException
+     * @throws PropertyDefinitionAlreadyExistsException
+     */
+    public function setupProperty(string $propertyName): PropertyDefinition
+    {
+        // Get existing property
+        if ($this->hasProperty($propertyName)) {
+            return $this->getProperty($propertyName);
+        } else { // Or define new property
+            return $this->defineProperty($propertyName);
+        }
+    }
+
+    /**
      * Has property definition
      *
      * @param string $propertyName

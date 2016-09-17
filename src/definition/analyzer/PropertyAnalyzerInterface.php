@@ -7,7 +7,6 @@
 namespace samsonframework\container\definition\analyzer;
 
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\PropertyDefinition;
 
 /**
  * Interface PropertyAnalyzerInterface
