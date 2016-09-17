@@ -21,14 +21,12 @@ interface ResolvePropertyInterface
      * Resolve property
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param \ReflectionProperty $reflectionProperty
      * @param ClassDefinition $classDefinition
-     * @param PropertyDefinition $propertyDefinition
+     * @param \ReflectionProperty $reflectionProperty
      */
     public function resolveProperty(
         DefinitionAnalyzer $analyzer,
-        \ReflectionProperty $reflectionProperty,
         ClassDefinition $classDefinition,
-        PropertyDefinition $propertyDefinition
+        \ReflectionProperty $reflectionProperty
     );
 }

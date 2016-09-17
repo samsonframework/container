@@ -20,9 +20,8 @@ class AnnotationPropertyAnalyzer extends AbstractAnnotationAnalyzer implements P
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionProperty $reflectionProperty,
         ClassDefinition $classDefinition,
-        PropertyDefinition $propertyDefinition = null
+        \ReflectionProperty $reflectionProperty
     ) {
         // Resolve annotations
         $annotations = $this->reader->getPropertyAnnotations($reflectionProperty);

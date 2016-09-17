@@ -9,7 +9,7 @@ namespace samsonframework\container\definition\analyzer\reflection;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\PropertyAnalyzerInterface;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\PropertyDefinition;
+use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 
 /**
  * Class ReflectionPropertyAnalyzer
@@ -18,17 +18,21 @@ use samsonframework\container\definition\PropertyDefinition;
  */
 class ReflectionPropertyAnalyzer implements PropertyAnalyzerInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     * @throws PropertyDefinitionNotFoundException
+     */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionProperty $reflectionProperty,
         ClassDefinition $classDefinition,
-        PropertyDefinition $propertyDefinition = null
+        \ReflectionProperty $reflectionProperty
     ) {
-        if ($propertyDefinition) {
-            // Set property metadata
-            $propertyDefinition->setIsPublic($reflectionProperty->isPublic());
-            $propertyDefinition->setModifiers($reflectionProperty->getModifiers());
+        $propertyName = $reflectionProperty->getName();
+        // Set property metadata
+        if ($classDefinition->hasProperty($propertyName)) {
+            $classDefinition->getProperty($propertyName)
+                ->setIsPublic($reflectionProperty->isPublic())
+                ->setModifiers($reflectionProperty->getModifiers());
         }
     }
 }

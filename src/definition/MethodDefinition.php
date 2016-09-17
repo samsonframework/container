@@ -8,6 +8,7 @@
 namespace samsonframework\container\definition;
 
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\ParameterDefinitionNotFoundException;
 use samsonframework\container\definition\exception\ParameterNotFoundException;
 
 /**
@@ -110,5 +111,31 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
     public function getParametersCollection(): array
     {
         return $this->parametersCollection;
+    }
+
+    /**
+     * Has parameter definition
+     *
+     * @param string $parameterName
+     * @return bool
+     */
+    public function hasParameter(string $parameterName): bool
+    {
+        return array_key_exists($parameterName, $this->parametersCollection);
+    }
+
+    /**
+     * Get property definition
+     *
+     * @param $parameterName
+     * @return ParameterDefinition
+     * @throws ParameterDefinitionNotFoundException
+     */
+    public function getParameter($parameterName): ParameterDefinition
+    {
+        if (!$this->hasParameter($parameterName)) {
+            throw new ParameterDefinitionNotFoundException();
+        }
+        return $this->parametersCollection[$parameterName];
     }
 }

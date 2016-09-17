@@ -20,9 +20,8 @@ class AnnotationMethodAnalyzer extends AbstractAnnotationAnalyzer implements Met
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition = null
+        \ReflectionMethod $reflectionMethod
     ) {
         // Resolve annotations
         $annotations = $this->reader->getMethodAnnotations($reflectionMethod);

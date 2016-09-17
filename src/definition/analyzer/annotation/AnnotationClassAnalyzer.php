@@ -10,14 +10,27 @@ use samsonframework\container\definition\analyzer\ClassAnalyzerInterface;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\ClassDefinition;
 
+/**
+ * Class AnnotationClassAnalyzer
+ *
+ * @author Ruslan Molodyko <molodyko@samsonos.com>
+ */
 class AnnotationClassAnalyzer extends AbstractAnnotationAnalyzer implements ClassAnalyzerInterface
 {
+    /**
+     * Analyze class
+     *
+     * @param DefinitionAnalyzer $analyzer
+     * @param \ReflectionClass $reflectionClass
+     * @param ClassDefinition $classDefinition
+     */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionClass $reflectionClass,
-        ClassDefinition $classDefinition
+        ClassDefinition $classDefinition,
+        \ReflectionClass $reflectionClass
     ) {
         $annotations = $this->reader->getClassAnnotations($reflectionClass);
+        // Exec annotations
         foreach ($annotations as $annotation) {
             if ($annotation instanceof ResolveClassInterface) {
                 $annotation->resolveClass($analyzer, $reflectionClass, $classDefinition);

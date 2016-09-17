@@ -22,5 +22,9 @@ interface ClassAnalyzerInterface
      * @param \ReflectionClass $reflectionClass
      * @param ClassDefinition $classDefinition
      */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass, ClassDefinition $classDefinition);
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        ClassDefinition $classDefinition,
+        \ReflectionClass $reflectionClass
+    );
 }

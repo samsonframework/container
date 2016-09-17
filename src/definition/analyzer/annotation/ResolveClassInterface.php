@@ -21,12 +21,12 @@ interface ResolveClassInterface
      * Resolve class
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param \ReflectionClass $reflectionClass
      * @param ClassDefinition $classDefinition
+     * @param \ReflectionClass $reflectionClass
      */
     public function resolveClass(
         DefinitionAnalyzer $analyzer,
-        \ReflectionClass $reflectionClass,
-        ClassDefinition $classDefinition
+        ClassDefinition $classDefinition,
+        \ReflectionClass $reflectionClass
     );
 }

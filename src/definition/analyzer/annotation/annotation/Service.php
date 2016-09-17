@@ -37,8 +37,8 @@ class Service implements ResolveClassInterface
     /** {@inheritdoc} */
     public function resolveClass(
         DefinitionAnalyzer $analyzer,
-        \ReflectionClass $reflectionClass,
-        ClassDefinition $classDefinition
+        ClassDefinition $classDefinition,
+        \ReflectionClass $reflectionClass
     ) {
         $classDefinition->setServiceName($this->value['value']);
         $classDefinition->setIsSingleton(true);

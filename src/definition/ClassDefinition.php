@@ -7,6 +7,8 @@
  */
 namespace samsonframework\container\definition;
 
+use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
+use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
 use samsonframework\container\definition\scope\AbstractScope;
@@ -266,6 +268,58 @@ class ClassDefinition extends AbstractDefinition implements ClassBuilderInterfac
     public function getMethodsCollection(): array
     {
         return $this->methodsCollection;
+    }
+
+    /**
+     * Has property definition
+     *
+     * @param string $propertyName
+     * @return bool
+     */
+    public function hasProperty(string $propertyName): bool
+    {
+        return array_key_exists($propertyName, $this->propertiesCollection);
+    }
+
+    /**
+     * Get property definition
+     *
+     * @param $propertyName
+     * @return PropertyDefinition
+     * @throws PropertyDefinitionNotFoundException
+     */
+    public function getProperty($propertyName): PropertyDefinition
+    {
+        if (!$this->hasProperty($propertyName)) {
+            throw new PropertyDefinitionNotFoundException();
+        }
+        return $this->propertiesCollection[$propertyName];
+    }
+
+    /**
+     * Has method definition
+     *
+     * @param string $methodName
+     * @return bool
+     */
+    public function hasMethod(string $methodName): bool
+    {
+        return array_key_exists($methodName, $this->methodsCollection);
+    }
+
+    /**
+     * Get method definition
+     *
+     * @param $methodName
+     * @return MethodDefinition
+     * @throws MethodDefinitionNotFoundException
+     */
+    public function getMethod($methodName): MethodDefinition
+    {
+        if (!$this->hasMethod($methodName)) {
+            throw new MethodDefinitionNotFoundException();
+        }
+        return $this->methodsCollection[$methodName];
     }
 
     /**

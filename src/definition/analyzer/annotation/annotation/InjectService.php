@@ -38,9 +38,8 @@ class InjectService implements ResolvePropertyInterface, ResolveMethodInterface
     /** {@inheritdoc} */
     public function resolveProperty(
         DefinitionAnalyzer $analyzer,
-        \ReflectionProperty $reflectionProperty,
         ClassDefinition $classDefinition,
-        PropertyDefinition $propertyDefinition
+        \ReflectionProperty $reflectionProperty
     ) {
         $propertyDefinition->defineDependency(new ServiceReference($this->value['value']));
     }
@@ -51,9 +50,8 @@ class InjectService implements ResolvePropertyInterface, ResolveMethodInterface
      */
     public function resolveMethod(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition
+        \ReflectionMethod $reflectionMethod
     ) {
         // Get parameter key
         $key = array_keys($this->value)[0];

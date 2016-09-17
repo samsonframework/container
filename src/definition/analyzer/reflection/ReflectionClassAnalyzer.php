@@ -18,8 +18,11 @@ use samsonframework\container\definition\ClassDefinition;
 class ReflectionClassAnalyzer implements ClassAnalyzerInterface
 {
     /** {@inheritdoc} */
-    public function analyze(DefinitionAnalyzer $analyzer, \ReflectionClass $reflectionClass, ClassDefinition $classDefinition)
-    {
+    public function analyze(
+        DefinitionAnalyzer $analyzer,
+        ClassDefinition $classDefinition,
+        \ReflectionClass $reflectionClass
+    ) {
         // Get name space from class name
         $classDefinition->setNameSpace($reflectionClass->getNamespaceName());
     }

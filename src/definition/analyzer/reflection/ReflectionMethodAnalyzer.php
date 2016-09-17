@@ -9,7 +9,8 @@ namespace samsonframework\container\definition\analyzer\reflection;
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
+use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
+use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
 
 /**
  * Class ReflectionMethodAnalyzer
@@ -18,20 +19,26 @@ use samsonframework\container\definition\MethodDefinition;
  */
 class ReflectionMethodAnalyzer implements MethodAnalyzerInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     * @throws MethodDefinitionAlreadyExistsException
+     * @throws MethodDefinitionNotFoundException
+     */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition = null
+        \ReflectionMethod $reflectionMethod
     ) {
-        if (!$methodDefinition && $reflectionMethod->getName() === '__construct') {
-            $methodDefinition = $classDefinition->defineConstructor();
+        $methodName = $reflectionMethod->getName();
+        // Constructor definition is required
+        if ($methodName === '__construct' && !$classDefinition->hasMethod('__construct')) {
+            $classDefinition->defineConstructor()->end();
         }
-        if ($methodDefinition) {
-            // Set method metadata
-            $methodDefinition->setModifiers($reflectionMethod->getModifiers());
-            $methodDefinition->setIsPublic($reflectionMethod->isPublic());
+        // Set method metadata
+        if ($classDefinition->hasMethod($methodName)) {
+            $classDefinition->getMethod($methodName)
+                ->setModifiers($reflectionMethod->getModifiers())
+                ->setIsPublic($reflectionMethod->isPublic());
         }
     }
 }

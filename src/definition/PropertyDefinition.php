@@ -65,9 +65,9 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
 
     /**
      * @param int $modifiers
-     * @return AbstractPropertyDefinition
+     * @return PropertyDefinition
      */
-    public function setModifiers(int $modifiers): AbstractPropertyDefinition
+    public function setModifiers(int $modifiers): PropertyDefinition
     {
         $this->modifiers = $modifiers;
 
@@ -84,9 +84,9 @@ class PropertyDefinition extends AbstractPropertyDefinition implements PropertyB
 
     /**
      * @param boolean $isPublic
-     * @return AbstractPropertyDefinition
+     * @return PropertyDefinition
      */
-    public function setIsPublic(bool $isPublic): AbstractPropertyDefinition
+    public function setIsPublic(bool $isPublic): PropertyDefinition
     {
         $this->isPublic = $isPublic;
 

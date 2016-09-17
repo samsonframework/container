@@ -68,7 +68,7 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
      * @param mixed $isOptional
      * @return ParameterDefinition
      */
-    public function setIsOptional($isOptional)
+    public function setIsOptional($isOptional): ParameterDefinition
     {
         $this->isOptional = $isOptional;
 
@@ -85,9 +85,9 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
 
     /**
      * @param \ReflectionType $typeHint
-     * @return AbstractPropertyDefinition
+     * @return ParameterDefinition
      */
-    public function setTypeHint(\ReflectionType $typeHint): AbstractPropertyDefinition
+    public function setTypeHint(\ReflectionType $typeHint): ParameterDefinition
     {
         $this->typeHint = $typeHint;
 
@@ -104,9 +104,9 @@ class ParameterDefinition extends AbstractPropertyDefinition implements Paramete
 
     /**
      * @param mixed $value
-     * @return AbstractPropertyDefinition
+     * @return ParameterDefinition
      */
-    public function setValue($value): AbstractPropertyDefinition
+    public function setValue($value): ParameterDefinition
     {
         $this->value = $value;
 

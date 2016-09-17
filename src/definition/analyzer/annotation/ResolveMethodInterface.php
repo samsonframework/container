@@ -21,14 +21,12 @@ interface ResolveMethodInterface
      * Resolve method
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param \ReflectionMethod $reflectionMethod
      * @param ClassDefinition $classDefinition
-     * @param MethodDefinition $methodDefinition
+     * @param \ReflectionMethod $reflectionMethod
      */
     public function resolveMethod(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition
+        \ReflectionMethod $reflectionMethod
     );
 }

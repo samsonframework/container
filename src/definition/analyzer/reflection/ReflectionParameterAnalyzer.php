@@ -10,9 +10,9 @@ use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\ParameterAnalyzerInterface;
 use samsonframework\container\definition\builder\exception\ReferenceNotImplementsException;
 use samsonframework\container\definition\ClassDefinition;
+use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
-use samsonframework\container\definition\MethodDefinition;
-use samsonframework\container\definition\ParameterDefinition;
+use samsonframework\container\definition\exception\ParameterDefinitionNotFoundException;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionReference;
 use samsonframework\container\definition\reference\ConstantReference;
@@ -29,20 +29,27 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
      * {@inheritdoc}
      * @throws ParameterDefinitionAlreadyExistsException
      * @throws ReferenceNotImplementsException
+     * @throws MethodDefinitionNotFoundException
+     * @throws ParameterDefinitionNotFoundException
+     * @throws \InvalidArgumentException
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionParameter $reflectionParameter,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition = null,
-        ParameterDefinition $parameterDefinition = null
+        \ReflectionParameter $reflectionParameter
     ) {
+        $methodName = $reflectionParameter->getDeclaringFunction()->getName();
+        $parameterName = $reflectionParameter->getName();
         // Define parameter only if method definition is available
-        if ($methodDefinition) {
+        if ($classDefinition->hasMethod($methodName)) {
+            $methodDefinition = $classDefinition->getMethod($methodName);
+
             // Define parameter definition if not exists
-            if (!$parameterDefinition) {
-                $parameterDefinition = $methodDefinition->defineParameter($reflectionParameter->getName());
+            if (!$methodDefinition->hasParameter($parameterName)) {
+                $methodDefinition->defineParameter($reflectionParameter->getName());
             }
+            $parameterDefinition = $methodDefinition->getParameter($parameterName);
+
             // Set parameter metadata
             if ($reflectionParameter->isDefaultValueAvailable()) {
                 $parameterDefinition->setValue($reflectionParameter->getDefaultValue());
@@ -74,12 +81,6 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
                     !$parameterDefinition->getTypeHint()->isBuiltin()
                 ) {
                     $class = (string)$parameterDefinition->getTypeHint();
-//                    $reflectionClass = new \ReflectionClass($class);
-//                    $className = $reflectionClass->getName();
-//                    // TODO Fix pdo for example
-//                    if ($reflectionClass->getNamespaceName() === '') {
-//                        $className = '\\' . $className;
-//                    }
                     $parameterDefinition->setDependency(new ClassReference($class));
                 }
             }

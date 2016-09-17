@@ -21,15 +21,13 @@ interface MethodAnalyzerInterface
      * Analyze property definition
      *
      * @param DefinitionAnalyzer $analyzer
-     * @param \ReflectionMethod $reflectionMethod
      * @param ClassDefinition $classDefinition
-     * @param MethodDefinition $methodDefinition
+     * @param \ReflectionMethod $reflectionMethod
      */
     public function analyze(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition = null
+        \ReflectionMethod $reflectionMethod
     );
 }
 

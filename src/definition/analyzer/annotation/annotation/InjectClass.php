@@ -11,8 +11,6 @@ use samsonframework\container\definition\analyzer\annotation\ResolvePropertyInte
 use samsonframework\container\definition\analyzer\DefinitionAnalyzer;
 use samsonframework\container\definition\analyzer\exception\WrongAnnotationConstructorException;
 use samsonframework\container\definition\ClassDefinition;
-use samsonframework\container\definition\MethodDefinition;
-use samsonframework\container\definition\PropertyDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 
 /**
@@ -38,9 +36,8 @@ class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
     /** {@inheritdoc} */
     public function resolveProperty(
         DefinitionAnalyzer $analyzer,
-        \ReflectionProperty $reflectionProperty,
         ClassDefinition $classDefinition,
-        PropertyDefinition $propertyDefinition
+        \ReflectionProperty $reflectionProperty
     ) {
         $propertyDefinition->defineDependency(new ClassReference($this->value['value']));
     }
@@ -51,9 +48,8 @@ class InjectClass implements ResolvePropertyInterface, ResolveMethodInterface
      */
     public function resolveMethod(
         DefinitionAnalyzer $analyzer,
-        \ReflectionMethod $reflectionMethod,
         ClassDefinition $classDefinition,
-        MethodDefinition $methodDefinition
+        \ReflectionMethod $reflectionMethod
     ) {
         // Get parameter key
         $key = array_keys($this->value)[0];
