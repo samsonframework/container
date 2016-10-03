@@ -12,6 +12,11 @@ use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 
+/**
+ * Class AnnotationPropertyAnalyzer
+ *
+ * @author Ruslan Molodyko <molodyko@samsonos.com>
+ */
 class AnnotationPropertyAnalyzer extends AbstractAnnotationAnalyzer implements PropertyAnalyzerInterface
 {
     /**

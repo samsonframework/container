@@ -11,6 +11,7 @@ use samsonframework\container\definition\exception\MethodDefinitionNotFoundExcep
 use samsonframework\container\definition\exception\PropertyDefinitionNotFoundException;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\ReferenceInterface;
+use samsonframework\container\definition\reference\ServiceReference;
 use samsonframework\container\definition\scope\AbstractScope;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\PropertyDefinitionAlreadyExistsException;

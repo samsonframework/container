@@ -29,6 +29,8 @@ class DefinitionBuilder extends AbstractDefinition
     protected $definitionCollection = [];
     /** @var  ParameterBuilder */
     protected $parameterBuilder;
+    /** @var array Collection of interface => [classes]*/
+    protected $implementors = [];
 
     /**
      * DefinitionBuilder constructor.
@@ -55,6 +57,20 @@ class DefinitionBuilder extends AbstractDefinition
     public function defineParameter(string $name, ReferenceInterface $reference): ParameterBuilderInterface
     {
         return $this->parameterBuilder->defineParameter($name, $reference);
+    }
+
+    /**
+     * Define interface implementors
+     *
+     * @param string $interfaceName
+     * @param ReferenceInterface $class
+     * @return DefinitionBuilder
+     */
+    public function defineImplementors(string $interfaceName, ReferenceInterface $class): DefinitionBuilder
+    {
+        $this->implementors[$interfaceName] = $class;
+
+        return $this;
     }
 
     /**
@@ -111,5 +127,13 @@ class DefinitionBuilder extends AbstractDefinition
     public function getParameterCollection(): array
     {
         return $this->parameterBuilder->getParameterCollection();
+    }
+
+    /**
+     * @return array
+     */
+    public function getImplementors(): array
+    {
+        return $this->implementors;
     }
 }

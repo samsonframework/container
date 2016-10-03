@@ -11,6 +11,11 @@ use samsonframework\container\definition\analyzer\MethodAnalyzerInterface;
 use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\MethodDefinitionAlreadyExistsException;
 
+/**
+ * Class AnnotationMethodAnalyzer
+ *
+ * @author Ruslan Molodyko <molodyko@samsonos.com>
+ */
 class AnnotationMethodAnalyzer extends AbstractAnnotationAnalyzer implements MethodAnalyzerInterface
 {
     /**

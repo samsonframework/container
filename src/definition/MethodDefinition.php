@@ -113,6 +113,40 @@ class MethodDefinition extends AbstractDefinition implements MethodBuilderInterf
     }
 
     /**
+     * Set correct order of parameter definitions
+     *
+     * @param array $order Correct ordered parameter names
+     * @throws \InvalidArgumentException
+     */
+    public function setParametersCollectionOrder(array $order)
+    {
+        $orderedList = [];
+        // Sort by template
+        foreach ($order as $parameterName) {
+            foreach ($this->parametersCollection as $parameterDefinition) {
+                if ($parameterName === $parameterDefinition->getParameterName()) {
+                    $orderedList[$parameterName] = $parameterDefinition;
+                    // Go to next parameter
+                    break;
+                }
+            }
+        }
+
+        // Check if correct parameters
+        $parametersCount = count($this->parametersCollection);
+        if (count($orderedList) !== $parametersCount) {
+            throw new \InvalidArgumentException(sprintf(
+                'Count of ordered list "%s" not equal to parameter collection count "%s"',
+                count($orderedList),
+                $parametersCount
+            ));
+        }
+
+        // Set ordered list
+        $this->parametersCollection = $orderedList;
+    }
+
+    /**
      * Has parameter definition
      *
      * @param string $parameterName

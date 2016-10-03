@@ -31,6 +31,9 @@ use samsonframework\generator\MethodGenerator;
  */
 class DefinitionGenerator
 {
+    /** Hot to get container from container */
+    const CONTAINER_DEPENDENCY_NAME = 'container';
+
     /** @var  ClassGenerator */
     protected $generator;
 
@@ -145,6 +148,19 @@ class DefinitionGenerator
 
             $isFirstCondition = false;
         }
+
+        // Generate if condition by class name or value
+        $methodGenerator->defLine($this->generateStartIfCondition(
+            false,
+            '\\' . $this->generator->getNamespace() . '\\' . $this->generator->getClassName(),
+            self::CONTAINER_DEPENDENCY_NAME
+        ));
+
+        // Return container
+        $methodGenerator->defLine("\treturn \$this;");
+
+        // Close if
+        $methodGenerator->defLine($this->generateEndIfCondition());
 
         // Close method
         $methodGenerator->end();

@@ -104,6 +104,7 @@ class DefinitionCompiler
         $className = $namespace . '\\' . $containerName;
         // Require container
         require_once($containerFilePath);
+
         // Instantiate container
         return new $className();
     }
@@ -120,20 +121,28 @@ class DefinitionCompiler
         $dependencyList = [];
         // Get dependencies which will be used for generation definitions
         foreach ($definitionBuilder->getDefinitionCollection() as $classDefinition) {
-            // Iterate properties and get their dependencies
-            foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
-                // Add dependency to list if valid
-                $this->addDependency($dependencyList, $propertyDefinition->getDependency(), $propertyDefinition);
-            }
-            foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
-                foreach ($methodDefinition->getParametersCollection() as $parameterDefinition) {
+//            if (!$classDefinition->isAnalyzed()) {
+                // Iterate properties and get their dependencies
+                foreach ($classDefinition->getPropertiesCollection() as $propertyDefinition) {
+                    // Add dependency to list if valid
                     $this->addDependency(
+                        $definitionBuilder,
                         $dependencyList,
-                        $parameterDefinition->getDependency(),
-                        $parameterDefinition
+                        $propertyDefinition->getDependency(),
+                        $propertyDefinition
                     );
                 }
-            }
+                foreach ($classDefinition->getMethodsCollection() as $methodDefinition) {
+                    foreach ($methodDefinition->getParametersCollection() as $parameterDefinition) {
+                        $this->addDependency(
+                            $definitionBuilder,
+                            $dependencyList,
+                            $parameterDefinition->getDependency(),
+                            $parameterDefinition
+                        );
+                    }
+                }
+//            }
         }
         return $dependencyList;
     }
@@ -174,29 +183,40 @@ class DefinitionCompiler
     /**
      * Get class which implements the interface
      *
+     * @param DefinitionBuilder $definitionBuilder
      * @param string $interfaceName
      * @return string
      * @throws ImplementerForTypeNotFoundException
      * TODO Add interface resolvers functionality
      */
-    protected function resolveTypeImplementer(string $interfaceName): string
+    protected function resolveTypeImplementer(DefinitionBuilder $definitionBuilder, string $interfaceName): ReferenceInterface
     {
-        // Gather all interface implementations
-        foreach (get_declared_classes() as $class) {
-            $classImplements = class_implements($class);
-            // Remove slash for start of interface
-            if (in_array(ltrim($interfaceName, '\\'), $classImplements, true)) {
-                return $class;
-            }
+//        // Gather all interface implementations
+//        foreach (get_declared_classes() as $class) {
+//            $classImplements = class_implements($class);
+//            // Remove slash for start of interface
+//            if (in_array(ltrim($interfaceName, '\\'), $classImplements, true)) {
+//                return $class;
+//            }
+//        }
+//        throw new ImplementerForTypeNotFoundException(
+//            sprintf('Type "%s" does not have some implementers', $interfaceName)
+//        );
+
+        $interfaces = $definitionBuilder->getImplementors();
+        if (array_key_exists($interfaceName, $interfaces)) {
+            return $interfaces[$interfaceName];
+        } else {
+            throw new ImplementerForTypeNotFoundException(
+                sprintf('Type "%s" does not have some implementers', $interfaceName)
+            );
         }
-        throw new ImplementerForTypeNotFoundException(
-            sprintf('Type "%s" does not have some implementers', $interfaceName)
-        );
     }
 
     /**
      * Add dependencies which then will be use for automatic creation the definitions
      *
+     * @param DefinitionBuilder $definitionBuilder
      * @param array $dependencyList
      * @param ReferenceInterface $reference
      * @param AbstractPropertyDefinition $definition
@@ -204,6 +224,7 @@ class DefinitionCompiler
      * @throws ImplementerForTypeNotFoundException
      */
     protected function addDependency(
+        DefinitionBuilder $definitionBuilder,
         array &$dependencyList,
         ReferenceInterface $reference,
         AbstractPropertyDefinition $definition
@@ -213,8 +234,8 @@ class DefinitionCompiler
             $className = $reference->getClassName();
             // When there is not simple class then resolve it by type
             if ($this->checkIfType($className)) {
-                $className = $this->resolveTypeImplementer($className);
-                $reference = new ClassReference($className);
+                $reference = $this->resolveTypeImplementer($definitionBuilder, $className);
+//                $reference = new ClassReference($className);
                 // Set new implementer dependency instead of type one
                 $definition->setDependency($reference);
             }

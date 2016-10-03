@@ -13,6 +13,7 @@ use samsonframework\container\definition\ClassDefinition;
 use samsonframework\container\definition\exception\MethodDefinitionNotFoundException;
 use samsonframework\container\definition\exception\ParameterDefinitionAlreadyExistsException;
 use samsonframework\container\definition\exception\ParameterDefinitionNotFoundException;
+use samsonframework\container\definition\MethodDefinition;
 use samsonframework\container\definition\ParameterDefinition;
 use samsonframework\container\definition\reference\ClassReference;
 use samsonframework\container\definition\reference\CollectionReference;
@@ -55,7 +56,28 @@ class ReflectionParameterAnalyzer implements ParameterAnalyzerInterface
             if (!$dependency || ($dependency instanceof UndefinedReference)) {
                 $this->setDependencyByReflection($parameterDefinition, $reflectionParameter);
             }
+
+            $this->setOrderArguments($methodDefinition, $reflectionParameter->getDeclaringFunction());
         }
+    }
+
+    /**
+     * Set correct order of arguments
+     *
+     * @param MethodDefinition $methodDefinition
+     * @param \ReflectionFunctionAbstract $reflectionMethod
+     * @throws \InvalidArgumentException
+     */
+    public function setOrderArguments(
+        MethodDefinition $methodDefinition,
+        \ReflectionFunctionAbstract $reflectionMethod
+    ) {
+        $parameters = [];
+        // Get parameter names
+        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
+            $parameters[] = $reflectionParameter->getName();
+        }
+        $methodDefinition->setParametersCollectionOrder($parameters);
     }
 
     /**
