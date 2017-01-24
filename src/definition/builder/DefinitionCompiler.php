@@ -208,7 +208,7 @@ class DefinitionCompiler
             return $interfaces[$interfaceName];
         } else {
             throw new ImplementerForTypeNotFoundException(
-                sprintf('Type "%s" does not have some implementers', $interfaceName)
+                sprintf('Type "%s" does not have implementers', $interfaceName)
             );
         }
     }
